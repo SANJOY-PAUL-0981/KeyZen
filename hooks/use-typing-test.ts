@@ -333,6 +333,8 @@ export function useTypingTest({
         e.preventDefault();
         if (typed.length === 0) return;
 
+        allTypedRef.current += 1; // count the space keystroke so raw >= wpm
+
         for (let i = 0; i < Math.min(typed.length, currentWord.length); i++) {
           if (typed[i] !== currentWord[i]) errorsThisSecondRef.current++;
         }
