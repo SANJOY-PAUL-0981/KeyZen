@@ -4,12 +4,12 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react"
+import { useMountEffect } from "@/hooks/use-mount-effect"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "motion/react"
@@ -76,34 +76,29 @@ function SiteHeader() {
   const isHome = pathname === "/"
   const dimHeader = isHome && typingActive
 
-  const [headerVisible, setHeaderVisible] = useState(true)
+  // Rule 1: derive header visibility inline instead of syncing via useEffect.
+  // mouseHeaderVisible tracks the temporary override when the user moves the mouse
+  // while actively typing on the home page.
+  const [mouseHeaderVisible, setMouseHeaderVisible] = useState(false)
   const headerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => {
-    if (!isHome) setTypingActive(false)
-  }, [isHome, setTypingActive])
-
-  useEffect(() => {
-    if (!isHome) {
-      setHeaderVisible(true)
-      return
-    }
-    if (!typingActive) setHeaderVisible(true)
-    else setHeaderVisible(false)
-  }, [isHome, typingActive])
+  // Base: always visible unless on home page AND actively typing.
+  // Mouse override only matters when the base would hide the header.
+  const headerVisible = !isHome || !typingActive || (isHome && typingActive && mouseHeaderVisible)
 
   const handleHeaderMouseMove = useCallback(() => {
     if (!isHome || !typingActive) return
-    setHeaderVisible(true)
+    setMouseHeaderVisible(true)
     if (headerTimerRef.current) clearTimeout(headerTimerRef.current)
-    headerTimerRef.current = setTimeout(() => setHeaderVisible(false), 2500)
+    headerTimerRef.current = setTimeout(() => setMouseHeaderVisible(false), 2500)
   }, [isHome, typingActive])
 
-  useEffect(() => {
+  // Rule 4: useMountEffect for cleanup-only timer on unmount.
+  useMountEffect(() => {
     return () => {
       if (headerTimerRef.current) clearTimeout(headerTimerRef.current)
     }
-  }, [])
+  })
 
   function handleLogoClick() {
     if (isHome && homeLogoHandlerRef.current) {

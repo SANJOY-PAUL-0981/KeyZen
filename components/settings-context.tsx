@@ -3,10 +3,10 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useState,
   type ReactNode,
 } from "react";
+import { useMountEffect } from "@/hooks/use-mount-effect";
 
 import { syncKeyZenFavicon } from "@/lib/favicon-client";
 
@@ -145,6 +145,18 @@ function loadGoogleFont(family: string) {
   document.head.appendChild(link);
 }
 
+function applyAccentToDom(accent: AccentColor) {
+  document.documentElement.setAttribute("data-accent", accent);
+  queueMicrotask(() => syncKeyZenFavicon());
+}
+
+function applyFontToDom(fontId: TypingFont) {
+  const option = FONT_OPTIONS.find((f) => f.id === fontId);
+  if (!option) return;
+  if (option.googleFamily) loadGoogleFont(option.googleFamily);
+  document.documentElement.style.setProperty("--typing-font", option.cssFamily);
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [accent, setAccentState] = useState<AccentColor>("teal");
   const [font, setFontState] = useState<TypingFont>("geist-mono");
@@ -152,38 +164,41 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [realtimeWpm, setRealtimeWpmState] = useState(false);
 
-  // Hydrate from localStorage
-  useEffect(() => {
+  // Rule 4: one-time hydration from localStorage on mount, applying DOM side
+  // effects inline here instead of in separate reactive useEffects.
+  useMountEffect(() => {
     const savedAccent = localStorage.getItem("tc-accent") as AccentColor | null;
     const savedFont = localStorage.getItem("tc-font") as TypingFont | null;
     const savedShowKeyboard = localStorage.getItem("tc-show-keyboard");
     const savedSoundEnabled = localStorage.getItem("tc-sound-enabled");
     const savedRealtimeWpm = localStorage.getItem("tc-realtime-wpm");
-    if (savedAccent) setAccentState(savedAccent);
-    if (savedFont) setFontState(savedFont);
+
+    const initialAccent = savedAccent ?? "teal";
+    setAccentState(initialAccent);
+    applyAccentToDom(initialAccent);
+
+    if (savedFont) {
+      setFontState(savedFont);
+      applyFontToDom(savedFont);
+    }
     if (savedShowKeyboard !== null) setShowKeyboardState(savedShowKeyboard !== "false");
     if (savedSoundEnabled !== null) setSoundEnabledState(savedSoundEnabled !== "false");
     if (savedRealtimeWpm !== null) setRealtimeWpmState(savedRealtimeWpm === "true");
-  }, []);
+  });
 
-  // Apply accent to <html>
-  useEffect(() => {
-    document.documentElement.setAttribute("data-accent", accent);
-    localStorage.setItem("tc-accent", accent);
-    queueMicrotask(() => syncKeyZenFavicon());
-  }, [accent]);
+  // Rule 3: setAccent / setFont are event handlers that apply DOM changes
+  // directly instead of relying on a reactive useEffect to "sync" them.
+  const setAccent = (c: AccentColor) => {
+    setAccentState(c);
+    applyAccentToDom(c);
+    localStorage.setItem("tc-accent", c);
+  };
 
-
-  useEffect(() => {
-    const option = FONT_OPTIONS.find((f) => f.id === font);
-    if (!option) return;
-    if (option.googleFamily) loadGoogleFont(option.googleFamily);
-    document.documentElement.style.setProperty(
-      "--typing-font",
-      option.cssFamily,
-    );
-    localStorage.setItem("tc-font", font);
-  }, [font]);
+  const setFont = (f: TypingFont) => {
+    setFontState(f);
+    applyFontToDom(f);
+    localStorage.setItem("tc-font", f);
+  };
 
   const setShowKeyboard = (v: boolean) => {
     setShowKeyboardState(v);
@@ -206,8 +221,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   return (
     <SettingsContext.Provider
       value={{
-        accent, setAccent: setAccentState,
-        font, setFont: setFontState, fontCssFamily,
+        accent, setAccent,
+        font, setFont, fontCssFamily,
         showKeyboard, setShowKeyboard,
         soundEnabled, setSoundEnabled,
         realtimeWpm, setRealtimeWpm,

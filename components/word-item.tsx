@@ -1,0 +1,79 @@
+"use client";
+
+import { memo } from "react";
+import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
+
+export interface WordItemProps {
+  word: string;
+  /** Live `typed` for the active word; finalized input for past; "" for future. */
+  displayInput: string;
+  isActive: boolean;
+  isPast: boolean;
+  /** True when a completed word was typed with any error → red underline. */
+  hasError: boolean;
+  elemRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+export const WordItem = memo(function WordItem({
+  word,
+  displayInput,
+  isActive,
+  isPast,
+  hasError,
+  elemRef,
+}: WordItemProps) {
+  const cursorAtEnd = isActive && displayInput.length >= word.length;
+
+  return (
+    <div
+      ref={isActive ? elemRef : undefined}
+      className={cn(
+        "relative",
+        isPast && hasError && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-destructive/50",
+      )}
+    >
+      {word.split("").map((char, cIdx) => {
+        let color = "text-muted-foreground/40";
+        if (isPast || isActive) {
+          if (cIdx < displayInput.length) {
+            color = displayInput[cIdx] === char ? "text-foreground" : "text-destructive";
+          }
+        }
+        const isLastChar = cIdx === word.length - 1;
+
+        return (
+          <span key={cIdx} className="relative inline-block">
+            {/* Cursor before this char. Stable layoutId → Framer Motion FLIP-animates
+                the cursor smoothly when wordIndex changes (spacebar press). */}
+            {isActive && cIdx === displayInput.length && (
+              <motion.span
+                layoutId="cursor-active"
+                className="typing-cursor absolute -left-px top-[2px] h-[1.2em] w-[2px] rounded-full bg-primary"
+                transition={{ type: "spring", stiffness: 700, damping: 38, mass: 0.6 }}
+              />
+            )}
+            {isActive && isLastChar && cursorAtEnd && (
+              <motion.span
+                layoutId="cursor-active"
+                className="typing-cursor absolute -right-px top-[2px] h-[1.2em] w-[2px] rounded-full bg-primary"
+                transition={{ type: "spring", stiffness: 700, damping: 38, mass: 0.6 }}
+              />
+            )}
+            <span className={cn("transition-colors duration-[60ms]", color)}>
+              {char}
+            </span>
+          </span>
+        );
+      })}
+
+      {(isActive || isPast) &&
+        displayInput.length > word.length &&
+        displayInput.slice(word.length).split("").map((char, eIdx) => (
+          <span key={`extra-${eIdx}`} className="text-destructive/60">
+            {char}
+          </span>
+        ))}
+    </div>
+  );
+});

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback } from "react"
+import { useMountEffect } from "@/hooks/use-mount-effect"
 import { cn } from "@/lib/utils"
 import { useAppChrome } from "@/components/app-chrome"
 import { Keyboard } from "@/components/ui/keyboard"
@@ -14,7 +15,7 @@ export default function Page() {
   const [restartKey, setRestartKey] = useState(0)
   const { showKeyboard, soundEnabled } = useSettings()
 
-  useEffect(() => {
+  useMountEffect(() => {
     homeLogoHandlerRef.current = () => {
       setIsFinished(false)
       setRestartKey((k) => k + 1)
@@ -22,7 +23,7 @@ export default function Page() {
     return () => {
       homeLogoHandlerRef.current = null
     }
-  }, [])
+  })
 
   const handleTypingActiveChange = useCallback(
     (active: boolean) => {
