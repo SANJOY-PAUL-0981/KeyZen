@@ -1,3 +1,4 @@
+import { GoogleTagManager } from "@next/third-parties/google"
 import { Doto, Geist_Mono, Space_Grotesk } from "next/font/google"
 import type { Metadata } from "next"
 
@@ -79,7 +80,17 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", spaceGrotesk.variable, doto.variable)}
     >
+      <GoogleTagManager gtmId="GTM-W5HG68WM" />
       <body>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-W5HG68WM"
+            height={0}
+            width={0}
+            style={{ display: "none", visibility: "hidden" }}
+            title="Google Tag Manager"
+          />
+        </noscript>
         <ThemeProvider>
           <SettingsProvider>{children}</SettingsProvider>
         </ThemeProvider>
