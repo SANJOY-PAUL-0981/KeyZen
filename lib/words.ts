@@ -61,6 +61,40 @@ const easyWords = [
   "among", "early", "maybe", "never", "often", "quite", "since", "where", "while",
 ];
 
+const uniqueEasyWords = [...new Set(easyWords)];
+
+function shuffleInPlace(words: string[]): void {
+  for (let i = words.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [words[i], words[j]] = [words[j], words[i]];
+  }
+}
+
+function pickEasyWordsWithoutReplacement(count: number): string[] {
+  const pool = uniqueEasyWords;
+  const out: string[] = [];
+  let deck = [...pool];
+  shuffleInPlace(deck);
+  let i = 0;
+
+  while (out.length < count) {
+    if (i >= deck.length) {
+      const prev = out[out.length - 1];
+      deck = [...pool];
+      shuffleInPlace(deck);
+      i = 0;
+      if (prev !== undefined && deck[0] === prev && deck.length > 1) {
+        const swapIdx = 1 + Math.floor(Math.random() * (deck.length - 1));
+        [deck[0], deck[swapIdx]] = [deck[swapIdx], deck[0]];
+      }
+    }
+    out.push(deck[i]!);
+    i += 1;
+  }
+
+  return out;
+}
+
 export function generateWords(
   count: number,
   options?: { punctuation?: boolean; numbers?: boolean; difficulty?: Difficulty },
@@ -68,7 +102,7 @@ export function generateWords(
   let raw: string[];
 
   if (options?.difficulty === "easy") {
-    raw = Array.from({ length: count }, () => easyWords[Math.floor(Math.random() * easyWords.length)]);
+    raw = pickEasyWordsWithoutReplacement(count);
   } else if (options?.difficulty === "hard") {
     raw = generate({ exactly: count, minLength: 5, maxLength: 12 }) as string[];
   } else {
