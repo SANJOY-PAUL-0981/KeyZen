@@ -1,21 +1,31 @@
-# Next.js template
+# KeyZen
 
-This is a Next.js template with shadcn/ui.
+A keyboard typing test built with [Next.js](https://nextjs.org). Practice in time, word count, quote, or zen modes with optional on-screen keyboard, sound, and live WPM.
 
-## Adding components
+**Repository:** [github.com/shivabhattacharjee/KeyZen](https://github.com/shivabhattacharjee/KeyZen)
 
-To add components to your app, run the following command:
+## Getting started
 
 ```bash
-npx shadcn@latest add button
+pnpm install
+pnpm dev
 ```
 
-This will place the ui components in the `components` directory.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Using components
+## Scripts
 
-To use the components in your app, import them as follows:
+| Command        | Description              |
+| -------------- | ------------------------ |
+| `pnpm dev`     | Dev server (Turbopack)   |
+| `pnpm build`   | Production build         |
+| `pnpm start`   | Run production server    |
+| `pnpm lint`    | ESLint                   |
+| `pnpm typecheck` | TypeScript check       |
+| `pnpm format`  | Prettier (TS/TSX)        |
 
-```tsx
-import { Button } from "@/components/ui/button";
-```
+`postinstall` copies quote data into `data/quotes.json` for the quote mode.
+
+## Stack
+
+Next.js App Router, React, Tailwind CSS, shadcn-style UI (Radix, cmdk), Motion, Recharts.
