@@ -29,10 +29,18 @@ type WordOption = 10 | 25 | 50 | 100;
 interface TypingTestProps {
   onKeyHighlight?: (key: string | null) => void;
   onFinished?: (finished: boolean) => void;
+  /** When true, do not steal focus back to the typing input (settings / font popover need focus). */
+  pauseTypingInputRefocus?: boolean;
 }
 
-export function TypingTest({ onKeyHighlight, onFinished }: TypingTestProps) {
+export function TypingTest({
+  onKeyHighlight,
+  onFinished,
+  pauseTypingInputRefocus = false,
+}: TypingTestProps) {
   const { realtimeWpm } = useSettings();
+  const pauseRefocusRef = useRef(false);
+  pauseRefocusRef.current = pauseTypingInputRefocus;
   const [mode, setMode] = useState<TestMode>("time");
   const [timeOption, setTimeOption] = useState<TimeOption>(30);
   const [wordOption, setWordOption] = useState<WordOption>(25);
@@ -151,21 +159,27 @@ export function TypingTest({ onKeyHighlight, onFinished }: TypingTestProps) {
         ]);
         errorsThisSecondRef.current = 0;
 
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            setFinished(true);
-            onFinished?.(true);
-            if (timerRef.current) clearInterval(timerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
+        setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
       }, 1000);
       return () => {
         if (timerRef.current) clearInterval(timerRef.current);
       };
     }
   }, [started, mode, finished]);
+
+  // Time mode: finish when countdown hits 0 (must not run inside setTimeLeft updater — that updates parent state)
+  useEffect(() => {
+    if (finished) return;
+    if (mode !== "time" || !started) return;
+    if (timeLeft !== 0) return;
+
+    setFinished(true);
+    onFinished?.(true);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, [timeLeft, mode, started, finished, onFinished]);
 
   // Calculate WPM
   useEffect(() => {
@@ -332,12 +346,16 @@ export function TypingTest({ onKeyHighlight, onFinished }: TypingTestProps) {
     ],
   );
 
-  const handleFocus = () => inputRef.current?.focus();
+  const handleFocus = () => {
+    if (pauseRefocusRef.current) return;
+    inputRef.current?.focus();
+  };
 
   // Keep input focused: re-focus on any keydown anywhere on the page
   useEffect(() => {
     if (finished) return;
     const onGlobalKeyDown = () => {
+      if (pauseRefocusRef.current) return;
       if (document.activeElement !== inputRef.current) {
         inputRef.current?.focus();
       }
@@ -351,7 +369,7 @@ export function TypingTest({ onKeyHighlight, onFinished }: TypingTestProps) {
     if (!finished) {
       // Small delay so UI interactions (settings panel, buttons) still work
       setTimeout(() => {
-        if (!finished) inputRef.current?.focus();
+        if (!finished && !pauseRefocusRef.current) inputRef.current?.focus();
       }, 100);
     }
   }, [finished]);

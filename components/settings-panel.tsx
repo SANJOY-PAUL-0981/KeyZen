@@ -1,19 +1,18 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { IconX } from "@tabler/icons-react";
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "motion/react";
-import { useSettings, ACCENT_COLORS, FONT_OPTIONS, type AccentColor, type TypingFont } from "@/components/settings-context";
+import { useSettings, ACCENT_COLORS, FONT_OPTIONS } from "@/components/settings-context";
 import { NextThemeSwitcher } from "@/components/kibo-ui/theme-switcher";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 interface SettingsPanelProps {
@@ -23,6 +22,8 @@ interface SettingsPanelProps {
 
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const { accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, soundEnabled, setSoundEnabled, realtimeWpm, setRealtimeWpm } = useSettings();
+  const [fontPickerOpen, setFontPickerOpen] = useState(false);
+  const selectedFont = FONT_OPTIONS.find((f) => f.id === font);
 
   // Drag-to-scroll for color swatches
   const swatchRef = useRef<HTMLDivElement>(null);
@@ -139,36 +140,70 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 />
               </section>
 
-              {/* Font — Select dropdown */}
+              {/* Font — grouped list (cmdk, no search) */}
               <section>
                 <SectionLabel>Font</SectionLabel>
-                <Select value={font} onValueChange={(v) => setFont(v as TypingFont)}>
-                  <SelectTrigger className="mt-3 w-full text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel className="text-[10px] uppercase tracking-widest">Mono</SelectLabel>
-                      {FONT_OPTIONS.filter((f) => f.tag === "mono").map((f) => (
-                        <SelectItem key={f.id} value={f.id}>
-                          <span style={{ fontFamily: f.cssFamily }}>
-                            {f.label}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                    <SelectGroup>
-                      <SelectLabel className="text-[10px] uppercase tracking-widest">Display</SelectLabel>
-                      {FONT_OPTIONS.filter((f) => f.tag === "display").map((f) => (
-                        <SelectItem key={f.id} value={f.id}>
-                          <span style={{ fontFamily: f.cssFamily }}>
-                            {f.label}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <Popover open={fontPickerOpen} onOpenChange={setFontPickerOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-expanded={fontPickerOpen}
+                      className={cn(
+                        "mt-3 flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs outline-none transition-colors",
+                        "hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                      )}
+                    >
+                      <span
+                        className="min-w-0 truncate"
+                        style={{ fontFamily: selectedFont?.cssFamily }}
+                      >
+                        {selectedFont?.label ?? font}
+                      </span>
+                      <CaretDownIcon className="size-4 shrink-0 text-muted-foreground" weight="bold" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-(--radix-popover-trigger-width) gap-0 p-0"
+                    align="start"
+                    side="left"
+                    sideOffset={8}
+                  >
+                    <Command shouldFilter={false}>
+                      <CommandList>
+                        <CommandGroup heading="Mono">
+                          {FONT_OPTIONS.filter((f) => f.tag === "mono").map((f) => (
+                            <CommandItem
+                              key={f.id}
+                              value={f.id}
+                              data-checked={font === f.id ? true : undefined}
+                              onSelect={() => {
+                                setFont(f.id);
+                                setFontPickerOpen(false);
+                              }}
+                            >
+                              <span style={{ fontFamily: f.cssFamily }}>{f.label}</span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                        <CommandGroup heading="Display">
+                          {FONT_OPTIONS.filter((f) => f.tag === "display").map((f) => (
+                            <CommandItem
+                              key={f.id}
+                              value={f.id}
+                              data-checked={font === f.id ? true : undefined}
+                              onSelect={() => {
+                                setFont(f.id);
+                                setFontPickerOpen(false);
+                              }}
+                            >
+                              <span style={{ fontFamily: f.cssFamily }}>{f.label}</span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </section>
 
             </div>

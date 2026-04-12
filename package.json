@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "node -e \"const fs=require('fs');const raw=fs.readFileSync('./node_modules/inspirational-quotes/data/data.json','utf8');fs.mkdirSync('./data',{recursive:true});fs.writeFileSync('./data/quotes.json',JSON.stringify(JSON.parse(raw.replace(/^\\uFEFF/,''))));\""
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -17,6 +18,8 @@
     "@tabler/icons-react": "^3.41.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "inspirational-quotes": "^2.0.1",
     "lucide-react": "^1.8.0",
     "motion": "^12.38.0",
     "next": "16.1.7",

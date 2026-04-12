@@ -58,6 +58,8 @@ export interface KeyboardProps {
   enableSound?: boolean;
   soundUrl?: string;
   onKeyEvent?: (event: KeyboardInteractionEvent) => void;
+  /** Keep key-event listeners active even when the keyboard is not intersecting the viewport */
+  forceActive?: boolean;
 }
 
 export function Keyboard({
@@ -67,6 +69,7 @@ export function Keyboard({
   enableHaptics = true,
   soundUrl = "/sounds/sound.ogg",
   onKeyEvent,
+  forceActive = false,
 }: KeyboardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -78,6 +81,7 @@ export function Keyboard({
       enableHaptics={enableHaptics}
       soundUrl={soundUrl}
       onKeyEvent={onKeyEvent}
+      forceActive={forceActive}
     >
       <div ref={containerRef} className={cn("inline-block", className)}>
         <KeyboardLayout />
@@ -132,6 +136,7 @@ interface KeyboardProviderProps {
   enableHaptics: boolean;
   soundUrl: string;
   onKeyEvent?: (event: KeyboardInteractionEvent) => void;
+  forceActive?: boolean;
 }
 
 function KeyboardProvider({
@@ -142,6 +147,7 @@ function KeyboardProvider({
   enableHaptics,
   soundUrl,
   onKeyEvent,
+  forceActive = false,
 }: KeyboardProviderProps) {
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
@@ -353,7 +359,7 @@ function KeyboardProvider({
   }, [containerRef]);
 
   useEffect(() => {
-    if (!isVisible) {
+    if (!isVisible && !forceActive) {
       return;
     }
 
@@ -394,7 +400,7 @@ function KeyboardProvider({
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [isVisible, pressKey, releaseKey]);
+  }, [isVisible, forceActive, pressKey, releaseKey]);
 
   return (
     <KeyboardContext.Provider

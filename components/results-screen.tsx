@@ -165,10 +165,10 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="flex w-full flex-col gap-6"
     >
-      {/* Main row */}
-      <div className="flex items-start gap-10">
-        {/* Left: WPM + ACC */}
-        <div className="flex w-36 shrink-0 flex-col gap-1 pt-2">
+      {/* Main block: column on mobile, row from md */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+        {/* WPM + ACC + test type */}
+        <div className="flex w-full flex-col gap-1 pt-2 md:w-36 md:shrink-0">
           <StatBig label="wpm" value={wpm} />
           <StatBig label="acc" value={`${accuracy}%`} />
           <div className="mt-4 flex flex-col gap-0.5 text-xs text-muted-foreground">
@@ -183,7 +183,7 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
         </div>
 
         {/* Chart */}
-        <div className="flex-1" style={{ height: 220 }}>
+        <div className="h-[220px] w-full md:flex-1">
           {wpmHistory.length > 1 ? (
             <WpmChart history={wpmHistory} />
           ) : (
@@ -194,8 +194,8 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-4 gap-6 border-t border-border pt-5">
+      {/* Stats — single column on mobile, row of 4 from md */}
+      <div className="grid grid-cols-1 gap-4 border-t border-border pt-5 md:grid-cols-4 md:gap-6">
         <StatBox label="raw" value={raw} />
         <StatBox
           label="characters"

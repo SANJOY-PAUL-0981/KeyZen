@@ -7,8 +7,9 @@ import { TypingTest } from "@/components/typing-test"
 import { SettingsPanel } from "@/components/settings-panel"
 import { useSettings } from "@/components/settings-context"
 import { IconSettings } from "@tabler/icons-react"
-import { Button } from "@/components/ui/button";
-import { GithubLogo } from "@phosphor-icons/react";
+import { CornerBrackets } from "@/components/corner-brackets"
+import { Button } from "@/components/ui/button"
+import { GithubLogo } from "@phosphor-icons/react"
 
 export default function Page() {
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -27,7 +28,6 @@ export default function Page() {
 
   return (
     <div className="flex min-h-dvh w-full flex-col bg-background">
-      {/* Header */}
       <header className="flex shrink-0 items-center justify-between border-b border-border px-6 py-3">
         <div className="flex items-center gap-3">
           <span
@@ -38,17 +38,26 @@ export default function Page() {
           </span>
           <button
             onClick={() => setSettingsOpen(true)}
-            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+            className="rounded-lg cursor-pointer p-1.5 text-muted-foreground transition-colors hover:text-foreground"
           >
             <IconSettings size={16} />
           </button>
         </div>
-      <Button variant={"outline"}>
-       <a href="https://github.com/shivabhattacharjee/KeyZen" target="_blank" rel="noopener noreferrer" className="flex gap-2 items-center"><GithubLogo/> Open Source</a>
-      </Button>
+      <CornerBrackets>
+        <Button variant="noborderradius" asChild>
+          <a
+            href="https://github.com/shivabhattacharjee/KeyZen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2"
+          >
+            <GithubLogo />
+            Open Source
+          </a>
+        </Button>
+      </CornerBrackets>
       </header>
 
-      {/* Body — two equal halves when keyboard is visible */}
       <div className="flex flex-1 flex-col">
         {/* Top half: typing test */}
         <main className={cn(
@@ -63,18 +72,19 @@ export default function Page() {
             key={restartKey}
             onKeyHighlight={handleKeyHighlight}
             onFinished={setIsFinished}
+            pauseTypingInputRefocus={settingsOpen}
           />
         </main>
 
         {/* Bottom half: keyboard — desktop only */}
-        {/* Always mounted on desktop when sound is on so audio context stays alive */}
+        {/* Always mounted so audio context stays alive; visibility toggled via CSS only */}
         {!isFinished && (
           <footer className={cn(
-            "hidden flex-1 flex-col items-center justify-center border-t border-border lg:flex",
-            !showKeyboard && "invisible h-0 overflow-hidden border-0"
+            "hidden items-center justify-center border-t border-border lg:flex",
+            showKeyboard ? "flex-1 flex-col" : "h-0 overflow-hidden invisible border-0"
           )}>
             <div className="scale-[0.85]">
-              <Keyboard theme="classic" enableHaptics enableSound={soundEnabled} />
+              <Keyboard theme="classic" enableHaptics enableSound={soundEnabled} forceActive={soundEnabled && !showKeyboard} />
             </div>
           </footer>
         )}
