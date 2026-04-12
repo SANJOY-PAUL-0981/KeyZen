@@ -1024,23 +1024,13 @@ export function TypingTest({
       <motion.div
         animate={{ opacity: controlsVisible ? 1 : 0 }}
         transition={{ duration: 0.4 }}
-        className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
+        className="flex items-center gap-4 text-xs text-muted-foreground"
       >
         <span>
           <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">tab</kbd>
           {" + "}
           <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd>
           {" "}- restart test
-        </span>
-        <span>
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">option</kbd>
-          {" + "}
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">⌫</kbd>
-          {" · "}
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">ctrl</kbd>
-          {" + "}
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">⌫</kbd>
-          {" "}- clear whole word (back if empty)
         </span>
       </motion.div>
     </div>
