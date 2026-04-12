@@ -647,7 +647,7 @@ export function TypingTest({
 
   return (
     <div
-      className="flex w-full max-w-4xl flex-col items-center gap-3 transition-all duration-150 ease-out"
+      className="flex w-full flex-col items-center gap-3 transition-all duration-150 ease-out"
       style={{ opacity: screenFade, filter: screenFade < 1 ? "blur(4px)" : "none" }}
       onClick={handleFocus}
       onMouseMove={handleMouseMove}
