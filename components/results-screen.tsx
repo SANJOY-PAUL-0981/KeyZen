@@ -144,6 +144,15 @@ function WpmChart({ history }: { history: WpmSnapshot[] }) {
   );
 }
 
+function isInvalidTestResult(stats: ResultStats): boolean {
+  const keystrokes =
+    stats.correctChars + stats.incorrectChars + stats.extraChars
+  if (keystrokes === 0) return true
+  if (!Number.isFinite(stats.wpm) || !Number.isFinite(stats.raw)) return true
+  if (!Number.isFinite(stats.accuracy)) return true
+  return false
+}
+
 export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
   const {
     wpm,
@@ -158,7 +167,54 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
     mode,
     modeDetail,
     wpmHistory,
-  } = stats;
+  } = stats
+
+  const invalid = isInvalidTestResult(stats)
+
+  if (invalid) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="flex w-full flex-col gap-8"
+      >
+        <div className="flex flex-col items-center gap-3 px-2 text-center">
+          <p className="font-(family-name:--font-doto) text-3xl font-bold text-muted-foreground md:text-4xl">
+            invalid result
+          </p>
+          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+            No keystrokes were recorded, so scores can&apos;t be calculated. This
+            often happens if the timer ran out before you typed, you left focus,
+            or the test ended right after it started.
+          </p>
+          <p className="text-xs text-muted-foreground/70">
+            {mode} {modeDetail}
+            {elapsedSeconds > 0 ? ` · ${elapsedSeconds}s` : null}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-border pt-6 pb-2">
+          <button
+            type="button"
+            onClick={onRestart}
+            className="flex items-center gap-2 rounded-lg px-4 py-2 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <IconArrowRight size={16} />
+            next test
+          </button>
+          <button
+            type="button"
+            onClick={onRestart}
+            className="flex items-center gap-2 rounded-lg px-4 py-2 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <IconRefresh size={16} />
+            restart
+          </button>
+        </div>
+      </motion.div>
+    )
+  }
 
   return (
     <motion.div
@@ -210,6 +266,7 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
       {/* Actions */}
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pb-2">
         <button
+          type="button"
           onClick={onRestart}
           className="flex items-center gap-2 rounded-lg px-4 py-2 text-muted-foreground transition-colors hover:text-foreground"
         >
@@ -218,6 +275,7 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
         </button>
 
         <button
+          type="button"
           onClick={onRestart}
           className="flex items-center gap-2 rounded-lg px-4 py-2 text-muted-foreground transition-colors hover:text-foreground"
         >

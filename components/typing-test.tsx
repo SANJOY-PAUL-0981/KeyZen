@@ -28,11 +28,7 @@ type TestMode = "time" | "words" | "quote" | "zen";
 type TimeOption = 15 | 30 | 60 | 120;
 type WordOption = 10 | 25 | 50 | 100;
 
-// ---------------------------------------------------------------------------
-// WordItem — memoized so only the active word re-renders on every keystroke.
-// Using a single stable layoutId "cursor-active" across all words so Framer
-// Motion FLIP-animates the cursor across word boundaries when space is pressed.
-// ---------------------------------------------------------------------------
+
 interface WordItemProps {
   word: string;
   /** Live `typed` for the active word; finalized input for past; "" for future. */
@@ -59,7 +55,6 @@ const WordItem = memo(function WordItem({
       ref={isActive ? elemRef : undefined}
       className={cn(
         "relative",
-        // Error underline on incorrectly completed words
         isPast && hasError && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-destructive/50",
       )}
     >
@@ -84,7 +79,7 @@ const WordItem = memo(function WordItem({
                 transition={{ type: "spring", stiffness: 700, damping: 38, mass: 0.6 }}
               />
             )}
-            {/* Cursor after last char when typed at or past end */}
+       
             {isActive && isLastChar && cursorAtEnd && (
               <motion.span
                 layoutId="cursor-active"
@@ -98,7 +93,7 @@ const WordItem = memo(function WordItem({
           </span>
         );
       })}
-      {/* Extra chars typed beyond word length */}
+
       {(isActive || isPast) &&
         displayInput.length > word.length &&
         displayInput.slice(word.length).split("").map((char, eIdx) => (
@@ -115,7 +110,6 @@ interface TypingTestProps {
   onFinished?: (finished: boolean) => void;
   onTypingActiveChange?: (active: boolean) => void;
   onFocusChange?: (focused: boolean) => void;
-  /** When true, do not steal focus back to the typing input (settings / font popover need focus). */
   pauseTypingInputRefocus?: boolean;
 }
 
@@ -146,10 +140,10 @@ export function TypingTest({
   const [timeLeft, setTimeLeft] = useState(30);
   const [startTime, setStartTime] = useState<number | null>(null);
 
-  // Track per-word input for error highlighting
+ 
   const [wordInputs, setWordInputs] = useState<string[]>([]);
 
-  // WPM / accuracy
+
   const [correctChars, setCorrectChars] = useState(0);
   const [totalChars, setTotalChars] = useState(0);
   const [incorrectChars, setIncorrectChars] = useState(0);
@@ -158,7 +152,6 @@ export function TypingTest({
   const [accuracy, setAccuracy] = useState(100);
   const [wpmHistory, setWpmHistory] = useState<WpmSnapshot[]>([]);
 
-  // Refs for interval-safe access to live values
   const correctCharsRef = useRef(0);
   const allTypedRef = useRef(0);
   const errorsThisSecondRef = useRef(0);
@@ -170,14 +163,14 @@ export function TypingTest({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const tabPressedRef = useRef(false);
 
-  // Focus-mode: controls toolbar hides while typing, restores on mouse move
+
   const [showControls, setShowControls] = useState(true);
   const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Whether the hidden input currently has focus (drives the focus overlay)
+
   const [isFocused, setIsFocused] = useState(true);
 
-  // Cursor blink pauses while actively typing, resumes after 1 s idle
+
   const [isActivelyTyping, setIsActivelyTyping] = useState(false);
   const typingIdleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -238,7 +231,7 @@ export function TypingTest({
 
   useEffect(() => { resetTest(); }, [resetTest]);
 
-  // Notify parent when test finishes
+
   useEffect(() => {
     if (finished) {
       onTypingActiveChange?.(false);
@@ -276,7 +269,7 @@ export function TypingTest({
     }
   }, [started, mode, finished]);
 
-  // Time mode: finish when countdown hits 0
+
   useEffect(() => {
     if (finished) return;
     if (mode !== "time" || !started) return;
@@ -286,7 +279,7 @@ export function TypingTest({
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
   }, [timeLeft, mode, started, finished, onFinished]);
 
-  // Calculate live WPM
+
   useEffect(() => {
     if (started && startTime && !finished) {
       const elapsed = (Date.now() - startTime) / 1000 / 60;
@@ -294,7 +287,7 @@ export function TypingTest({
     }
   }, [correctChars, started, startTime, finished, typed]);
 
-  // Record a WPM snapshot for words/quote mode (called on each word completion)
+
   const recordWordSnapshot = useCallback((newCorrectChars: number) => {
     if (!startTime || mode === "time") return;
     const elapsedSec = (Date.now() - startTime) / 1000;
