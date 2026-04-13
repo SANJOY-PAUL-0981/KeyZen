@@ -2,7 +2,7 @@
 
 export type WpmCountMode = "time" | "words" | "quote" | "zen"
 
-export interface MonkeytypeStyleCounts {
+export interface WpmCounts {
   correctWordChars: number
   correctSpaces: number
   allCorrectChars: number
@@ -17,18 +17,17 @@ interface CountParams {
   typed: string
   wordIndex: number
   mode: WpmCountMode
-  /** When true, uses Monkeytype's "final" rules for the incomplete last word. */
   final: boolean
 }
 
-export function countMonkeytypeStyle({
+export function countWpm({
   targetWords,
   wordInputs,
   typed,
   wordIndex,
   mode,
   final,
-}: CountParams): MonkeytypeStyleCounts {
+}: CountParams): WpmCounts {
   /** Invariant: `wordInputs.length === wordIndex` (slice guards if briefly out of sync). */
   const inputWords = [...wordInputs.slice(0, wordIndex), typed]
 
@@ -92,11 +91,11 @@ export function countMonkeytypeStyle({
   }
 }
 
-export function wpmNumeratorFromCounts(c: MonkeytypeStyleCounts): number {
+export function wpmNumeratorFromCounts(c: WpmCounts): number {
   return c.correctWordChars + c.correctSpaces
 }
 
-export function accuracyFromCounts(c: MonkeytypeStyleCounts): number {
+export function accuracyFromCounts(c: WpmCounts): number {
   const denom = c.allCorrectChars + c.incorrectChars
   if (denom <= 0) return 100
   return Math.round((c.allCorrectChars / denom) * 100)

@@ -6,7 +6,7 @@ import { generateWords, type Difficulty } from "@/lib/words";
 import { getQuote, type QuoteLength } from "@/lib/quotes";
 import {
   accuracyFromCounts,
-  countMonkeytypeStyle,
+  countWpm,
   wpmNumeratorFromCounts,
 } from "@/lib/wpm-count";
 import type { ResultStats, WpmSnapshot } from "@/components/results-screen";
@@ -90,7 +90,7 @@ export function useTypingTest({
 
   // ── Derived ──────────────────────────────────────────────────────────────
   const mtCounts = useMemo(
-    () => countMonkeytypeStyle({ targetWords: words, wordInputs, typed, wordIndex, mode, final: finished }),
+    () => countWpm({ targetWords: words, wordInputs, typed, wordIndex, mode, final: finished }),
     [words, wordInputs, typed, wordIndex, mode, finished],
   );
   const wpmNumerator = wpmNumeratorFromCounts(mtCounts);
@@ -231,7 +231,7 @@ export function useTypingTest({
     snapshotWordIndex: number,
   ) => {
     if (!startTime || mode === "time") return;
-    const snapCounts = countMonkeytypeStyle({
+    const snapCounts = countWpm({
       targetWords: words, wordInputs: snapshotWordInputs,
       typed: snapshotTyped, wordIndex: snapshotWordIndex, mode, final: false,
     });

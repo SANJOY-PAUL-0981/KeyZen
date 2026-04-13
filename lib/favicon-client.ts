@@ -1,7 +1,3 @@
-/**
- * Client-only favicon sync (same idea as Monkeytype’s FavIcon: base64 SVG data URL).
- * Uses a hidden probe with bg-background / text-primary so colors match resolved Tailwind theme.
- */
 
 function buildFaviconHref(primary: string, background: string): string {
   const p = primary.replace(/"/g, "'")

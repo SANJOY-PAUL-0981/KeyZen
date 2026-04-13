@@ -29,7 +29,6 @@ const MAX_WPM = 300
 const MAX_RAW_WPM = 350
 // 300 WPM ≈ 25 chars/sec; 350 raw ≈ 29 chars/sec — cap at 30 for safety
 const MAX_CHARS_PER_SEC = 30
-// Single-second burst ceiling (MonkeyType uses 600)
 const MAX_BURST_WPM = 600
 // Min test duration before we can draw conclusions
 const MIN_ELAPSED_SECONDS = 2
