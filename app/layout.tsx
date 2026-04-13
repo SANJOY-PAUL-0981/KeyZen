@@ -6,6 +6,7 @@ import "./globals.css"
 import { AppChrome } from "@/components/app-chrome"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SettingsProvider } from "@/components/settings-context"
+import { siteConfig } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 const spaceGrotesk = Space_Grotesk({subsets:['latin'],variable:'--font-sans'})
@@ -18,9 +19,8 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "KeyZen — Typing Speed Test",
-  description:
-    "Measure and improve your typing speed and accuracy with KeyZen. A clean typing test with time and word modes, quotes, optional on-screen keyboard and sound, and real-time WPM tracking.",
+  title: `${siteConfig.name} — Typing Speed Test`,
+  description: siteConfig.description,
   keywords: [
     "typing test",
     "typing speed",
@@ -31,17 +31,16 @@ export const metadata: Metadata = {
     "KeyZen",
     "monkeytype alternative",
   ],
-  authors: [{ name: "KeyZen" }],
+  authors: [{ name: siteConfig.name }],
   creator: "Shiva Bhattacharjee",
-  metadataBase: new URL("https://KeyZen.theshiva.xyz"),
+  metadataBase: new URL(siteConfig.url),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://KeyZen.theshiva.xyz",
-    title: "KeyZen — Typing Speed Test",
-    description:
-      "Measure and improve your typing speed with a clean, distraction-free typing test. Real-time WPM, accuracy tracking, time and word modes.",
-    siteName: "KeyZen",
+    title: `${siteConfig.name} — Typing Speed Test`,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
     images: [
       {
         url: "/opengraph.png",
@@ -53,10 +52,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "KeyZen — Typing Speed Test",
+    title: `${siteConfig.name} — Typing Speed Test`,
     description:
       "A clean, minimal typing test. Track your WPM and accuracy in real-time.",
-    creator: "@KeyZen",
+    creator: `@${siteConfig.name}`,
     images: ["/opengraph.png"],
   },
   robots: {
