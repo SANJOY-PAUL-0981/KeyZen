@@ -240,7 +240,7 @@ export function useTypingTest({
     elapsedSecondsRef.current = elapsedSec;
     const elapsedMin = elapsedSec / 60 || 1 / 60;
     const snapWpm = Math.round(snapNum / 5 / elapsedMin);
-    const snapRaw = Math.round(allTypedRef.current / 5 / elapsedMin);
+    const snapRaw = Math.max(Math.round(allTypedRef.current / 5 / elapsedMin), snapWpm);
     setWpmHistory((prev) => [
       ...prev,
       { second: Math.round(elapsedSec), wpm: snapWpm, raw: snapRaw, errors: errorsThisSecondRef.current },
@@ -312,7 +312,7 @@ export function useTypingTest({
             elapsedSecondsRef.current = elapsedTicks;
             const elapsedMin = elapsedTicks / 60;
             const snapWpm = elapsedMin > 0 ? Math.round(correctCharsRef.current / 5 / elapsedMin) : 0;
-            const snapRaw = elapsedMin > 0 ? Math.round(allTypedRef.current / 5 / elapsedMin) : 0;
+            const snapRaw = elapsedMin > 0 ? Math.max(Math.round(allTypedRef.current / 5 / elapsedMin), snapWpm) : 0;
             setWpmHistory((prev) => [
               ...prev,
               { second: elapsedTicks, wpm: snapWpm, raw: snapRaw, errors: errorsThisSecondRef.current },
@@ -445,10 +445,12 @@ export function useTypingTest({
       const variance = wpmValues.reduce((a, b) => a + (b - mean) ** 2, 0) / wpmValues.length;
       consistency = Math.max(0, Math.round(100 - (Math.sqrt(variance) / (mean || 1)) * 100));
     }
+    const computedWpm = Math.round(wpmNumerator / 5 / elapsedMin);
+    const computedRaw = Math.max(Math.round(allTypedRef.current / 5 / elapsedMin), computedWpm);
     frozenStatsRef.current = {
-      wpm: Math.round(wpmNumerator / 5 / elapsedMin),
+      wpm: computedWpm,
       accuracy,
-      raw: Math.round(allTypedRef.current / 5 / elapsedMin),
+      raw: computedRaw,
       correctChars: mtCounts.correctWordChars,
       incorrectChars: mtCounts.incorrectChars,
       extraChars: mtCounts.extraChars,

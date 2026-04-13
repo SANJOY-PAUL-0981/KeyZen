@@ -53,18 +53,18 @@ export const WordItem = memo(function WordItem({
             {isActive && cIdx === displayInput.length && (
               <motion.span
                 layoutId="cursor-active"
-                className="typing-cursor absolute -left-px top-[2px] h-[1.2em] w-[2px] rounded-full bg-primary"
+                className="typing-cursor absolute -left-px top-0.5 h-[1.2em] w-0.5 rounded-full bg-primary"
                 transition={{ type: "spring", stiffness: 700, damping: 38, mass: 0.6 }}
               />
             )}
             {isActive && isLastChar && cursorAtEnd && (
               <motion.span
                 layoutId="cursor-active"
-                className="typing-cursor absolute -right-px top-[2px] h-[1.2em] w-[2px] rounded-full bg-primary"
+                className="typing-cursor absolute -right-px top-0.5 h-[1.2em] w-0.5 rounded-full bg-primary"
                 transition={{ type: "spring", stiffness: 700, damping: 38, mass: 0.6 }}
               />
             )}
-            <span className={cn("transition-colors duration-[60ms]", color)}>
+            <span className={cn("transition-colors duration-60", color)}>
               {char}
             </span>
           </span>
