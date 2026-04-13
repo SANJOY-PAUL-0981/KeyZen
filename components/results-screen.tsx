@@ -42,6 +42,7 @@ export interface ResultStats {
   missedChars: number;
   consistency: number;
   elapsedSeconds: number;
+  correctedErrors: number;
   mode: string;
   modeDetail: string;
   wpmHistory: WpmSnapshot[];
@@ -203,6 +204,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
     missedChars,
     consistency,
     elapsedSeconds,
+    correctedErrors,
     mode,
     modeDetail,
     wpmHistory,
@@ -307,8 +309,8 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         </div>
       </div>
 
-      {/* Stats — single column on mobile, row of 4 from md */}
-      <div className="grid grid-cols-1 gap-4 border-t border-border pt-5 md:grid-cols-4 md:gap-6">
+      {/* Stats — single column on mobile, row of 5 from md */}
+      <div className="grid grid-cols-2 gap-4 border-t border-border pt-5 md:grid-cols-5 md:gap-6">
         <StatBox label="raw" value={raw} />
         <StatBox
           label="characters"
@@ -316,6 +318,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         />
         <StatBox label="consistency" value={`${consistency}%`} />
         <StatBox label="time" value={`${elapsedSeconds}s`} />
+        <StatBox label="corrections" value={correctedErrors} />
       </div>
 
       {/* Actions */}

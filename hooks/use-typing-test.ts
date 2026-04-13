@@ -76,6 +76,7 @@ export function useTypingTest({
   const allTypedRef = useRef(0);
   const errorsThisSecondRef = useRef(0);
   const elapsedSecondsRef = useRef(0);
+  const correctedErrorsRef = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const wordsContainerRef = useRef<HTMLDivElement>(null);
   const activeWordRef = useRef<HTMLDivElement>(null);
@@ -148,6 +149,7 @@ export function useTypingTest({
     allTypedRef.current = 0;
     errorsThisSecondRef.current = 0;
     elapsedSecondsRef.current = 0;
+    correctedErrorsRef.current = 0;
     if (m === "time") setTimeLeft(to);
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     setRowOffset(0);
@@ -372,7 +374,10 @@ export function useTypingTest({
           setWordIndex((prev) => prev - 1);
           setTyped(prevInput);
           setWordInputs((prev) => prev.slice(0, -1));
-        } else {
+        } else if (typed.length > 0) {
+          const lastIdx = typed.length - 1;
+          const isWrong = lastIdx >= currentWord.length || typed[lastIdx] !== currentWord[lastIdx];
+          if (isWrong) correctedErrorsRef.current += 1;
           setTyped((prev) => prev.slice(0, -1));
         }
         return;
@@ -450,6 +455,7 @@ export function useTypingTest({
       missedChars: mtCounts.missedChars,
       consistency,
       elapsedSeconds: Math.round(elapsed),
+      correctedErrors: correctedErrorsRef.current,
       mode,
       modeDetail: mode === "time" ? String(timeOption) : mode === "words" ? String(wordOption) : mode === "quote" ? quoteLength : "",
       wpmHistory,
@@ -470,6 +476,7 @@ export function useTypingTest({
     allTypedRef.current = 0;
     errorsThisSecondRef.current = 0;
     elapsedSecondsRef.current = 0;
+    correctedErrorsRef.current = 0;
     if (mode === "time") setTimeLeft(timeOption);
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     setRowOffset(0);
