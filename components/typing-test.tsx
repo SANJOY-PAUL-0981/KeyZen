@@ -110,7 +110,7 @@ export function TypingTest(props: TypingTestProps) {
         <div
           ref={wordsContainerRef}
           className={cn(
-            "relative h-44 w-full overflow-hidden text-2xl leading-relaxed",
+            "relative h-[7.8rem] w-full overflow-hidden text-2xl leading-relaxed",
             isActivelyTyping && "is-typing",
           )}
           style={{ fontFamily: "var(--typing-font)" }}
