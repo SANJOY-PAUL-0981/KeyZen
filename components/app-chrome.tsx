@@ -44,6 +44,12 @@ export function AppChrome({ children }: { children: ReactNode }) {
   const [typingActive, setTypingActive] = useState(false)
   const homeLogoHandlerRef = useRef<(() => void) | null>(null)
 
+  useMountEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {})
+    }
+  })
+
   const value = useMemo(
     () => ({
       settingsOpen,
