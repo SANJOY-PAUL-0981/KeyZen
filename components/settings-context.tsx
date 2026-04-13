@@ -157,6 +157,8 @@ interface SettingsContextType {
   setRealtimeWpm: (v: boolean) => void;
   faahMode: boolean;
   setFaahMode: (v: boolean) => void;
+  ghostMode: boolean;
+  setGhostMode: (v: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
@@ -190,6 +192,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [realtimeWpm, setRealtimeWpmState] = useState(false);
   const [faahMode, setFaahModeState] = useState(false);
+  const [ghostMode, setGhostModeState] = useState(false);
 
   // Rule 4: one-time hydration from localStorage on mount, applying DOM side
   // effects inline here instead of in separate reactive useEffects.
@@ -200,6 +203,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const savedSoundEnabled = localStorage.getItem("tc-sound-enabled");
     const savedRealtimeWpm = localStorage.getItem("tc-realtime-wpm");
     const savedFaahMode = localStorage.getItem("tc-faah-mode");
+    const savedGhostMode = localStorage.getItem("tc-ghost-mode");
 
     const initialAccent = savedAccent ?? "teal";
     setAccentState(initialAccent);
@@ -213,6 +217,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     if (savedSoundEnabled !== null) setSoundEnabledState(savedSoundEnabled !== "false");
     if (savedRealtimeWpm !== null) setRealtimeWpmState(savedRealtimeWpm === "true");
     if (savedFaahMode !== null) setFaahModeState(savedFaahMode === "true");
+    if (savedGhostMode !== null) setGhostModeState(savedGhostMode === "true");
   });
 
   // Rule 3: setAccent / setFont are event handlers that apply DOM changes
@@ -249,6 +254,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("tc-faah-mode", String(v));
   };
 
+  const setGhostMode = (v: boolean) => {
+    setGhostModeState(v);
+    localStorage.setItem("tc-ghost-mode", String(v));
+  };
+
   const fontCssFamily =
     FONT_OPTIONS.find((f) => f.id === font)?.cssFamily ?? "var(--font-mono)";
 
@@ -261,6 +271,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         soundEnabled, setSoundEnabled,
         realtimeWpm, setRealtimeWpm,
         faahMode, setFaahMode,
+        ghostMode, setGhostMode,
       }}
     >
       {children}

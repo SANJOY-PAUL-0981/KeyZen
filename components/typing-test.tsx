@@ -19,7 +19,7 @@ interface TypingTestProps {
 }
 
 export function TypingTest(props: TypingTestProps) {
-  const { realtimeWpm, faahMode } = useSettings();
+  const { realtimeWpm, faahMode, ghostMode } = useSettings();
   const faahAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const onWrongKey = useCallback(() => {
@@ -161,8 +161,12 @@ export function TypingTest(props: TypingTestProps) {
               {words.map((word, wIdx) => {
                 const isActive = wIdx === wordIndex;
                 const isPast = wIdx < wordIndex;
+                const isFuture = !isActive && !isPast;
                 const displayInput = isActive ? typed : isPast ? (wordInputs[wIdx] ?? "") : "";
                 const hasError = isPast && wordInputs[wIdx] !== word;
+                const currentWordDone = typed.length >= (words[wordIndex]?.length ?? 0);
+                const isNextWord = wIdx === wordIndex + 1;
+                const dimmed = ghostMode && isFocused && isFuture && !(currentWordDone && isNextWord);
 
                 return (
                   <WordItem
@@ -173,6 +177,7 @@ export function TypingTest(props: TypingTestProps) {
                     isPast={isPast}
                     hasError={hasError}
                     elemRef={isActive ? activeWordRef : undefined}
+                    dimmed={dimmed}
                   />
                 );
               })}

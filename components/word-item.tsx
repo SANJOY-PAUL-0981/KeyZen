@@ -13,6 +13,8 @@ export interface WordItemProps {
   /** True when a completed word was typed with any error → red underline. */
   hasError: boolean;
   elemRef?: React.RefObject<HTMLDivElement | null>;
+  /** When true, the word fades nearly invisible (ghost mode for upcoming words). */
+  dimmed?: boolean;
 }
 
 export const WordItem = memo(function WordItem({
@@ -22,6 +24,7 @@ export const WordItem = memo(function WordItem({
   isPast,
   hasError,
   elemRef,
+  dimmed = false,
 }: WordItemProps) {
   const cursorAtEnd = isActive && displayInput.length >= word.length;
 
@@ -32,6 +35,7 @@ export const WordItem = memo(function WordItem({
         "relative",
         isPast && hasError && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-destructive/50",
       )}
+      style={dimmed ? { opacity: 0.05 } : undefined}
     >
       {word.split("").map((char, cIdx) => {
         let color = "text-muted-foreground/40";

@@ -22,7 +22,7 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
-  const { accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, soundEnabled, setSoundEnabled, realtimeWpm, setRealtimeWpm, faahMode, setFaahMode } = useSettings();
+  const { accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, soundEnabled, setSoundEnabled, realtimeWpm, setRealtimeWpm, faahMode, setFaahMode, ghostMode, setGhostMode } = useSettings();
   const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const selectedFont = FONT_OPTIONS.find((f) => f.id === font);
 
@@ -148,6 +148,11 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                   label="Faah mode"
                   enabled={faahMode}
                   onToggle={() => setFaahMode(!faahMode)}
+                />
+                <ToggleRow
+                  label="Ghost mode"
+                  enabled={ghostMode}
+                  onToggle={() => setGhostMode(!ghostMode)}
                 />
               </section>
 
