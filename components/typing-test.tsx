@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion, LayoutGroup } from "motion/react";
-import { IconRefresh, IconPointer } from "@tabler/icons-react";
+import { useState } from "react";
+import { IconPointer, IconRefresh } from "@tabler/icons-react";
 import { ResultsScreen } from "@/components/results-screen";
 import { TestControls } from "@/components/test-controls";
 import { WordItem } from "@/components/word-item";
@@ -28,7 +29,7 @@ export function TypingTest(props: TypingTestProps) {
     controlsVisible, showResults, frozenStats,
     inputRef, wordsContainerRef, activeWordRef,
     handleKeyDown, handleFocus, handleInputBlur, handleInputFocus,
-    handleMouseMove, handleResultsRestart,
+    handleMouseMove, handleResultsRestart, handleResultsNext,
     onModeChange, onTimeOptionChange, onWordOptionChange, onQuoteLengthChange,
     onPunctuationToggle, onNumbersToggle, onDifficultyToggle, onRestart,
   } = useTypingTest(props);
@@ -39,7 +40,7 @@ export function TypingTest(props: TypingTestProps) {
         className="w-full transition-all duration-150 ease-out"
         style={{ opacity: screenFade, filter: screenFade < 1 ? "blur(4px)" : "none" }}
       >
-        <ResultsScreen stats={frozenStats!} onRestart={handleResultsRestart} />
+        <ResultsScreen stats={frozenStats!} onRestart={handleResultsRestart} onNext={handleResultsNext} />
       </div>
     );
   }
@@ -189,18 +190,7 @@ export function TypingTest(props: TypingTestProps) {
       </div>
 
       {/* Restart button */}
-      <motion.button
-        animate={{ opacity: controlsVisible ? 1 : 0.15 }}
-        transition={{ duration: 0.4 }}
-        onClick={() => onRestart()}
-        className={cn(
-          "rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground",
-          !controlsVisible && "pointer-events-none",
-        )}
-        title="Restart test"
-      >
-        <IconRefresh size={18} />
-      </motion.button>
+      <RestartButton controlsVisible={controlsVisible} onRestart={onRestart} />
 
       {/* Keyboard shortcuts hint */}
       <motion.div
@@ -216,5 +206,38 @@ export function TypingTest(props: TypingTestProps) {
         </span>
       </motion.div>
     </div>
+  );
+}
+
+function RestartButton({ controlsVisible, onRestart }: { controlsVisible: boolean; onRestart: () => void }) {
+  const [spinning, setSpinning] = useState(false);
+
+  function handleClick() {
+    setSpinning(true);
+    setTimeout(() => setSpinning(false), 600);
+    onRestart();
+  }
+
+  return (
+    <motion.button
+      animate={{ opacity: controlsVisible ? 1 : 0.15 }}
+      transition={{ duration: 0.4 }}
+      onClick={handleClick}
+      className={cn(
+        "rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground",
+        !controlsVisible && "pointer-events-none",
+      )}
+      title="Restart test"
+    >
+      <span
+        style={{
+          display: "inline-flex",
+          transition: "transform 0.6s cubic-bezier(0.4,0,0.2,1)",
+          transform: spinning ? "rotate(360deg)" : "rotate(0deg)",
+        }}
+      >
+        <IconRefresh size={18} />
+      </span>
+    </motion.button>
   );
 }

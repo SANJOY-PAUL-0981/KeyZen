@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect, useRef, type ReactNode } from "react";
+import { useMemo, useEffect, useRef, useState, type ReactNode } from "react";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { isInvalidTestResult } from "@/lib/validate-result";
 import { motion } from "motion/react";
@@ -50,25 +50,46 @@ export interface ResultStats {
 interface ResultsScreenProps {
   stats: ResultStats;
   onRestart: () => void;
+  onNext: () => void;
 }
 
 function ResultsBracketButton({
   onClick,
   label,
   icon,
+  spinOnClick = false,
 }: {
   onClick: () => void;
   label: string;
   icon: ReactNode;
+  spinOnClick?: boolean;
 }) {
+  const [spinning, setSpinning] = useState(false);
+
+  function handleClick() {
+    if (spinOnClick) {
+      setSpinning(true);
+      setTimeout(() => setSpinning(false), 600);
+    }
+    onClick();
+  }
+
   return (
     <CornerBrackets className="inline-flex">
       <button
         type="button"
-        onClick={onClick}
+        onClick={handleClick}
         className="flex items-center gap-2 px-4 py-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
       >
-        {icon}
+        <span
+          style={{
+            display: "inline-flex",
+            transition: "transform 0.6s cubic-bezier(0.4,0,0.2,1)",
+            transform: spinning ? "rotate(360deg)" : "rotate(0deg)",
+          }}
+        >
+          {icon}
+        </span>
         {label}
       </button>
     </CornerBrackets>
@@ -171,7 +192,7 @@ function WpmChart({ history }: { history: WpmSnapshot[] }) {
 }
 
 
-export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
+export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) {
   const {
     wpm,
     accuracy,
@@ -228,13 +249,14 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
 
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-border pt-6 pb-2">
           <ResultsBracketButton
-            onClick={onRestart}
+            onClick={onNext}
             label="next test"
             icon={<IconArrowRight size={16} aria-hidden />}
           />
           <ResultsBracketButton
             onClick={onRestart}
             label="restart"
+            spinOnClick
             icon={<IconRefresh size={16} aria-hidden />}
           />
         </div>
@@ -299,13 +321,14 @@ export function ResultsScreen({ stats, onRestart }: ResultsScreenProps) {
       {/* Actions */}
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pb-2">
         <ResultsBracketButton
-          onClick={onRestart}
+          onClick={onNext}
           label="next test"
           icon={<IconArrowRight size={16} aria-hidden />}
         />
         <ResultsBracketButton
           onClick={onRestart}
           label="restart"
+          spinOnClick
           icon={<IconRefresh size={16} aria-hidden />}
         />
         <DownloadResultsPopover stats={stats} />

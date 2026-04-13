@@ -451,8 +451,43 @@ export function useTypingTest({
   }
   if (!finished) frozenStatsRef.current = null;
 
+  // Resets all typing state but keeps the current word list (for "restart same test").
+  const resetSameWords = useCallback(() => {
+    setTyped("");
+    setWordIndex(0);
+    setStarted(false);
+    setFinished(false);
+    setStartTime(null);
+    setWordInputs([]);
+    setWpmHistory([]);
+    correctCharsRef.current = 0;
+    allTypedRef.current = 0;
+    errorsThisSecondRef.current = 0;
+    elapsedSecondsRef.current = 0;
+    if (mode === "time") setTimeLeft(timeOption);
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+    setRowOffset(0);
+    setShowControls(true);
+    setIsActivelyTyping(false);
+    onFinished?.(false);
+    onTypingActiveChange?.(false);
+    inputRef.current?.focus();
+  }, [mode, timeOption, onFinished, onTypingActiveChange]);
+
   // Rule 3: fade results→typing on restart, driven by user action.
   const handleResultsRestart = useCallback(() => {
+    setScreenFade(0);
+    if (screenFadeRef.current) clearTimeout(screenFadeRef.current);
+    screenFadeRef.current = setTimeout(() => {
+      setResetting(true);
+      resetSameWords();
+      setTimeout(() => setResetting(false), 150);
+      requestAnimationFrame(() => setScreenFade(1));
+      screenFadeRef.current = null;
+    }, 150);
+  }, [resetSameWords]);
+
+  const handleResultsNext = useCallback(() => {
     setScreenFade(0);
     if (screenFadeRef.current) clearTimeout(screenFadeRef.current);
     screenFadeRef.current = setTimeout(() => {
@@ -525,7 +560,7 @@ export function useTypingTest({
     inputRef, wordsContainerRef, activeWordRef,
     // Handlers
     handleKeyDown, handleFocus, handleInputBlur, handleInputFocus,
-    handleMouseMove, handleResultsRestart,
+    handleMouseMove, handleResultsRestart, handleResultsNext,
     onModeChange, onTimeOptionChange, onWordOptionChange, onQuoteLengthChange,
     onPunctuationToggle, onNumbersToggle, onDifficultyToggle,
     onRestart: () => resetTest(),
