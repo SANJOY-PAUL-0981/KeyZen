@@ -210,16 +210,25 @@ export function TypingTest(props: TypingTestProps) {
 
       {/* Keyboard shortcuts hint */}
       <motion.div
-        animate={{ opacity: controlsVisible ? 1 : 0 }}
+        animate={{ opacity: (mode === "zen" && started) ? 1 : controlsVisible ? 1 : 0 }}
         transition={{ duration: 0.4 }}
         className="flex items-center gap-4 text-xs text-muted-foreground"
       >
-        <span>
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">tab</kbd>
-          {" + "}
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd>
-          {" "}- restart test
-        </span>
+        {mode === "zen" && started ? (
+          <span>
+            <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">shift</kbd>
+            {" + "}
+            <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd>
+            {" "}- end test
+          </span>
+        ) : (
+          <span>
+            <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">tab</kbd>
+            {" + "}
+            <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd>
+            {" "}- restart test
+          </span>
+        )}
       </motion.div>
     </div>
   );

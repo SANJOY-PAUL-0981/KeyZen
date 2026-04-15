@@ -333,8 +333,18 @@ export function useTypingTest({
         resetTest();
         return;
       }
+      if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault();
+        if (mode === "zen" && started && !finished) {
+          finishTest();
+        }
+        return;
+      }
 
       if (finished) return;
+
+      // Don't start the test (or process further) for non-character keys like Shift, Enter, ArrowLeft, etc.
+      if (e.key.length > 1 && e.key !== "Backspace") return;
 
       if (!started) {
         setStarted(true);

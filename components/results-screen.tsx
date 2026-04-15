@@ -217,9 +217,11 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
     if (!invalid && wpm >= 100) {
       const timer = setTimeout(() => {
         confettiRef.current?.fire({
-          particleCount: 150,
-          spread: 80,
-          origin: { y: 0.4 },
+          particleCount: 200,
+          spread: 120,
+          ticks: 400,
+          gravity: 0.6,
+          origin: { y: 0.3 },
         })
       }, 400)
       return () => clearTimeout(timer)
@@ -277,7 +279,8 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         <Confetti
           ref={confettiRef}
           manualstart
-          className="pointer-events-none fixed inset-0 z-50 size-full"
+          className="pointer-events-none fixed inset-0 z-50"
+          style={{ width: "100vw", height: "100vh" }}
         />
       )}
       {/* Main block: column on mobile, row from md */}
