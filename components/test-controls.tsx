@@ -50,7 +50,7 @@ export function TestControls({
       animate={{ opacity: controlsVisible ? 1 : 0 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className={cn(
-        "flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-1",
+        "flex flex-wrap items-center justify-center gap-2",
         !controlsVisible && "pointer-events-none select-none",
       )}
     >
@@ -64,7 +64,7 @@ export function TestControls({
           <IconNumber size={14} />
           numbers
         </button>
-        <div className="hidden h-4 w-px bg-border sm:block" />
+        <div className="h-4 w-px bg-border" />
         <button type="button" onClick={() => onDifficultyToggle("easy")} className={btnClass(difficulty === "easy")}>
           <IconFeather size={14} />
           easy
@@ -75,7 +75,7 @@ export function TestControls({
         </button>
       </div>
 
-      <div className="hidden h-4 w-px bg-border sm:mx-1 sm:block" />
+      <div className="hidden h-4 w-px bg-border sm:block" />
 
       {/* Mode tabs */}
       <Tabs value={mode} onValueChange={(v) => onModeChange(v as TestMode)} className="flex items-center">
@@ -96,7 +96,7 @@ export function TestControls({
 
       {mode !== "zen" && (
         <>
-          <div className="hidden h-4 w-px bg-border sm:mx-1 sm:block" />
+          <div className="hidden h-4 w-px bg-border sm:block" />
 
           {/* Count / quote-length / time tabs */}
           {mode === "words" ? (
@@ -125,7 +125,7 @@ export function TestControls({
             </Tabs>
           )}
 
-          <div className="hidden h-4 w-px bg-border sm:mx-1 sm:block" />
+          <div className="hidden h-4 w-px bg-border sm:block" />
         </>
       )}
 

@@ -13,7 +13,7 @@ import { useMountEffect } from "@/hooks/use-mount-effect"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "motion/react"
-import { IconInfoCircle, IconSettings } from "@tabler/icons-react"
+import { IconInfoCircle, IconNotes, IconSettings } from "@tabler/icons-react"
 import { GithubLogo } from "@phosphor-icons/react"
 
 import { CornerBrackets } from "@/components/corner-brackets"
@@ -155,6 +155,18 @@ function SiteHeader() {
           >
             <IconInfoCircle size={16} stroke={1.5} aria-hidden />
           </Link>
+          <Link
+            href="/changelog"
+            prefetch
+            className={cn(
+              iconButtonClass,
+              pathname === "/changelog" && "text-foreground",
+            )}
+            aria-current={pathname === "/changelog" ? "page" : undefined}
+            aria-label="Changelog"
+          >
+            <IconNotes size={16} stroke={1.5} aria-hidden />
+          </Link>
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
@@ -174,7 +186,7 @@ function SiteHeader() {
             className="flex items-center gap-2"
           >
             <GithubLogo />
-            Open Source
+           <span className="hidden md:block">Open Source</span>
           </a>
         </Button>
       </CornerBrackets>
