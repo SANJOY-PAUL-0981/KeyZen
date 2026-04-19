@@ -10,6 +10,31 @@ import { useMountEffect } from "@/hooks/use-mount-effect";
 
 import { syncKeyZenFavicon } from "@/lib/favicon-client";
 
+export type SoundPack =
+  | "default"
+  | "cherrymx-black-pbt"
+  | "cherrymx-blue-pbt"
+  | "cherrymx-brown-pbt"
+  | "cherrymx-red-pbt"
+  | "mx-speed-silver";
+
+export interface SoundPackOption {
+  id: SoundPack;
+  label: string;
+  url: string;
+  /** Optional mechvibes-style config.json with per-key offsets. Omit for the built-in default pack. */
+  configUrl?: string;
+}
+
+export const SOUND_PACKS: SoundPackOption[] = [
+  { id: "default",           label: "Default",                url: "/sounds/sound.ogg" },
+  { id: "cherrymx-black-pbt", label: "Cherry MX Black", url: "/sounds/cherrymx-black-pbt/sound.ogg", configUrl: "/sounds/cherrymx-black-pbt/config.json" },
+  { id: "cherrymx-blue-pbt",  label: "Cherry MX Blue",  url: "/sounds/cherrymx-blue-pbt/sound.ogg",  configUrl: "/sounds/cherrymx-blue-pbt/config.json" },
+  { id: "cherrymx-brown-pbt", label: "Cherry MX Brown ", url: "/sounds/cherrymx-brown-pbt/sound.ogg", configUrl: "/sounds/cherrymx-brown-pbt/config.json" },
+  { id: "cherrymx-red-pbt",   label: "Cherry MX Red",   url: "/sounds/cherrymx-red-pbt/sound.ogg",   configUrl: "/sounds/cherrymx-red-pbt/config.json" },
+  { id: "mx-speed-silver",    label: "MX Speed Silver", url: "/sounds/mx-speed-silver/mx-speed-silver-1.wav", configUrl: "/sounds/mx-speed-silver/config.json" },
+];
+
 export type AccentColor =
   | "teal"
   | "red"
@@ -161,6 +186,8 @@ interface SettingsContextType {
   setGhostMode: (v: boolean) => void;
   shakeMode: boolean;
   setShakeMode: (v: boolean) => void;
+  soundPack: SoundPack;
+  setSoundPack: (p: SoundPack) => void;
   language: string;
   setLanguage: (l: string) => void;
   showDiacritics: boolean;
@@ -200,6 +227,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [faahMode, setFaahModeState] = useState(false);
   const [ghostMode, setGhostModeState] = useState(false);
   const [shakeMode, setShakeModeState] = useState(false);
+  const [soundPack, setSoundPackState] = useState<SoundPack>("default");
   const [language, setLanguageState] = useState("english");
   const [showDiacritics, setShowDiacriticsState] = useState(true);
 
@@ -229,6 +257,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     if (savedFaahMode !== null) setFaahModeState(savedFaahMode === "true");
     if (savedGhostMode !== null) setGhostModeState(savedGhostMode === "true");
     if (savedShakeMode !== null) setShakeModeState(savedShakeMode === "true");
+
+    const savedSoundPack = localStorage.getItem("tc-sound-pack") as SoundPack | null;
+    if (savedSoundPack) setSoundPackState(savedSoundPack);
 
     const savedLanguage = localStorage.getItem("tc-language");
     if (savedLanguage) setLanguageState(savedLanguage);
@@ -281,6 +312,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("tc-shake-mode", String(v));
   };
 
+  const setSoundPack = (p: SoundPack) => {
+    setSoundPackState(p);
+    localStorage.setItem("tc-sound-pack", p);
+  };
+
   const setLanguage = (l: string) => {
     setLanguageState(l);
     localStorage.setItem("tc-language", l);
@@ -305,6 +341,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         faahMode, setFaahMode,
         ghostMode, setGhostMode,
         shakeMode, setShakeMode,
+        soundPack, setSoundPack,
         language, setLanguage,
         showDiacritics, setShowDiacritics,
       }}

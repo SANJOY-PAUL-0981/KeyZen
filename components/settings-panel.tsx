@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react"
 import { IconX } from "@tabler/icons-react"
+import type { SoundPack } from "@/components/settings-context"
 import { CaretDownIcon } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "motion/react"
 import {
   useSettings,
   ACCENT_COLORS,
   FONT_OPTIONS,
+  SOUND_PACKS,
 } from "@/components/settings-context"
 import { NextThemeSwitcher } from "@/components/kibo-ui/theme-switcher"
 import {
@@ -54,6 +56,8 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     setGhostMode,
     shakeMode,
     setShakeMode,
+    soundPack,
+    setSoundPack,
     language,
     setLanguage,
     showDiacritics,
@@ -150,6 +154,37 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 <SectionLabel>Theme</SectionLabel>
                 <NextThemeSwitcher />
               </section>
+
+              {soundEnabled && (
+                <section>
+                  <SectionLabel>Keys</SectionLabel>
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {SOUND_PACKS.map((s) => {
+                      const selected = soundPack === s.id
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSoundPack(s.id)}
+                          aria-pressed={selected}
+                          className={cn(
+                            "flex min-w-0 flex-col cursor-pointer items-center justify-between gap-2 rounded-lg border p-2 text-center transition-colors outline-none",
+                            "hover:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                            selected
+                              ? "border-primary bg-primary/10 text-foreground"
+                              : "border-input bg-background text-muted-foreground"
+                          )}
+                        >
+                          <SwitchIcon pack={s.id} selected={selected} />
+                          <span className="w-full text-[10px] leading-tight font-medium break-words">
+                            {s.label}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </section>
+              )}
 
               <section>
                 <SectionLabel>Accent</SectionLabel>
@@ -386,6 +421,91 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         </>
       )}
     </AnimatePresence>
+  )
+}
+
+const SWITCH_STEM_COLORS: Record<SoundPack, string> = {
+  "default": "var(--color-primary)",
+  "cherrymx-black-pbt": "#2b2b2b",
+  "cherrymx-blue-pbt": "#2f6fe0",
+  "cherrymx-brown-pbt": "#8a5a2b",
+  "cherrymx-red-pbt": "#d7373f",
+  "mx-speed-silver": "#c4ccd4",
+}
+
+function SwitchIcon({ pack, selected }: { pack: SoundPack; selected: boolean }) {
+  const stem = SWITCH_STEM_COLORS[pack]
+  const isBlack = pack === "cherrymx-black-pbt"
+
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      width={32}
+      height={32}
+      aria-hidden
+      className={cn("shrink-0 transition-opacity", !selected && "opacity-80")}
+    >
+      {/* Outer housing — bottom base with slight shadow lip */}
+      <rect
+        x="4"
+        y="10"
+        width="40"
+        height="34"
+        rx="4"
+        className="fill-muted-foreground/30"
+      />
+      {/* Top plate */}
+      <rect
+        x="6"
+        y="7"
+        width="36"
+        height="33"
+        rx="3.5"
+        className="fill-muted-foreground/15 stroke-muted-foreground/40"
+        strokeWidth="0.75"
+      />
+      {/* Inner recess where the stem sits */}
+      <rect
+        x="11"
+        y="11"
+        width="26"
+        height="25"
+        rx="2"
+        className="fill-background/70"
+      />
+      {/* Cruciform stem — the Cherry MX signature */}
+      <g transform="translate(24 23)">
+        <rect
+          x="-10"
+          y="-3.25"
+          width="20"
+          height="6.5"
+          rx="1.25"
+          fill={stem}
+          stroke={isBlack ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
+          strokeWidth="0.5"
+        />
+        <rect
+          x="-3.25"
+          y="-10"
+          width="6.5"
+          height="20"
+          rx="1.25"
+          fill={stem}
+          stroke={isBlack ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
+          strokeWidth="0.5"
+        />
+        {/* Subtle top-left highlight on the stem for a hint of depth */}
+        <rect
+          x="-9"
+          y="-2.5"
+          width="18"
+          height="1"
+          rx="0.5"
+          fill="rgba(255,255,255,0.22)"
+        />
+      </g>
+    </svg>
   )
 }
 

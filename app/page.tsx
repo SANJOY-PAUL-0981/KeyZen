@@ -6,14 +6,17 @@ import { cn } from "@/lib/utils"
 import { useAppChrome } from "@/components/app-chrome"
 import { Keyboard } from "@/components/ui/keyboard"
 import { TypingTest } from "@/components/typing-test"
-import { useSettings } from "@/components/settings-context"
+import { useSettings, SOUND_PACKS } from "@/components/settings-context"
 
 export default function Page() {
   const { settingsOpen, setTypingActive, homeLogoHandlerRef } = useAppChrome()
   const [isFinished, setIsFinished] = useState(false)
   const [typingFocused, setTypingFocused] = useState(true)
   const [restartKey, setRestartKey] = useState(0)
-  const { showKeyboard, soundEnabled, language } = useSettings()
+  const { showKeyboard, soundEnabled, soundPack, language } = useSettings()
+  const soundPackOption = SOUND_PACKS.find((s) => s.id === soundPack)
+  const soundUrl = soundPackOption?.url ?? "/sounds/sound.ogg"
+  const soundConfigUrl = soundPackOption?.configUrl
 
   useMountEffect(() => {
     homeLogoHandlerRef.current = () => {
@@ -72,6 +75,8 @@ export default function Page() {
               theme="classic"
               enableHaptics
               enableSound={soundEnabled}
+              soundUrl={soundUrl}
+              soundConfigUrl={soundConfigUrl}
               forceActive={soundEnabled && !showKeyboard}
               physicalKeysEnabled={typingFocused}
               language={language}

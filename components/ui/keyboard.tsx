@@ -59,6 +59,8 @@ export interface KeyboardProps {
   enableHaptics?: boolean;
   enableSound?: boolean;
   soundUrl?: string;
+  /** Optional mechvibes-style config.json URL; when present, its defines override the built-in offsets */
+  soundConfigUrl?: string;
   onKeyEvent?: (event: KeyboardInteractionEvent) => void;
   /** Keep key-event listeners active even when the keyboard is not intersecting the viewport */
   forceActive?: boolean;
@@ -74,6 +76,7 @@ export function Keyboard({
   enableSound = true,
   enableHaptics = true,
   soundUrl = "/sounds/sound.ogg",
+  soundConfigUrl,
   onKeyEvent,
   forceActive = false,
   physicalKeysEnabled = true,
@@ -89,6 +92,7 @@ export function Keyboard({
       enableSound={enableSound}
       enableHaptics={enableHaptics}
       soundUrl={soundUrl}
+      soundConfigUrl={soundConfigUrl}
       onKeyEvent={onKeyEvent}
       forceActive={forceActive}
       physicalKeysEnabled={physicalKeysEnabled}
@@ -147,10 +151,21 @@ interface KeyboardProviderProps {
   enableSound: boolean;
   enableHaptics: boolean;
   soundUrl: string;
+  soundConfigUrl?: string;
   onKeyEvent?: (event: KeyboardInteractionEvent) => void;
   forceActive?: boolean;
   physicalKeysEnabled?: boolean;
   layout: KeyboardLayout;
+}
+
+type PackKeyDef =
+  | { kind: "slice"; start: number; duration: number }
+  | { kind: "sample"; buffer: AudioBuffer };
+
+interface ResolvedSoundPack {
+  /** When true, release phase should be silent (pack has no per-key release sound). */
+  singleSoundPerKey: boolean;
+  defines: Record<string, PackKeyDef | null>;
 }
 
 function KeyboardProvider({
@@ -160,6 +175,7 @@ function KeyboardProvider({
   enableSound,
   enableHaptics,
   soundUrl,
+  soundConfigUrl,
   onKeyEvent,
   forceActive = false,
   physicalKeysEnabled = true,
@@ -167,6 +183,7 @@ function KeyboardProvider({
 }: KeyboardProviderProps) {
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const soundPackRef = useRef<ResolvedSoundPack | null>(null);
   const pressedKeysRef = useRef<Set<string>>(new Set());
   const modifiersDownRef = useRef<Set<string>>(new Set());
   const { trigger } = useWebHaptics();
@@ -178,6 +195,7 @@ function KeyboardProvider({
   useEffect(() => {
     if (!enableSound || !soundUrl) {
       audioBufferRef.current = null;
+      soundPackRef.current = null;
       return;
     }
 
@@ -188,16 +206,33 @@ function KeyboardProvider({
         const audioContext = new AudioContext();
         audioContextRef.current = audioContext;
 
-        const response = await fetch(soundUrl);
-        if (!response.ok) {
+        const spriteBufferPromise = fetch(soundUrl)
+          .then((response) => (response.ok ? response.arrayBuffer() : null))
+          .then((arrayBuffer) => (arrayBuffer ? audioContext.decodeAudioData(arrayBuffer) : null));
+
+        const configPromise = soundConfigUrl
+          ? fetch(soundConfigUrl)
+              .then((response) => (response.ok ? response.json() : null))
+              .catch(() => null)
+          : Promise.resolve(null);
+
+        const [spriteBuffer, rawConfig] = await Promise.all([spriteBufferPromise, configPromise]);
+        if (cancelled) {
           return;
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        if (spriteBuffer) {
+          audioBufferRef.current = spriteBuffer;
+        }
 
+        if (!rawConfig) {
+          soundPackRef.current = null;
+          return;
+        }
+
+        const pack = await buildResolvedPack(audioContext, rawConfig, soundConfigUrl!);
         if (!cancelled) {
-          audioBufferRef.current = audioBuffer;
+          soundPackRef.current = pack;
         }
       } catch {
         // Sound is optional. Keep UI interactive if loading fails.
@@ -209,12 +244,13 @@ function KeyboardProvider({
     return () => {
       cancelled = true;
       audioBufferRef.current = null;
+      soundPackRef.current = null;
 
       const context = audioContextRef.current;
       audioContextRef.current = null;
       void context?.close();
     };
-  }, [enableSound, soundUrl]);
+  }, [enableSound, soundUrl, soundConfigUrl]);
 
   const playSound = useCallback(
     (phase: KeyboardEventPhase, keyCode: string) => {
@@ -228,22 +264,25 @@ function KeyboardProvider({
         return;
       }
 
-      const soundDef =
-        phase === "down" ? SOUND_DEFINES_DOWN[keyCode] : SOUND_DEFINES_UP[keyCode];
+      const soundDef = resolveSoundDef(phase, keyCode, soundPackRef.current);
       if (!soundDef) {
         return;
       }
-
-      const [startMs, durationMs] = soundDef;
 
       if (audioContext.state === "suspended") {
         void audioContext.resume();
       }
 
       const source = audioContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(audioContext.destination);
-      source.start(0, startMs / 1000, durationMs / 1000);
+      if (soundDef.kind === "sample") {
+        source.buffer = soundDef.buffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+      } else {
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+        source.start(0, soundDef.start / 1000, soundDef.duration / 1000);
+      }
     },
     [enableSound],
   );
@@ -1100,6 +1139,130 @@ function toRgba(color: string, alpha: number): string {
   const blue = Number.parseInt(hex.slice(4, 6), 16);
 
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+
+const DOM_CODE_TO_SCANCODES: Record<string, number[]> = {
+  Escape: [1],
+  Digit1: [2], Digit2: [3], Digit3: [4], Digit4: [5], Digit5: [6],
+  Digit6: [7], Digit7: [8], Digit8: [9], Digit9: [10], Digit0: [11],
+  Minus: [12], Equal: [13], Backspace: [14],
+  Tab: [15],
+  KeyQ: [16], KeyW: [17], KeyE: [18], KeyR: [19], KeyT: [20],
+  KeyY: [21], KeyU: [22], KeyI: [23], KeyO: [24], KeyP: [25],
+  BracketLeft: [26], BracketRight: [27],
+  Enter: [28],
+  ControlLeft: [29],
+  KeyA: [30], KeyS: [31], KeyD: [32], KeyF: [33], KeyG: [34],
+  KeyH: [35], KeyJ: [36], KeyK: [37], KeyL: [38],
+  Semicolon: [39], Quote: [40], Backquote: [41],
+  ShiftLeft: [42], Backslash: [43],
+  KeyZ: [44], KeyX: [45], KeyC: [46], KeyV: [47], KeyB: [48],
+  KeyN: [49], KeyM: [50],
+  Comma: [51], Period: [52], Slash: [53],
+  ShiftRight: [54],
+  AltLeft: [56], Space: [57], CapsLock: [58],
+  F1: [59], F2: [60], F3: [61], F4: [62], F5: [63],
+  F6: [64], F7: [65], F8: [66], F9: [67], F10: [68],
+  F11: [87], F12: [88],
+  ControlRight: [57373, 3613],
+  AltRight: [57400, 3640],
+  Home: [57415, 3655],
+  End: [57423, 3663],
+  PageUp: [57417, 3657],
+  PageDown: [57425, 3665],
+  Delete: [57427, 3667],
+  ArrowUp: [57416],
+  ArrowLeft: [57419],
+  ArrowRight: [57421],
+  ArrowDown: [57424],
+  MetaLeft: [57435, 3675],
+  MetaRight: [57436, 3676],
+};
+
+interface RawSoundPackConfig {
+  key_define_type?: "single" | "multi";
+  defines?: Record<string, unknown>;
+}
+
+/**
+ * Resolve a raw mechvibes config into either sprite slices (offsets into the main buffer)
+ * or per-key sample buffers (when defines point to individual .wav files).
+ */
+async function buildResolvedPack(
+  audioContext: AudioContext,
+  raw: RawSoundPackConfig,
+  configUrl: string,
+): Promise<ResolvedSoundPack> {
+  const rawDefines = raw.defines ?? {};
+  const baseUrl = configUrl.slice(0, configUrl.lastIndexOf("/") + 1);
+
+  // Gather unique sample filenames (for "multi" packs that ship one .wav per key group).
+  const uniqueFilenames = new Set<string>();
+  for (const value of Object.values(rawDefines)) {
+    if (typeof value === "string" && value.length > 0) {
+      uniqueFilenames.add(value);
+    }
+  }
+
+  // Decode each unique sample in parallel.
+  const samplesEntries = await Promise.all(
+    Array.from(uniqueFilenames).map(async (filename) => {
+      try {
+        const response = await fetch(baseUrl + filename);
+        if (!response.ok) {
+          return [filename, null] as const;
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = await audioContext.decodeAudioData(arrayBuffer);
+        return [filename, buffer] as const;
+      } catch {
+        return [filename, null] as const;
+      }
+    }),
+  );
+  const sampleBuffers = new Map<string, AudioBuffer | null>(samplesEntries);
+
+  const defines: Record<string, PackKeyDef | null> = {};
+  for (const [scancode, value] of Object.entries(rawDefines)) {
+    if (Array.isArray(value) && value.length >= 2 && typeof value[0] === "number" && typeof value[1] === "number") {
+      defines[scancode] = { kind: "slice", start: value[0], duration: value[1] };
+    } else if (typeof value === "string") {
+      const buffer = sampleBuffers.get(value);
+      defines[scancode] = buffer ? { kind: "sample", buffer } : null;
+    } else {
+      defines[scancode] = null;
+    }
+  }
+
+  return { singleSoundPerKey: true, defines };
+}
+
+function resolveSoundDef(
+  phase: KeyboardEventPhase,
+  keyCode: string,
+  pack: ResolvedSoundPack | null,
+): PackKeyDef | undefined {
+  if (pack) {
+    // These packs define only a press sound; stay silent on release rather than playing wrong audio.
+    if (phase === "up" && pack.singleSoundPerKey) {
+      return undefined;
+    }
+    const scancodes = DOM_CODE_TO_SCANCODES[keyCode];
+    if (!scancodes) {
+      return undefined;
+    }
+    for (const scancode of scancodes) {
+      const def = pack.defines[String(scancode)];
+      if (def) {
+        return def;
+      }
+    }
+    return undefined;
+  }
+  const builtin = phase === "down" ? SOUND_DEFINES_DOWN[keyCode] : SOUND_DEFINES_UP[keyCode];
+  if (!builtin) return undefined;
+  return { kind: "slice", start: builtin[0], duration: builtin[1] };
 }
 
 export const SOUND_DEFINES_DOWN: Record<string, [number, number]> = {
