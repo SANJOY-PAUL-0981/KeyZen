@@ -439,11 +439,12 @@ const SWITCH_STEM_COLORS: Record<SoundPack, string> = {
   "cherrymx-brown-pbt": "#8a5a2b",
   "cherrymx-red-pbt": "#d7373f",
   "mx-speed-silver": "#c4ccd4",
+  "eg-oreo": "#1a1a2e",
 }
 
 function SwitchIcon({ pack, selected }: { pack: SoundPack; selected: boolean }) {
   const stem = SWITCH_STEM_COLORS[pack]
-  const isBlack = pack === "cherrymx-black-pbt"
+  const isBlack = pack === "cherrymx-black-pbt" || pack === "eg-oreo"
 
   return (
     <svg

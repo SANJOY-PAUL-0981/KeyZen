@@ -16,7 +16,8 @@ export type SoundPack =
   | "cherrymx-blue-pbt"
   | "cherrymx-brown-pbt"
   | "cherrymx-red-pbt"
-  | "mx-speed-silver";
+  | "mx-speed-silver"
+  | "eg-oreo";
 
 export interface SoundPackOption {
   id: SoundPack;
@@ -33,6 +34,7 @@ export const SOUND_PACKS: SoundPackOption[] = [
   { id: "cherrymx-brown-pbt", label: "Cherry MX Brown ", url: "/sounds/cherrymx-brown-pbt/sound.ogg", configUrl: "/sounds/cherrymx-brown-pbt/config.json" },
   { id: "cherrymx-red-pbt",   label: "Cherry MX Red",   url: "/sounds/cherrymx-red-pbt/sound.ogg",   configUrl: "/sounds/cherrymx-red-pbt/config.json" },
   { id: "mx-speed-silver",    label: "MX Speed Silver", url: "/sounds/mx-speed-silver/mx-speed-silver-1.wav", configUrl: "/sounds/mx-speed-silver/config.json" },
+  { id: "eg-oreo",            label: "EG Oreo",         url: "/sounds/eg-oreo/oreo.ogg",                      configUrl: "/sounds/eg-oreo/config.json" },
 ];
 
 export type AccentColor =
