@@ -19,7 +19,8 @@ interface TypingTestProps {
 }
 
 export function TypingTest(props: TypingTestProps) {
-  const { realtimeWpm, faahMode, ghostMode, shakeMode } = useSettings()
+  const { realtimeWpm, faahMode, ghostMode, shakeMode, fontSize } = useSettings()
+  const fontSizeRem = { xs: "1rem", sm: "1.25rem", md: "1.5rem", lg: "1.875rem", xl: "2.25rem" }[fontSize]
   const faahAudioRef = useRef<HTMLAudioElement | null>(null)
   const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -194,10 +195,10 @@ export function TypingTest(props: TypingTestProps) {
         <div
           ref={wordsContainerRef}
           className={cn(
-            "relative h-[7.8rem] w-full overflow-hidden text-2xl leading-relaxed",
+            "relative h-[7.8rem] w-full overflow-hidden leading-relaxed",
             isActivelyTyping && "is-typing"
           )}
-          style={{ fontFamily: "var(--typing-font)" }}
+          style={{ fontFamily: "var(--typing-font)", fontSize: fontSizeRem }}
         >
           <input
             ref={inputRef}

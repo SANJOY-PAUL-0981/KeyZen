@@ -6,9 +6,15 @@ import type { SoundPack } from "@/components/settings-context"
 import { CaretDownIcon } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "motion/react"
 import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+} from "@/components/ui/drawer"
+import {
   useSettings,
   ACCENT_COLORS,
   FONT_OPTIONS,
+  FONT_SIZES,
   SOUND_PACKS,
 } from "@/components/settings-context"
 import { NextThemeSwitcher } from "@/components/kibo-ui/theme-switcher"
@@ -62,6 +68,8 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     setLanguage,
     showDiacritics,
     setShowDiacritics,
+    fontSize,
+    setFontSize,
   } = useSettings()
   const isRTL = isRTLLanguage(language)
   const [isMobile, setIsMobile] = useState(false)
@@ -123,41 +131,8 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     if (swatchRef.current) swatchRef.current.style.cursor = "grab"
   }
 
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
-            onClick={onClose}
-          />
-
-          <motion.aside
-            key="panel"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 340, damping: 34 }}
-            className="fixed top-0 right-0 z-50 flex h-full w-72 flex-col border-l border-border bg-background shadow-2xl"
-          >
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-                Settings
-              </span>
-              <button
-                onClick={onClose}
-                className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <IconX size={14} />
-              </button>
-            </div>
-
-            <div className="flex-1 space-y-7 overflow-y-auto px-4 py-5">
+  const panelContent = (
+    <div className="flex-1 space-y-7 overflow-y-auto px-4 py-5">
               <section className="flex items-center justify-between">
                 <SectionLabel>Theme</SectionLabel>
                 <NextThemeSwitcher />
@@ -245,6 +220,17 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                   enabled={realtimeWpm}
                   onToggle={() => setRealtimeWpm(!realtimeWpm)}
                 />
+                {isRTL && (
+                  <ToggleRow
+                    label="Diacritics"
+                    enabled={showDiacritics}
+                    onToggle={() => setShowDiacritics(!showDiacritics)}
+                  />
+                )}
+              </section>
+
+              <section className="flex flex-col gap-3">
+                <SectionLabel>Modes</SectionLabel>
                 <ToggleRow
                   label="Shake mode"
                   enabled={shakeMode}
@@ -260,14 +246,6 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                   enabled={ghostMode}
                   onToggle={() => setGhostMode(!ghostMode)}
                 />
-
-                {isRTL && (
-                  <ToggleRow
-                    label="Diacritics"
-                    enabled={showDiacritics}
-                    onToggle={() => setShowDiacritics(!showDiacritics)}
-                  />
-                )}
               </section>
 
               <section>
@@ -348,6 +326,29 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               </section>
 
               <section>
+                <SectionLabel>Font Size</SectionLabel>
+                <div className="mt-3 flex gap-1.5">
+                  {FONT_SIZES.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setFontSize(s.id)}
+                      aria-pressed={fontSize === s.id}
+                      className={cn(
+                        "flex flex-1 items-center justify-center rounded-lg border py-1.5 text-[11px] font-semibold transition-colors outline-none",
+                        "hover:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                        fontSize === s.id
+                          ? "border-primary bg-primary/10 text-foreground"
+                          : "border-input bg-background text-muted-foreground"
+                      )}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section>
                 <SectionLabel>Language</SectionLabel>
                 <Popover open={langPickerOpen} onOpenChange={setLangPickerOpen}>
                   <PopoverTrigger asChild>
@@ -424,7 +425,64 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                   </AnimatePresence>
                 </div>
               </section>
+    </div>
+  )
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={(v) => { if (!v) onClose() }}>
+        <DrawerContent className="max-h-[90dvh]">
+          <DrawerTitle className="sr-only">Settings</DrawerTitle>
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+              Settings
+            </span>
+            <button
+              onClick={onClose}
+              className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <IconX size={14} />
+            </button>
+          </div>
+          {panelContent}
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+            onClick={onClose}
+          />
+          <motion.aside
+            key="panel"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 340, damping: 34 }}
+            className="fixed top-0 right-0 z-50 flex h-full w-72 flex-col border-l border-border bg-background shadow-2xl"
+          >
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+              <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+                Settings
+              </span>
+              <button
+                onClick={onClose}
+                className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <IconX size={14} />
+              </button>
             </div>
+            {panelContent}
           </motion.aside>
         </>
       )}

@@ -170,12 +170,24 @@ export const ACCENT_COLORS: { id: AccentColor; label: string; swatch: string }[]
     { id: "lavender", label: "Lavender", swatch: "oklch(0.65 0.16 285)" },
   ];
 
+export type FontSize = "xs" | "sm" | "md" | "lg" | "xl";
+
+export const FONT_SIZES: { id: FontSize; label: string; rem: string }[] = [
+  { id: "xs", label: "XS", rem: "1rem" },
+  { id: "sm", label: "SM", rem: "1.25rem" },
+  { id: "md", label: "MD", rem: "1.5rem" },
+  { id: "lg", label: "LG", rem: "1.875rem" },
+  { id: "xl", label: "XL", rem: "2.25rem" },
+];
+
 interface SettingsContextType {
   accent: AccentColor;
   setAccent: (c: AccentColor) => void;
   font: TypingFont;
   setFont: (f: TypingFont) => void;
   fontCssFamily: string;
+  fontSize: FontSize;
+  setFontSize: (s: FontSize) => void;
   showKeyboard: boolean;
   setShowKeyboard: (v: boolean) => void;
   soundEnabled: boolean;
@@ -232,6 +244,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [soundPack, setSoundPackState] = useState<SoundPack>("default");
   const [language, setLanguageState] = useState("english");
   const [showDiacritics, setShowDiacriticsState] = useState(true);
+  const [fontSize, setFontSizeState] = useState<FontSize>("md");
 
   // Rule 4: one-time hydration from localStorage on mount, applying DOM side
   // effects inline here instead of in separate reactive useEffects.
@@ -268,6 +281,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
     const savedShowDiacritics = localStorage.getItem("tc-show-diacritics");
     if (savedShowDiacritics !== null) setShowDiacriticsState(savedShowDiacritics !== "false");
+
+    const savedFontSize = localStorage.getItem("tc-font-size") as FontSize | null;
+    if (savedFontSize) setFontSizeState(savedFontSize);
   });
 
   // Rule 3: setAccent / setFont are event handlers that apply DOM changes
@@ -329,6 +345,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("tc-show-diacritics", String(v));
   };
 
+  const setFontSize = (s: FontSize) => {
+    setFontSizeState(s);
+    localStorage.setItem("tc-font-size", s);
+  };
+
   const fontCssFamily =
     FONT_OPTIONS.find((f) => f.id === font)?.cssFamily ?? "var(--font-mono)";
 
@@ -346,6 +367,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         soundPack, setSoundPack,
         language, setLanguage,
         showDiacritics, setShowDiacritics,
+        fontSize, setFontSize,
       }}
     >
       {children}
