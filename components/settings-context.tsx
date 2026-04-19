@@ -27,7 +27,7 @@ export interface SoundPackOption {
 }
 
 export const SOUND_PACKS: SoundPackOption[] = [
-  { id: "default",           label: "Default",                url: "/sounds/sound.ogg" },
+  { id: "default",           label: "Classic",                url: "/sounds/sound.ogg" },
   { id: "cherrymx-black-pbt", label: "Cherry MX Black", url: "/sounds/cherrymx-black-pbt/sound.ogg", configUrl: "/sounds/cherrymx-black-pbt/config.json" },
   { id: "cherrymx-blue-pbt",  label: "Cherry MX Blue",  url: "/sounds/cherrymx-blue-pbt/sound.ogg",  configUrl: "/sounds/cherrymx-blue-pbt/config.json" },
   { id: "cherrymx-brown-pbt", label: "Cherry MX Brown ", url: "/sounds/cherrymx-brown-pbt/sound.ogg", configUrl: "/sounds/cherrymx-brown-pbt/config.json" },
