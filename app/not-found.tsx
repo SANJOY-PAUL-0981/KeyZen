@@ -60,7 +60,7 @@ function PixelCatWithSign() {
   // Cat matrix 14x13 cells at PX=5 = 70x65.
   return (
     <svg
-      viewBox="-6 -6 200 170"
+      viewBox="-16 -6 220 170"
       shapeRendering="crispEdges"
       overflow="visible"
       preserveAspectRatio="xMidYMax meet"
@@ -70,19 +70,19 @@ function PixelCatWithSign() {
       {/* Sign board */}
       <g className="cat-sign">
         <rect
-          x="6"
+          x="-10"
           y="4"
-          width="168"
+          width="200"
           height="36"
           className="fill-card"
           stroke="currentColor"
           strokeWidth={PX / 2}
         />
         {/* pixel corner studs */}
-        <rect x="6" y="4" width={PX} height={PX} className="fill-foreground" />
-        <rect x="169" y="4" width={PX} height={PX} className="fill-foreground" />
-        <rect x="6" y="35" width={PX} height={PX} className="fill-foreground" />
-        <rect x="169" y="35" width={PX} height={PX} className="fill-foreground" />
+        <rect x="-10" y="4" width={PX} height={PX} className="fill-foreground" />
+        <rect x="185" y="4" width={PX} height={PX} className="fill-foreground" />
+        <rect x="-10" y="35" width={PX} height={PX} className="fill-foreground" />
+        <rect x="185" y="35" width={PX} height={PX} className="fill-foreground" />
         <text
           x="90"
           y="27"

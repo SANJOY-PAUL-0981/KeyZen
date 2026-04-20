@@ -72,8 +72,16 @@ export default async function AboutPage() {
           stack and features.
         </p>
         <p className="leading-relaxed">
-          If you spot a bug or want to improve something, issues and pull
-          requests on GitHub are welcome.
+          If you spot a bug or want to improve something,{" "}
+          <a
+            href={`https://github.com/${REPO_OWNER}/${REPO_NAME}/issues`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            raise an issue or request a feature
+          </a>{" "}
+          on GitHub.
         </p>
 
         <div className="space-y-3 text-sm">
