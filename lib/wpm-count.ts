@@ -96,7 +96,7 @@ export function wpmNumeratorFromCounts(c: WpmCounts): number {
 }
 
 export function accuracyFromCounts(c: WpmCounts): number {
-  const denom = c.allCorrectChars + c.incorrectChars
+  const denom = c.allCorrectChars + c.incorrectChars + c.missedChars
   if (denom <= 0) return 100
   return Math.round((c.allCorrectChars / denom) * 100)
 }
