@@ -16,7 +16,6 @@ import {
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import {
@@ -109,19 +108,42 @@ const chartConfig: ChartConfig = {
   },
 };
 
-function WpmChart({ history }: { history: WpmSnapshot[] }) {
+function WpmChart({
+  history,
+  personalBest,
+}: {
+  history: WpmSnapshot[];
+  personalBest?: number;
+}) {
+  const burst = useMemo(
+    () => Math.max(...history.map((d) => d.wpm), 0),
+    [history],
+  );
+
   const data = useMemo(
     () =>
       history.map((d) => ({
         second: d.second,
         wpm: d.wpm,
         raw: d.raw,
-        errors: d.errors > 0 ? d.errors : undefined,
+        errors: d.errors,
       })),
     [history],
   );
 
-  const maxVal = Math.max(...history.map((d) => d.raw), 10);
+  const maxVal = Math.max(...history.map((d) => d.raw), personalBest ?? 0, 10);
+
+  const { secondTicks, minSecond, maxSecond } = useMemo(() => {
+    const seconds = history.map((d) => Math.round(d.second));
+    const lo = seconds.length ? Math.max(1, Math.min(...seconds)) : 1;
+    const hi = seconds.length ? Math.max(lo, Math.max(...seconds)) : 1;
+    const span = hi - lo;
+    const step = Math.max(1, Math.ceil((span || 1) / 8));
+    const ticks: number[] = [];
+    for (let t = lo; t <= hi; t += step) ticks.push(t);
+    if (ticks[ticks.length - 1] !== hi) ticks.push(hi);
+    return { secondTicks: ticks, minSecond: lo, maxSecond: hi };
+  }, [history]);
 
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
@@ -133,10 +155,14 @@ function WpmChart({ history }: { history: WpmSnapshot[] }) {
         />
         <XAxis
           dataKey="second"
+          type="number"
+          domain={[minSecond, maxSecond]}
+          ticks={secondTicks}
+          allowDecimals={false}
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 11, fill: "currentColor", opacity: 0.35 }}
-          interval="preserveStartEnd"
+          tickFormatter={(v: number) => `${Math.round(v)}`}
         />
         <YAxis
           domain={[0, Math.ceil(maxVal * 1.2)]}
@@ -154,17 +180,15 @@ function WpmChart({ history }: { history: WpmSnapshot[] }) {
         />
         <ChartTooltip
           cursor={{ stroke: "currentColor", strokeOpacity: 0.15, strokeWidth: 1 }}
-          content={
-            <ChartTooltipContent
-              labelFormatter={(v) => `second ${v}`}
-              formatter={(value, name) => [
-                <span key={name} className="font-mono font-bold">
-                  {value}
-                </span>,
-                name === "wpm" ? "WPM" : "Raw",
-              ]}
+          content={({ active, payload, label }) => (
+            <ChartHoverCard
+              active={active}
+              payload={payload}
+              label={label}
+              burst={burst}
+              personalBest={personalBest}
             />
-          }
+          )}
         />
         {/* Raw line */}
         <Line
@@ -215,6 +239,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
   const invalid = isInvalidTestResult(stats)
 
   const [pb] = useState(() => invalid ? null : saveIfPersonalBest(mode, modeDetail, wpm, accuracy));
+  const chartPersonalBest = pb?.isNewPb ? wpm : pb?.previous?.wpm;
 
   useEffect(() => {
     if (!invalid && wpm >= 100) {
@@ -317,7 +342,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         {/* Chart */}
         <div className="h-[220px] w-full md:flex-1">
           {wpmHistory.length > 1 ? (
-            <WpmChart history={wpmHistory} />
+            <WpmChart history={wpmHistory} personalBest={chartPersonalBest} />
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-muted-foreground/50">
               not enough data
@@ -508,6 +533,75 @@ function StatBox({ label, value, hint }: { label: string; value: string | number
         {value}
       </motion.span>
       {hint && <span className="text-[10px] text-muted-foreground opacity-40">{hint}</span>}
+    </div>
+  );
+}
+
+function ChartHoverCard({
+  active,
+  payload,
+  label,
+  burst,
+  personalBest,
+}: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ payload?: WpmSnapshot }>;
+  label?: string | number;
+  burst: number;
+  personalBest?: number;
+}) {
+  if (!active || !payload?.length) {
+    return null;
+  }
+
+  const row = payload[0]?.payload;
+  if (!row) {
+    return null;
+  }
+
+  return (
+    <div className="min-w-[9rem] rounded-md border border-border bg-popover/95 px-2.5 py-2 font-mono text-popover-foreground shadow-lg backdrop-blur">
+      <div className="mb-1.5 flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold leading-none tabular-nums">
+          {label}s
+        </span>
+        {personalBest ? (
+          <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+            pb {personalBest}
+          </span>
+        ) : null}
+      </div>
+      <div className="grid gap-0.5 text-[11px]">
+        <ChartTooltipRow color="var(--destructive)" label="errors" value={row.errors} />
+        <ChartTooltipRow color="var(--color-primary)" label="wpm" value={row.wpm} />
+        <ChartTooltipRow color="currentColor" label="raw" value={row.raw} dim />
+        <ChartTooltipRow color="currentColor" label="burst" value={burst} dim />
+      </div>
+    </div>
+  );
+}
+
+function ChartTooltipRow({
+  color,
+  label,
+  value,
+  dim = false,
+}: {
+  color: string;
+  label: string;
+  value: string | number;
+  dim?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span
+        className="h-2 w-2 rounded-[1px]"
+        style={{ backgroundColor: color, opacity: dim ? 0.35 : 1 }}
+      />
+      <span className="min-w-[3.5rem] text-muted-foreground">{label}</span>
+      <span className="ml-auto text-xs font-semibold tabular-nums text-foreground">
+        {value}
+      </span>
     </div>
   );
 }

@@ -274,3 +274,32 @@ body.screen-shake {
   .changelog-hero animate,
   .changelog-hero animateTransform { display: none; }
 }
+
+/* ── 404 cat slide ────────────────────────────────────────────── */
+@keyframes cat-slide {
+  0%   { transform: translate(-50%, 90%); opacity: 0; }
+  30%  { opacity: 1; }
+  70%  { transform: translate(-50%, -6%); }
+  85%  { transform: translate(-50%, 2%); }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@keyframes sign-wave {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+
+.cat-slide {
+  transform: translate(-50%, 90%);
+  animation: cat-slide 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+.cat-sign {
+  transform-origin: bottom center;
+  animation: sign-wave 2.4s ease-in-out 1.9s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-slide { animation: none; opacity: 1; transform: translate(-50%, 0); }
+  .cat-sign { animation: none; }
+}
