@@ -218,7 +218,7 @@ export default async function ChangelogPage() {
         aria-hidden
       />
 
-      <div className="mx-auto w-full max-w-3xl">
+      <div className="mx-auto w-full max-w-5xl">
         <Hero />
 
         {commits.length === 0 ? (

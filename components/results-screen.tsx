@@ -147,7 +147,7 @@ function WpmChart({
 
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
-      <LineChart data={data} margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
+      <LineChart data={data} margin={{ top: 8, right: 16, left: -16, bottom: 20 }}>
         <CartesianGrid
           vertical={false}
           stroke="currentColor"
@@ -169,7 +169,7 @@ function WpmChart({
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 11, fill: "currentColor", opacity: 0.35 }}
-          width={48}
+          width={36}
           label={{
             value: "WPM",
             angle: -90,
@@ -312,7 +312,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         />
       )}
       {/* Main block: column on mobile, row from md */}
-      <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-16">
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-4">
         {/* WPM + ACC + test type */}
         <div className="flex w-full flex-col gap-1 pt-2 md:w-36 md:shrink-0">
           <StatBig label="wpm" value={wpm} />
@@ -340,7 +340,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         </div>
 
         {/* Chart */}
-        <div className="h-[220px] w-full md:flex-1">
+        <div className=" h-80 w-full md:flex-1">
           {wpmHistory.length > 1 ? (
             <WpmChart history={wpmHistory} personalBest={chartPersonalBest} />
           ) : (

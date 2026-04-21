@@ -40,7 +40,7 @@ export default async function AboutPage() {
 
   return (
     <main className="flex flex-1 flex-col px-6 py-10 md:py-16">
-      <article className="mx-auto w-full max-w-2xl space-y-6 text-muted-foreground">
+      <article className=" w-full mx-auto max-w-5xl space-y-6 text-muted-foreground">
         <h1 className="font-(family-name:--font-doto) text-3xl font-bold text-foreground md:text-4xl">
           About KeyZen
         </h1>
