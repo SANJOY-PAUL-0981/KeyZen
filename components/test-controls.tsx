@@ -120,19 +120,21 @@ export function TestControls({
               </TabsList>
             </Tabs>
           ) : mode === "custom" ? (
-            <CustomTextDialog
-              value={customText}
-              onSave={onCustomTextChange}
-              trigger={
-                <button
-                  type="button"
-                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none"
-                >
-                  <IconPencil size={13} />
-                  change
-                </button>
-              }
-            />
+            <div className="bg-muted inline-flex h-9 items-center justify-center rounded-lg p-[3px]">
+              <CustomTextDialog
+                value={customText}
+                onSave={onCustomTextChange}
+                trigger={
+                  <button
+                    type="button"
+                    className="flex items-center gap-1.5 rounded-md px-3 h-full text-xs font-medium text-foreground bg-background dark:bg-input/30 shadow-sm transition-colors focus-visible:outline-none"
+                  >
+                    <IconPencil size={13} />
+                    change
+                  </button>
+                }
+              />
+            </div>
           ) : (
             <Tabs value={String(timeOption)} onValueChange={(v) => onTimeOptionChange(Number(v) as TimeOption)} className="flex items-center">
               <TabsList>
