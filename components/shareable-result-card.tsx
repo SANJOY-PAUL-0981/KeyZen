@@ -235,7 +235,7 @@ export function ScreenshotButton({ stats, pb }: ScreenshotButtonProps) {
         </CornerBrackets>
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-[780px]"
+        className="max-w-[min(calc(100%-2rem),1000px)]! sm:max-w-[700px]!"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader>
@@ -320,6 +320,8 @@ function ScaledCardPreview({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const scaledWidth = CARD_WIDTH * scale
+
   return (
     <div
       ref={wrapperRef}
@@ -334,7 +336,7 @@ function ScaledCardPreview({ children }: { children: React.ReactNode }) {
           transformOrigin: "top left",
           position: "absolute",
           top: 0,
-          left: 0,
+          left: `calc(50% - ${scaledWidth / 2}px)`,
         }}
       >
         {children}
