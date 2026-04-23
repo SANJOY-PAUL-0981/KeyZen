@@ -19,8 +19,15 @@ interface TypingTestProps {
 }
 
 export function TypingTest(props: TypingTestProps) {
-  const { realtimeWpm, faahMode, ghostMode, shakeMode, fontSize } = useSettings()
-  const fontSizeRem = { xs: "1rem", sm: "1.25rem", md: "1.5rem", lg: "1.875rem", xl: "2.25rem" }[fontSize]
+  const { realtimeWpm, faahMode, ghostMode, shakeMode, fontSize } =
+    useSettings()
+  const fontSizeRem = {
+    xs: "1rem",
+    sm: "1.25rem",
+    md: "1.5rem",
+    lg: "1.875rem",
+    xl: "2.25rem",
+  }[fontSize]
   const faahAudioRef = useRef<HTMLAudioElement | null>(null)
   const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -121,30 +128,29 @@ export function TypingTest(props: TypingTestProps) {
       onClick={handleFocus}
       onMouseMove={handleMouseMove}
     >
-      {/* Controls toolbar */}
-      <TestControls
-        mode={mode}
-        timeOption={timeOption}
-        wordOption={wordOption}
-        quoteLength={quoteLength}
-        punctuation={punctuation}
-        numbers={numbers}
-        difficulty={difficulty}
-        customText={customText}
-        controlsVisible={controlsVisible}
-        onModeChange={onModeChange}
-        onTimeOptionChange={onTimeOptionChange}
-        onWordOptionChange={onWordOptionChange}
-        onQuoteLengthChange={onQuoteLengthChange}
-        onPunctuationToggle={onPunctuationToggle}
-        onNumbersToggle={onNumbersToggle}
-        onDifficultyToggle={onDifficultyToggle}
-        onCustomTextChange={onCustomTextChange}
-        onRestart={onRestart}
-      />
-
       {/* Words display */}
       <div className="relative w-full">
+        {/* Controls toolbar */}
+        <TestControls
+          mode={mode}
+          timeOption={timeOption}
+          wordOption={wordOption}
+          quoteLength={quoteLength}
+          punctuation={punctuation}
+          numbers={numbers}
+          difficulty={difficulty}
+          customText={customText}
+          controlsVisible={controlsVisible}
+          onModeChange={onModeChange}
+          onTimeOptionChange={onTimeOptionChange}
+          onWordOptionChange={onWordOptionChange}
+          onQuoteLengthChange={onQuoteLengthChange}
+          onPunctuationToggle={onPunctuationToggle}
+          onNumbersToggle={onNumbersToggle}
+          onDifficultyToggle={onDifficultyToggle}
+          onCustomTextChange={onCustomTextChange}
+          onRestart={onRestart}
+        />
         {/* Caps Lock indicator */}
         <div className="pointer-events-none absolute top-3 right-0 left-0 z-30 flex items-center justify-center">
           <AnimatePresence>
@@ -170,7 +176,7 @@ export function TypingTest(props: TypingTestProps) {
             "flex items-center gap-5 md:mb-3 md:min-h-8",
             started
               ? "mb-3 min-h-8"
-              : "mb-0 h-0 min-h-0 overflow-hidden md:h-auto",
+              : "mb-0 h-0 min-h-0 overflow-hidden md:h-auto"
           )}
           animate={{ opacity: resetting ? 0 : 1 }}
           transition={{ duration: 0.15 }}

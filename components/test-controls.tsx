@@ -223,7 +223,7 @@ export function TestControls({
         )}
       >
         {/* Desktop / large screen controls */}
-        <div className="hidden lg:flex flex-wrap items-center justify-center gap-2">
+        <div className="hidden lg:flex flex-wrap items-center justify-center gap-2 mt-6">
           {/* Toggles: punctuation / numbers / difficulty */}
           <div className="flex flex-row flex-wrap items-center justify-center gap-1 rounded-lg p-1 bg-zinc-100 dark:bg-zinc-800">
             <button type="button" onClick={onPunctuationToggle} className={btnClass(punctuation)}>
@@ -317,7 +317,7 @@ export function TestControls({
         </div>
 
         {/* Mobile / tablet button */}
-        <div className="flex lg:hidden items-center justify-center">
+        <div className="flex lg:hidden items-center justify-center mb-5">
           <button
             type="button"
             onClick={(e) => {
