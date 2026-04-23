@@ -558,6 +558,7 @@ export function useTypingTest({
       correctedErrors: correctedErrorsRef.current,
       mode,
       modeDetail: mode === "time" ? String(timeOption) : mode === "words" ? String(wordOption) : mode === "quote" ? quoteLength : mode === "custom" ? "custom" : "",
+      language,
       wpmHistory,
     };
   }

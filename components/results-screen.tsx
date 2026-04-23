@@ -4,6 +4,7 @@ import { useMemo, useEffect, useRef, useState, type ReactNode } from "react";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { isInvalidTestResult } from "@/lib/validate-result";
 import { saveIfPersonalBest } from "@/lib/personal-best";
+import { getLanguageManifest } from "@/lib/languages";
 import { motion } from "motion/react";
 import { IconInfoCircle, IconRefresh, IconArrowRight, IconDownload } from "@tabler/icons-react";
 import {
@@ -46,6 +47,7 @@ export interface ResultStats {
   correctedErrors: number;
   mode: string;
   modeDetail: string;
+  language: string;
   wpmHistory: WpmSnapshot[];
 }
 
@@ -242,6 +244,11 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
   const [pb] = useState(() => invalid ? null : saveIfPersonalBest(mode, modeDetail, wpm, accuracy));
   const chartPersonalBest = wpm;
 
+  const languageName = useMemo(() => {
+    if (mode === "custom") return null;
+    return stats.language ? stats.language.charAt(0).toUpperCase() + stats.language.slice(1) : null;
+  }, [mode, stats.language]);
+
   useEffect(() => {
     if (!invalid && pb?.isNewPb) {
       const timer = setTimeout(() => {
@@ -338,9 +345,11 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
               Test Type
             </span>
             <span className="text-primary">
-              {capitalize(mode)} {modeDetail}
+              {modeDetail && modeDetail !== mode ? `${capitalize(mode)} ${modeDetail}` : capitalize(mode)}
             </span>
-            <span className="opacity-50">English</span>
+            {languageName && (
+              <span className="opacity-50">{languageName}</span>
+            )}
           </div>
         </div>
 

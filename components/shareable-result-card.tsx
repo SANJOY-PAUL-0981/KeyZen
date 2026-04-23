@@ -42,6 +42,7 @@ interface ShareableStats {
   correctedErrors: number
   mode: string
   modeDetail: string
+  language: string
   wpmHistory: Array<{
     second: number
     wpm: number
