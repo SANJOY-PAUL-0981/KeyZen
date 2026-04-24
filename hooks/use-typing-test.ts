@@ -6,30 +6,24 @@ import { generateWords, generateWordsFromPool, type Difficulty } from "@/lib/wor
 import { getQuote, type QuoteLength } from "@/lib/quotes";
 import { fetchLanguageWords, isRTLLanguage, stripArabicDiacritics } from "@/lib/languages";
 import { useSettings } from "@/components/settings-context";
-import {
-  accuracyFromCounts,
-  countWpm,
-  wpmNumeratorFromCounts,
-} from "@/lib/wpm-count";
+import { accuracyFromCounts, countWpm, wpmNumeratorFromCounts, } from "@/lib/wpm-count";
 import type { ResultStats, WpmSnapshot } from "@/components/results-screen";
-import {
-  type TestMode, type TimeOption, type WordOption,
-  TEST_MODE_STORAGE_KEY, TIME_OPTION_STORAGE_KEY, WORD_OPTION_STORAGE_KEY,
-  QUOTE_LENGTH_STORAGE_KEY, PUNCTUATION_STORAGE_KEY, NUMBERS_STORAGE_KEY, DIFFICULTY_STORAGE_KEY,
-  CUSTOM_TEXT_STORAGE_KEY, DEFAULT_CUSTOM_TEXT,
-  readStoredTestMode, readStoredTimeOption, readStoredWordOption,
-  readStoredQuoteLength, readStoredBool, readStoredDifficulty, readStoredCustomText,
-} from "@/lib/test-storage";
+import { CODE_MANIFEST, getCodeContent } from "@/lib/code";
+import { type TestMode, type TimeOption, type WordOption, TEST_MODE_STORAGE_KEY, TIME_OPTION_STORAGE_KEY, WORD_OPTION_STORAGE_KEY, QUOTE_LENGTH_STORAGE_KEY, PUNCTUATION_STORAGE_KEY, NUMBERS_STORAGE_KEY, DIFFICULTY_STORAGE_KEY, CUSTOM_TEXT_STORAGE_KEY, DEFAULT_CUSTOM_TEXT, CODE_LANGUAGE_STORAGE_KEY, CODE_CHAPTER_STORAGE_KEY, readStoredTestMode, readStoredTimeOption, readStoredWordOption, readStoredQuoteLength, readStoredBool, readStoredDifficulty, readStoredCustomText, readStoredCodeLanguage, readStoredCodeChapter, } from "@/lib/test-storage";
 
 function customTextToWords(text: string): string[] {
   return text.replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
 }
+
+const getCommentPrefix = (lang: string): string =>
+  lang === "shell" || lang === "bash" ? "#" : lang === "lua" ? "--" : "//";
 
 type ResetOverrides = Partial<{
   mode: TestMode; quoteLength: QuoteLength; wordOption: WordOption;
   timeOption: TimeOption; punctuation: boolean; numbers: boolean;
   difficulty: Difficulty | undefined; language: string; showDiacritics: boolean;
   customText: string;
+  codeLanguage: string; codeChapter: string;
 }>;
 
 interface UseTypingTestProps {
@@ -65,6 +59,10 @@ export function useTypingTest({
   const [numbers, setNumbers] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty | undefined>("easy");
   const [customText, setCustomText] = useState<string>(DEFAULT_CUSTOM_TEXT);
+  const [codeLanguage, setCodeLanguage] = useState<string>("");
+  const [codeChapter, setCodeChapter] = useState<string>("");
+
+  const codeContentCache = useRef<Record<string, string>>({});
 
   // Language word pool cache (kept in a ref so it survives re-renders)
   const langPoolRef = useRef<{ code: string; hard: boolean; words: string[] } | null>(null);
@@ -86,6 +84,7 @@ export function useTypingTest({
   const [isActivelyTyping, setIsActivelyTyping] = useState(false);
   const [screenFade, setScreenFade] = useState(1);
   const [capsLock, setCapsLock] = useState(false);
+  const [codeLoading, setCodeLoading] = useState(false);
 
   // ── Refs ─────────────────────────────────────────────────────────────────
   const correctCharsRef = useRef(0);
@@ -171,6 +170,8 @@ export function useTypingTest({
     const lang = overrides.language ?? language;
     const sd = "showDiacritics" in overrides ? overrides.showDiacritics : showDiacritics;
     const ct = overrides.customText ?? customText;
+    const cl = overrides.codeLanguage ?? codeLanguage;
+    const cc = overrides.codeChapter ?? codeChapter;
     const wc = m === "time" ? 200 : m === "words" ? wo : 100;
 
     setQuoteAuthor(null);
@@ -181,6 +182,20 @@ export function useTypingTest({
     } else if (m === "custom") {
       const customWords = customTextToWords(ct);
       setWords(customWords.length > 0 ? customWords : customTextToWords(DEFAULT_CUSTOM_TEXT));
+    } else if (m === "code") {
+      const c = getCommentPrefix(cl);
+      if (cl && cc) {
+        const content = getCodeContent(cl, cc);
+        if (content) {
+          const newWords = content.split(/\s+/).filter(w => w.length > 0);
+          setWords(newWords.length > 0 ? newWords : [c, "empty", "file"]);
+        } else {
+          setWords([c, "error", "loading", "file"]);
+        }
+      } else {
+        const missing = !cl && !cc ? ["language", "and", "chapter"] : !cl ? ["language"] : ["chapter"];
+        setWords([c, "Select", "a", ...missing, "from", "the", "top", "menu", "to", "start"]);
+      }
     } else {
       const newWords = await buildWords(lang, wc, { punctuation: p, numbers: n, difficulty: d, showDiacritics: sd });
       setWords(newWords);
@@ -204,8 +219,8 @@ export function useTypingTest({
     setIsActivelyTyping(false);
     onFinished?.(false);
     onTypingActiveChange?.(false);
-    if (!pauseRefocusRef.current) inputRef.current?.focus();
-  }, [mode, quoteLength, wordOption, timeOption, punctuation, numbers, difficulty, language, showDiacritics, customText, buildWords, onFinished, onTypingActiveChange]);
+    inputRef.current?.focus();
+  }, [mode, quoteLength, wordOption, timeOption, punctuation, numbers, difficulty, language, showDiacritics, customText, codeLanguage, codeChapter, buildWords, onFinished, onTypingActiveChange]);
 
   const resetTestImmediate = useCallback(() => resetTestWith(), [resetTestWith]);
 
@@ -231,6 +246,8 @@ export function useTypingTest({
     const storedNumbers = readStoredBool(NUMBERS_STORAGE_KEY);
     const storedDifficulty = readStoredDifficulty();
     const storedCustomText = readStoredCustomText();
+    const storedCodeLang = readStoredCodeLanguage();
+    const storedCodeChap = readStoredCodeChapter();
 
     const m = storedMode ?? mode;
     const to = storedTime ?? timeOption;
@@ -240,6 +257,13 @@ export function useTypingTest({
     const n = storedNumbers ?? numbers;
     const d = storedDifficulty !== undefined ? storedDifficulty : difficulty;
     const lang = language;
+    
+    let activeCodeLang = codeLanguage;
+    let activeCodeChap = codeChapter;
+    if (storedCodeLang) { activeCodeLang = storedCodeLang; setCodeLanguage(storedCodeLang); }
+    else if (m === "code") { activeCodeLang = "javascript"; setCodeLanguage("javascript"); }
+    if (storedCodeChap) { activeCodeChap = storedCodeChap; setCodeChapter(storedCodeChap); }
+    else if (m === "code") { activeCodeChap = CODE_MANIFEST["javascript"]?.chapters[0] ?? "00_variables"; setCodeChapter(activeCodeChap); }
 
     if (storedMode !== undefined) setMode(storedMode);
     if (storedTime !== undefined) setTimeOption(storedTime);
@@ -259,11 +283,25 @@ export function useTypingTest({
     } else if (m === "custom") {
       const customWords = customTextToWords(ct);
       setWords(customWords.length > 0 ? customWords : customTextToWords(DEFAULT_CUSTOM_TEXT));
+    } else if (m === "code") {
+      const c = getCommentPrefix(activeCodeLang);
+      if (activeCodeLang && activeCodeChap) {
+        const content = getCodeContent(activeCodeLang, activeCodeChap);
+        if (content) {
+          const newWords = content.split(/\s+/).filter(w => w.length > 0);
+          setWords(newWords.length > 0 ? newWords : [c, "empty", "file"]);
+        } else {
+          setWords([c, "error", "loading", "file"]);
+        }
+      } else {
+        const missing = !activeCodeLang && !activeCodeChap ? ["language", "and", "chapter"] : !activeCodeLang ? ["language"] : ["chapter"];
+        setWords([c, "Select", "a", ...missing, "from", "the", "top", "menu", "to", "start"]);
+      }
     } else {
       buildWords(lang, wc, { punctuation: p, numbers: n, difficulty: d, showDiacritics }).then((w) => setWords(w));
     }
     if (m === "time") setTimeLeft(to);
-    if (!pauseRefocusRef.current) inputRef.current?.focus();
+    inputRef.current?.focus();
   });
 
   // ── React to language changes from settings context ──────────────────────
@@ -585,7 +623,7 @@ export function useTypingTest({
     setIsActivelyTyping(false);
     onFinished?.(false);
     onTypingActiveChange?.(false);
-    if (!pauseRefocusRef.current) inputRef.current?.focus();
+    inputRef.current?.focus();
   }, [mode, timeOption, onFinished, onTypingActiveChange]);
 
   // Rule 3: fade results→typing on restart, driven by user action.
@@ -616,8 +654,16 @@ export function useTypingTest({
   const onModeChange = useCallback((next: TestMode) => {
     setMode(next);
     localStorage.setItem(TEST_MODE_STORAGE_KEY, next);
-    resetTest({ mode: next });
-  }, [resetTest]);
+    if (next === "code" && !codeLanguage) {
+      setCodeLanguage("javascript");
+      localStorage.setItem(CODE_LANGUAGE_STORAGE_KEY, "javascript");
+      setCodeChapter("00_variables");
+      localStorage.setItem(CODE_CHAPTER_STORAGE_KEY, "00_variables");
+      resetTest({ mode: next, codeLanguage: "javascript", codeChapter: "00_variables" });
+    } else {
+      resetTest({ mode: next });
+    }
+  }, [resetTest, codeLanguage]);
 
   const onTimeOptionChange = useCallback((next: TimeOption) => {
     setTimeOption(next);
@@ -665,6 +711,25 @@ export function useTypingTest({
     resetTest({ difficulty: next });
   }, [difficulty, resetTest]);
 
+const onCodeLanguageChange = useCallback((next: string) => {
+    setCodeLanguage(next);
+    const firstChap = CODE_MANIFEST[next]?.chapters[0] ?? "";
+    setCodeChapter(firstChap);
+    localStorage.setItem(CODE_LANGUAGE_STORAGE_KEY, next);
+    if (firstChap) {
+      localStorage.setItem(CODE_CHAPTER_STORAGE_KEY, firstChap);
+      resetTest({ codeLanguage: next, codeChapter: firstChap });
+    } else {
+      localStorage.removeItem(CODE_CHAPTER_STORAGE_KEY);
+      resetTest({ codeLanguage: next, codeChapter: "" });
+    }
+  }, [resetTest]);
+
+  const onCodeChapterChange = useCallback((next: string) => {
+    setCodeChapter(next);
+    localStorage.setItem(CODE_CHAPTER_STORAGE_KEY, next);
+    resetTest({ codeChapter: next });
+  }, [resetTest]);
 
   const controlsVisible = !started || showControls;
   const showResults = finished && frozenStatsRef.current;
@@ -673,9 +738,10 @@ export function useTypingTest({
     // State
     mode, timeOption, wordOption, quoteLength, quoteAuthor,
     punctuation, numbers, difficulty, customText,
+    codeLanguage, codeChapter,
     words, typed, wordIndex, started, rowOffset, finished,
     timeLeft, wordInputs, showControls, isFocused, resetting, isActivelyTyping,
-    screenFade, wpm, accuracy, capsLock,
+    screenFade, wpm, accuracy, capsLock, codeLoading,
     // Computed
     isRTL,
     controlsVisible, showResults, frozenStats: frozenStatsRef.current,
@@ -686,7 +752,7 @@ export function useTypingTest({
     handleMouseMove, handleResultsRestart, handleResultsNext,
     onModeChange, onTimeOptionChange, onWordOptionChange, onQuoteLengthChange,
     onPunctuationToggle, onNumbersToggle, onDifficultyToggle,
-    onCustomTextChange,
+    onCustomTextChange, onCodeLanguageChange, onCodeChapterChange,
     onRestart: () => resetTest(),
   };
 }
