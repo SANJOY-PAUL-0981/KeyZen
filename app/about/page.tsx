@@ -84,6 +84,25 @@ export default async function AboutPage() {
           on GitHub.
         </p>
 
+        <h2 className="font-(family-name:--font-doto) text-xl font-semibold text-foreground">
+          Privacy & Data Collection
+        </h2>
+        <p className="leading-relaxed">
+          KeyZen uses Google Analytics to collect anonymous usage data such as typing
+          speed, accuracy, and feature usage. This helps identify bugs, improve UX, and
+          prioritize new features. No personal information is collected. Data is
+          processed in accordance with Google&apos;s{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            Privacy Policy
+          </a>
+          .
+        </p>
+
         <div className="space-y-3 text-sm">
           <p className="text-muted-foreground">Contributors</p>
           {contributors.length === 0 ? (
