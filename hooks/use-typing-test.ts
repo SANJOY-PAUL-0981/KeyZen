@@ -643,12 +643,26 @@ export function useTypingTest({
     setScreenFade(0);
     if (screenFadeRef.current) clearTimeout(screenFadeRef.current);
     screenFadeRef.current = setTimeout(() => {
+      if (mode === "code") {
+        const chapters = CODE_MANIFEST[codeLanguage]?.chapters ?? [];
+        const currentIndex = chapters.indexOf(codeChapter);
+        if (currentIndex !== -1 && currentIndex < chapters.length - 1) {
+          const nextChapter = chapters[currentIndex + 1];
+          setCodeChapter(nextChapter);
+          localStorage.setItem(CODE_CHAPTER_STORAGE_KEY, nextChapter);
+          void resetTestWith({ codeChapter: nextChapter }).then(() => {
+            requestAnimationFrame(() => setScreenFade(1));
+            screenFadeRef.current = null;
+          });
+          return;
+        }
+      }
       void resetTestImmediate().then(() => {
         requestAnimationFrame(() => setScreenFade(1));
         screenFadeRef.current = null;
       });
     }, 150);
-  }, [resetTestImmediate]);
+  }, [resetTestImmediate, resetTestWith, mode, codeLanguage, codeChapter]);
 
   // ── Option-change handlers (Rule 3) ──────────────────────────────────────
   const onModeChange = useCallback((next: TestMode) => {
