@@ -57,7 +57,8 @@ export function useShikiTokens(
     }
 
     const codeToHighlight = rawCode ?? words.join("\n");
-    const key = `${lang}:${theme}:${codeToHighlight}`;
+    const wordsKey = words.join("|");
+    const key = `${lang}:${theme}:${codeToHighlight}:${wordsKey}`;
     if (key === prevKey.current) return;
     prevKey.current = key;
 
