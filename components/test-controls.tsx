@@ -108,9 +108,9 @@ export function TestControls({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-1.5 bg-zinc-100 dark:bg-zinc-800 border-border rounded-lg flex flex-col shadow-sm" align="center" sideOffset={8}>
           <div className="px-1 pb-1.5 pt-1">
-            <input 
-              type="text" 
-              placeholder="Search language..." 
+            <input
+              type="text"
+              placeholder="Search language..."
               value={langSearch}
               onChange={(e) => setLangSearch(e.target.value)}
               className="w-full bg-zinc-200/50 dark:bg-zinc-700/50 text-foreground px-2.5 py-1.5 rounded min-w-[140px] text-xs outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/70"
@@ -119,41 +119,41 @@ export function TestControls({
           </div>
           <div className="flex flex-col max-h-[300px] overflow-y-auto overflow-x-hidden pr-0.5 custom-scrollbar" style={{ scrollbarWidth: "thin" }}>
             {Object.values(codeManifest)
-              .filter(lang => 
-                !langSearch || 
-                lang.name.toLowerCase().includes(langSearch.toLowerCase()) || 
-                lang.ext.toLowerCase().includes(langSearch.toLowerCase()) || 
+              .filter(lang =>
+                !langSearch ||
+                lang.name.toLowerCase().includes(langSearch.toLowerCase()) ||
+                lang.ext.toLowerCase().includes(langSearch.toLowerCase()) ||
                 lang.code.toLowerCase().includes(langSearch.toLowerCase())
               )
               .map(lang => (
-              <button
-                type="button"
-                key={lang.code}
-                onClick={() => {
-                  onCodeLanguageChange(lang.code);
-                  setDesktopLangOpen(false);
-                }}
-                className={renderDropdownOptionClass(codeLanguage === lang.code)}
-              >
-                {lang.name}
-              </button>
-            ))}
-            {Object.values(codeManifest).filter(lang => 
-              !langSearch || 
-              lang.name.toLowerCase().includes(langSearch.toLowerCase()) || 
-              lang.ext.toLowerCase().includes(langSearch.toLowerCase()) || 
+                <button
+                  type="button"
+                  key={lang.code}
+                  onClick={() => {
+                    onCodeLanguageChange(lang.code);
+                    setDesktopLangOpen(false);
+                  }}
+                  className={renderDropdownOptionClass(codeLanguage === lang.code)}
+                >
+                  {lang.name}
+                </button>
+              ))}
+            {Object.values(codeManifest).filter(lang =>
+              !langSearch ||
+              lang.name.toLowerCase().includes(langSearch.toLowerCase()) ||
+              lang.ext.toLowerCase().includes(langSearch.toLowerCase()) ||
               lang.code.toLowerCase().includes(langSearch.toLowerCase())
             ).length === 0 && (
-              <p className="py-4 text-center text-xs text-muted-foreground w-[140px]">No results</p>
-            )}
+                <p className="py-4 text-center text-xs text-muted-foreground w-[140px]">No results</p>
+              )}
           </div>
         </PopoverContent>
       </Popover>
 
       <Popover open={desktopChapterOpen} onOpenChange={setDesktopChapterOpen}>
         <PopoverTrigger asChild>
-          <button 
-            className={codeSelectTriggerClass} 
+          <button
+            className={codeSelectTriggerClass}
             data-state={codeChapter ? "active" : "inactive"}
             disabled={!codeLanguage || !codeManifest[codeLanguage]}
           >
@@ -188,12 +188,12 @@ export function TestControls({
         <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Mode</span>
         <div className="grid grid-cols-3 gap-2">
           {([
-            { value: "time",   icon: IconClock,    label: "time"   },
-            { value: "words",  icon: IconLetterA,  label: "words"  },
-            { value: "quote",  icon: IconQuote,    label: "quote"  },
-            { value: "zen",    icon: IconMountain, label: "zen"    },
-            { value: "code",   icon: IconCode,     label: "code"   },
-            { value: "custom", icon: IconTool,     label: "custom" },
+            { value: "time", icon: IconClock, label: "time" },
+            { value: "words", icon: IconLetterA, label: "words" },
+            { value: "quote", icon: IconQuote, label: "quote" },
+            { value: "zen", icon: IconMountain, label: "zen" },
+            { value: "code", icon: IconCode, label: "code" },
+            { value: "custom", icon: IconTool, label: "custom" },
           ] as const).map(({ value, icon: Icon, label }) => (
             <button
               key={value}
@@ -286,39 +286,39 @@ export function TestControls({
                         className="absolute top-[calc(100%+4px)] left-0 w-full z-50 overflow-hidden shadow-xl rounded-lg border border-border bg-zinc-100 dark:bg-zinc-800 flex flex-col max-h-40 md:max-h-56"
                       >
                         <div className="px-2 py-1.5 border-b border-border shrink-0">
-                            <input
-                              type="text"
-                              placeholder="Search language..."
-                              value={langSearch}
-                              onChange={(e) => setLangSearch(e.target.value)}
-                              className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground/70"
-                              autoFocus={false}
-                            />
-                          </div>
-                          <div className="flex flex-col gap-0.5 p-1.5 overflow-y-auto custom-scrollbar flex-1">
-                            {(() => {
-                              const filtered = Object.values(codeManifest).filter(lang =>
-                                !langSearch ||
-                                lang.name.toLowerCase().includes(langSearch.toLowerCase()) ||
-                                lang.ext.toLowerCase().includes(langSearch.toLowerCase()) ||
-                                lang.code.toLowerCase().includes(langSearch.toLowerCase())
-                              )
-                              return filtered.length > 0 ? (
-                                filtered.map((lang) => (
-                                  <button
-                                    type="button"
-                                    key={lang.code}
-                                    onClick={() => { onCodeLanguageChange(lang.code); setLangPickerOpen(false); setLangSearch(""); }}
-                                    className={renderDropdownOptionClass(codeLanguage === lang.code)}
-                                  >
-                                    {lang.name}
-                                  </button>
-                                ))
-                              ) : (
-                                <p className="py-3 text-center text-xs text-muted-foreground">No results</p>
-                              )
-                            })()}
-                          </div>
+                          <input
+                            type="text"
+                            placeholder="Search language..."
+                            value={langSearch}
+                            onChange={(e) => setLangSearch(e.target.value)}
+                            className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground/70"
+                            autoFocus={false}
+                          />
+                        </div>
+                        <div className="flex flex-col gap-0.5 p-1.5 overflow-y-auto custom-scrollbar flex-1">
+                          {(() => {
+                            const filtered = Object.values(codeManifest).filter(lang =>
+                              !langSearch ||
+                              lang.name.toLowerCase().includes(langSearch.toLowerCase()) ||
+                              lang.ext.toLowerCase().includes(langSearch.toLowerCase()) ||
+                              lang.code.toLowerCase().includes(langSearch.toLowerCase())
+                            )
+                            return filtered.length > 0 ? (
+                              filtered.map((lang) => (
+                                <button
+                                  type="button"
+                                  key={lang.code}
+                                  onClick={() => { onCodeLanguageChange(lang.code); setLangPickerOpen(false); setLangSearch(""); }}
+                                  className={renderDropdownOptionClass(codeLanguage === lang.code)}
+                                >
+                                  {lang.name}
+                                </button>
+                              ))
+                            ) : (
+                              <p className="py-3 text-center text-xs text-muted-foreground">No results</p>
+                            )
+                          })()}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -399,7 +399,7 @@ export function TestControls({
                 <div className="grid grid-cols-2 gap-2">
                   {([
                     { key: "easy", icon: IconFeather, label: "easy", active: difficulty === "easy", d: "easy" as const },
-                    { key: "hard", icon: IconFlame,   label: "hard", active: difficulty === "hard", d: "hard" as const },
+                    { key: "hard", icon: IconFlame, label: "hard", active: difficulty === "hard", d: "hard" as const },
                   ] as const).map(({ key, icon: Icon, label, active, d }) => (
                     <Tooltip key={key}>
                       <TooltipTrigger asChild>
@@ -425,8 +425,8 @@ export function TestControls({
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Toggles</span>
                 <div className="grid grid-cols-2 gap-2">
                   {([
-                    { key: "punctuation", icon: IconAt,     label: "punctuation", active: punctuation,  onClick: onPunctuationToggle },
-                    { key: "numbers",     icon: IconNumber,  label: "numbers",     active: numbers,      onClick: onNumbersToggle },
+                    { key: "punctuation", icon: IconAt, label: "punctuation", active: punctuation, onClick: onPunctuationToggle },
+                    { key: "numbers", icon: IconNumber, label: "numbers", active: numbers, onClick: onNumbersToggle },
                   ] as const).map(({ key, icon: Icon, label, active, onClick }) => (
                     <Tooltip key={key}>
                       <TooltipTrigger asChild>
@@ -473,8 +473,8 @@ export function TestControls({
                 <TooltipProvider delayDuration={200}>
                   <div className="flex flex-row items-center justify-center gap-1 rounded-lg p-1 bg-zinc-100 dark:bg-zinc-800">
                     {([
-                      { key: "punctuation", icon: IconAt,    label: "punctuation", active: punctuation, onClick: onPunctuationToggle },
-                      { key: "numbers",     icon: IconNumber, label: "numbers",     active: numbers,     onClick: onNumbersToggle },
+                      { key: "punctuation", icon: IconAt, label: "punctuation", active: punctuation, onClick: onPunctuationToggle },
+                      { key: "numbers", icon: IconNumber, label: "numbers", active: numbers, onClick: onNumbersToggle },
                     ] as const).map(({ key, icon: Icon, label, active, onClick }) => (
                       <Tooltip key={key}>
                         <TooltipTrigger asChild>
@@ -494,7 +494,7 @@ export function TestControls({
                     <div className="h-4 w-px shrink-0 bg-border" />
                     {([
                       { key: "easy", icon: IconFeather, label: "easy", active: difficulty === "easy", d: "easy" as const },
-                      { key: "hard", icon: IconFlame,   label: "hard", active: difficulty === "hard", d: "hard" as const },
+                      { key: "hard", icon: IconFlame, label: "hard", active: difficulty === "hard", d: "hard" as const },
                     ] as const).map(({ key, icon: Icon, label, active, d }) => (
                       <Tooltip key={key}>
                         <TooltipTrigger asChild>
@@ -522,12 +522,12 @@ export function TestControls({
           <Tabs value={mode} onValueChange={(v) => onModeChange(v as TestMode)} className="flex items-center">
             <TabsList>
               {([
-                { value: "time",   icon: IconClock,    label: "time"   },
-                { value: "words",  icon: IconLetterA,  label: "words"  },
-                { value: "quote",  icon: IconQuote,    label: "quote"  },
-                { value: "zen",    icon: IconMountain, label: "zen"    },
-                { value: "code",   icon: IconCode,     label: "code"   },
-                { value: "custom", icon: IconTool,     label: "custom" },
+                { value: "time", icon: IconClock, label: "time" },
+                { value: "words", icon: IconLetterA, label: "words" },
+                { value: "quote", icon: IconQuote, label: "quote" },
+                { value: "zen", icon: IconMountain, label: "zen" },
+                { value: "code", icon: IconCode, label: "code" },
+                { value: "custom", icon: IconTool, label: "custom" },
               ] as const).map(({ value, icon: Icon, label }) => (
                 <TabsTrigger key={value} value={value} className="gap-1.5 px-3 text-xs cursor-pointer">
                   <Icon size={13} />
@@ -586,13 +586,13 @@ export function TestControls({
                 </Tabs>
               )}
 
-           
+
             </>
           )}
         </div>
 
         {/* Mobile / tablet button */}
-        <div className="flex lg:hidden items-center justify-center mb-5">
+        <div className="flex fixed left-0 right-0 lg:hidden items-center justify-center mb-5">
           <button
             type="button"
             onClick={(e) => {
