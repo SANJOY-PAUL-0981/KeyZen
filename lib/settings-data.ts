@@ -86,7 +86,8 @@ export type TypingFont =
   | "cascadia-code" | "0xproto" | "overpass-mono" | "ubuntu-mono"
   | "oxygen-mono" | "courier-prime" | "dm-mono" | "red-hat-mono"
   | "martian-mono" | "anonymous-pro" | "share-tech-mono" | "chivo-mono"
-  | "victor-mono" | "azeret-mono"
+  | "victor-mono" | "azeret-mono" | "hack" | "fira-mono" | "pt-mono" | "cousine" | "cutive-mono"
+  | "vt323" | "major-mono-display" | "nova-mono"
   // Display / Sans
   | "atkinson-hyperlegible" | "comfortaa" | "coming-soon" | "geist-sans"
   | "ibm-plex-sans" | "inter-tight" | "itim" | "kanit" | "lalezar" | "lato"
@@ -95,13 +96,14 @@ export type TypingFont =
   | "georgia" | "helvetica" | "sf-pro" | "poppins" | "raleway" | "work-sans"
   | "plus-jakarta-sans" | "dm-sans" | "outfit" | "figtree" | "manrope"
   | "rubik" | "quicksand" | "josefin-sans" | "sora" | "barlow" | "cabin"
-  | "exo-2"
+  | "exo-2" | "inter" | "bebas-neue" | "oswald" | "noto-sans" | "pacifico" | "archivo" | "syne" | "arvo" | "bitter" | "karla" | "public-sans"
+  | "jost" | "heebo" | "prompt" | "rajdhani" | "teko" | "lexend" | "catamaran" | "cairo"
   // Serif
   | "playfair-display" | "merriweather" | "lora" | "eb-garamond"
-  | "libre-baskerville" | "crimson-pro"
+  | "libre-baskerville" | "crimson-pro" | "cinzel" | "cormorant-garamond" | "zilla-slab"
   // Handwriting
   | "caveat" | "patrick-hand" | "indie-flower" | "architects-daughter"
-  | "permanent-marker";
+  | "permanent-marker" | "shadows-into-light" | "dancing-script" | "amatic-sc" | "sacramento";
 
 export interface FontOption {
   id: TypingFont;
@@ -135,6 +137,14 @@ export const FONT_OPTIONS: FontOption[] = [
   { id: "chivo-mono",            label: "Chivo Mono",            googleFamily: "Chivo+Mono:wght@400;500;700",        cssFamily: "'Chivo Mono'",                 tag: "mono" },
   { id: "victor-mono",           label: "Victor Mono",           googleFamily: "Victor+Mono:wght@400;500;700",       cssFamily: "'Victor Mono'",                tag: "mono" },
   { id: "azeret-mono",           label: "Azeret Mono",           googleFamily: "Azeret+Mono:wght@400;500;700",       cssFamily: "'Azeret Mono'",                tag: "mono" },
+  { id: "hack",                  label: "Hack",                  googleFamily: "Hack",                               cssFamily: "'Hack', monospace",            tag: "mono" },
+  { id: "fira-mono",             label: "Fira Mono",             googleFamily: "Fira+Mono:wght@400;500;700",         cssFamily: "'Fira Mono'",                  tag: "mono" },
+  { id: "pt-mono",               label: "PT Mono",               googleFamily: "PT+Mono",                            cssFamily: "'PT Mono'",                    tag: "mono" },
+  { id: "cousine",               label: "Cousine",               googleFamily: "Cousine:wght@400;700",               cssFamily: "'Cousine'",                    tag: "mono" },
+  { id: "cutive-mono",           label: "Cutive Mono",           googleFamily: "Cutive+Mono",                        cssFamily: "'Cutive Mono'",                tag: "mono" },
+  { id: "vt323",                 label: "VT323",                 googleFamily: "VT323",                              cssFamily: "'VT323'",                      tag: "mono" },
+  { id: "major-mono-display",    label: "Major Mono Display",    googleFamily: "Major+Mono+Display",                 cssFamily: "'Major Mono Display'",         tag: "mono" },
+  { id: "nova-mono",             label: "Nova Mono",             googleFamily: "Nova+Mono",                          cssFamily: "'Nova Mono'",                  tag: "mono" },
   // ── Display / Sans ──────────────────────────────────────────────────────────
   { id: "atkinson-hyperlegible", label: "Atkinson Hyperlegible", googleFamily: "Atkinson+Hyperlegible:wght@400;700", cssFamily: "'Atkinson Hyperlegible'",      tag: "display" },
   { id: "comfortaa",             label: "Comfortaa",             googleFamily: "Comfortaa:wght@400;500;700",         cssFamily: "'Comfortaa'",                  tag: "display" },
@@ -174,6 +184,25 @@ export const FONT_OPTIONS: FontOption[] = [
   { id: "barlow",                label: "Barlow",                googleFamily: "Barlow:wght@400;500;700",            cssFamily: "'Barlow'",                     tag: "display" },
   { id: "cabin",                 label: "Cabin",                 googleFamily: "Cabin:wght@400;500;700",             cssFamily: "'Cabin'",                      tag: "display" },
   { id: "exo-2",                 label: "Exo 2",                 googleFamily: "Exo+2:wght@400;500;700",             cssFamily: "'Exo 2'",                      tag: "display" },
+  { id: "inter",                 label: "Inter",                 googleFamily: "Inter:wght@400;500;700",             cssFamily: "'Inter'",                      tag: "display" },
+  { id: "bebas-neue",            label: "Bebas Neue",            googleFamily: "Bebas+Neue",                         cssFamily: "'Bebas Neue'",                 tag: "display" },
+  { id: "oswald",                label: "Oswald",                googleFamily: "Oswald:wght@400;500;700",            cssFamily: "'Oswald'",                     tag: "display" },
+  { id: "noto-sans",             label: "Noto Sans",             googleFamily: "Noto+Sans:wght@400;500;700",         cssFamily: "'Noto Sans'",                  tag: "display" },
+  { id: "pacifico",              label: "Pacifico",              googleFamily: "Pacifico",                           cssFamily: "'Pacifico'",                  tag: "display" },
+  { id: "archivo",               label: "Archivo",               googleFamily: "Archivo:wght@400;500;700",            cssFamily: "'Archivo'",                    tag: "display" },
+  { id: "syne",                  label: "Syne",                  googleFamily: "Syne:wght@400;500;700;800",          cssFamily: "'Syne'",                       tag: "display" },
+  { id: "arvo",                  label: "Arvo",                  googleFamily: "Arvo:wght@400;700",                  cssFamily: "'Arvo'",                       tag: "display" },
+  { id: "bitter",                label: "Bitter",                googleFamily: "Bitter:wght@400;500;700",            cssFamily: "'Bitter'",                     tag: "display" },
+  { id: "karla",                 label: "Karla",                 googleFamily: "Karla:wght@400;500;700",              cssFamily: "'Karla'",                      tag: "display" },
+  { id: "public-sans",           label: "Public Sans",           googleFamily: "Public+Sans:wght@400;500;700",       cssFamily: "'Public Sans'",                tag: "display" },
+  { id: "jost",                  label: "Jost",                  googleFamily: "Jost:wght@400;500;700",              cssFamily: "'Jost'",                       tag: "display" },
+  { id: "heebo",                 label: "Heebo",                 googleFamily: "Heebo:wght@400;500;700",             cssFamily: "'Heebo'",                      tag: "display" },
+  { id: "prompt",                label: "Prompt",                googleFamily: "Prompt:wght@400;500;700",            cssFamily: "'Prompt'",                     tag: "display" },
+  { id: "rajdhani",              label: "Rajdhani",              googleFamily: "Rajdhani:wght@400;500;700",          cssFamily: "'Rajdhani'",                   tag: "display" },
+  { id: "teko",                  label: "Teko",                  googleFamily: "Teko:wght@400;500;700",              cssFamily: "'Teko'",                       tag: "display" },
+  { id: "lexend",                label: "Lexend",                googleFamily: "Lexend:wght@400;500;700",            cssFamily: "'Lexend'",                     tag: "display" },
+  { id: "catamaran",             label: "Catamaran",             googleFamily: "Catamaran:wght@400;500;700",         cssFamily: "'Catamaran'",                  tag: "display" },
+  { id: "cairo",                 label: "Cairo",                 googleFamily: "Cairo:wght@400;500;700",             cssFamily: "'Cairo'",                      tag: "display" },
   // ── Serif ────────────────────────────────────────────────────────────────────
   { id: "playfair-display",      label: "Playfair Display",      googleFamily: "Playfair+Display:wght@400;500;700",  cssFamily: "'Playfair Display'",           tag: "serif" },
   { id: "merriweather",          label: "Merriweather",          googleFamily: "Merriweather:wght@400;700",          cssFamily: "'Merriweather'",               tag: "serif" },
@@ -181,10 +210,17 @@ export const FONT_OPTIONS: FontOption[] = [
   { id: "eb-garamond",           label: "EB Garamond",           googleFamily: "EB+Garamond:wght@400;500;700",       cssFamily: "'EB Garamond'",                tag: "serif" },
   { id: "libre-baskerville",     label: "Libre Baskerville",     googleFamily: "Libre+Baskerville:wght@400;700",     cssFamily: "'Libre Baskerville'",          tag: "serif" },
   { id: "crimson-pro",           label: "Crimson Pro",           googleFamily: "Crimson+Pro:wght@400;500;700",       cssFamily: "'Crimson Pro'",                tag: "serif" },
+  { id: "cinzel",                label: "Cinzel",                googleFamily: "Cinzel:wght@400;700",                cssFamily: "'Cinzel'",                     tag: "serif" },
+  { id: "cormorant-garamond",    label: "Cormorant Garamond",    googleFamily: "Cormorant+Garamond:wght@400;700",    cssFamily: "'Cormorant Garamond'",         tag: "serif" },
+  { id: "zilla-slab",            label: "Zilla Slab",            googleFamily: "Zilla+Slab:wght@400;700",            cssFamily: "'Zilla Slab'",                 tag: "serif" },
   // ── Handwriting ─────────────────────────────────────────────────────────────
   { id: "caveat",                label: "Caveat",                googleFamily: "Caveat:wght@400;500;700",            cssFamily: "'Caveat'",                     tag: "handwriting" },
   { id: "patrick-hand",          label: "Patrick Hand",          googleFamily: "Patrick+Hand",                       cssFamily: "'Patrick Hand'",               tag: "handwriting" },
   { id: "indie-flower",          label: "Indie Flower",          googleFamily: "Indie+Flower",                       cssFamily: "'Indie Flower'",               tag: "handwriting" },
   { id: "architects-daughter",   label: "Architects Daughter",   googleFamily: "Architects+Daughter",                cssFamily: "'Architects Daughter'",        tag: "handwriting" },
   { id: "permanent-marker",      label: "Permanent Marker",      googleFamily: "Permanent+Marker",                   cssFamily: "'Permanent Marker'",           tag: "handwriting" },
+  { id: "shadows-into-light",    label: "Shadows Into Light",    googleFamily: "Shadows+Into+Light",                 cssFamily: "'Shadows Into Light'",         tag: "handwriting" },
+  { id: "dancing-script",        label: "Dancing Script",        googleFamily: "Dancing+Script",                     cssFamily: "'Dancing Script'",             tag: "handwriting" },
+  { id: "amatic-sc",             label: "Amatic SC",             googleFamily: "Amatic+SC",                          cssFamily: "'Amatic SC'",                  tag: "handwriting" },
+  { id: "sacramento",            label: "Sacramento",            googleFamily: "Sacramento",                         cssFamily: "'Sacramento'",                 tag: "handwriting" },
 ];
