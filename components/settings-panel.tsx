@@ -127,23 +127,31 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               </section>
 
               <section className="flex flex-col gap-3">
-                <SectionLabel>Sound</SectionLabel>
+                <SectionHeader
+                  title="Sound"
+                  description="Audio feedback when typing"
+                />
                 <ToggleRow
                   label="Keyboard sound"
+                  description="Play sounds as you type each key"
                   enabled={soundEnabled}
                   onToggle={() => setSoundEnabled(!soundEnabled)}
                   disabledReason="keyboard not available on mobile"
                 />
                 <ToggleRow
                   label="Click sound"
+                  description="Play a click sound on each keypress"
                   enabled={clickSoundEnabled}
                   onToggle={() => setClickSoundEnabled(!clickSoundEnabled)}
                 />
               </section>
 
-              {soundEnabled && !isMobile && (
+{soundEnabled && !isMobile && (
                 <section>
-                  <SectionLabel>Sound Pack</SectionLabel>
+                  <SectionHeader
+                    title="Sound Pack"
+                    description="Choose the sound your keyboard makes when you type"
+                  />
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {SOUND_PACKS.map((s) => {
                       const selected = soundPack === s.id
@@ -180,40 +188,52 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               )}
 
               <section className="flex flex-col gap-3">
-                <SectionLabel>Interface</SectionLabel>
+                <SectionHeader
+                  title="Interface"
+                  description="Customize the typing test layout and display"
+                />
                 <ToggleRow
                   label="Show keyboard"
+                  description="Display a keyboard at the bottom of the screen"
                   enabled={showKeyboard}
                   onToggle={() => setShowKeyboard(!showKeyboard)}
                   disabledReason="keyboard not available on mobile"
                 />
                 <ToggleRow
                   label="Realtime stats"
+                  description="Show WPM and accuracy while typing"
                   enabled={realtimeWpm}
                   onToggle={() => setRealtimeWpm(!realtimeWpm)}
                 />
               </section>
 
               <section className="flex flex-col gap-3">
-                <SectionLabel>Code</SectionLabel>
+                <SectionHeader
+                  title="Code"
+                  description="Editor features for code snippets"
+                />
                 <ToggleRow
                   label="Syntax highlighting"
+                  description="Colorize code keywords and strings"
                   enabled={syntaxHighlighting}
                   onToggle={() => setSyntaxHighlighting(!syntaxHighlighting)}
                 />
                 <ToggleRow
                   label="Auto pair"
+                  description="Automatically close brackets and quotes"
                   enabled={autoPair}
                   onToggle={() => setAutoPair(!autoPair)}
                 />
                 <ToggleRow
                   label="Line numbers"
+                  description="Show line numbers alongside code"
                   enabled={showLineNumbers}
                   onToggle={() => setShowLineNumbers(!showLineNumbers)}
                 />
                 {isRTL && (
                   <ToggleRow
                     label="Diacritics"
+                    description="Show accent marks on characters"
                     enabled={showDiacritics}
                     onToggle={() => setShowDiacritics(!showDiacritics)}
                   />
@@ -221,19 +241,25 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               </section>
 
               <section className="flex flex-col gap-3">
-                <SectionLabel>Modes</SectionLabel>
+                <SectionHeader
+                  title="Modes"
+                  description="Fun visual effects and challenges"
+                />
                 <ToggleRow
                   label="Shake mode"
+                  description="Screen shakes when you press a wrong key"
                   enabled={shakeMode}
                   onToggle={() => setShakeMode(!shakeMode)}
                 />
                 <ToggleRow
                   label="Faah mode"
+                  description="Words must be typed twice to be completed"
                   enabled={faahMode}
                   onToggle={() => setFaahMode(!faahMode)}
                 />
                 <ToggleRow
                   label="Ghost mode"
+                  description="Next word stays hidden until current one is typed"
                   enabled={ghostMode}
                   onToggle={() => setGhostMode(!ghostMode)}
                 />
@@ -603,6 +629,23 @@ function SwitchIcon({ pack, selected }: { pack: SoundPack; selected: boolean }) 
   )
 }
 
+function SectionHeader({
+  title,
+  description,
+}: {
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
+        {title}
+      </p>
+      <p className="text-[10px] text-muted-foreground/60 leading-snug">{description}</p>
+    </div>
+  )
+}
+
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
@@ -613,16 +656,17 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function ToggleRow({
   label,
+  description,
   enabled,
   onToggle,
   disabledReason,
 }: {
   label: string
+  description?: string
   enabled: boolean
   onToggle: () => void
   disabledReason?: string
 }) {
-  // Use JS window check to detect mobile (lg = 1024px)
   const isMobile = typeof window !== "undefined" && window.innerWidth < 1024
   const isDisabled = !!disabledReason && isMobile
 
@@ -631,14 +675,21 @@ function ToggleRow({
       className="flex items-center justify-between"
       title={isDisabled ? disabledReason : undefined}
     >
-      <span
-        className={cn(
-          "text-[11px] font-semibold tracking-widest uppercase",
-          isDisabled ? "text-muted-foreground/40" : "text-muted-foreground"
+      <div className="flex flex-col gap-0.5">
+        <span
+          className={cn(
+            "text-[11px] font-semibold tracking-widest uppercase",
+            isDisabled ? "text-muted-foreground/40" : "text-muted-foreground"
+          )}
+        >
+          {label}
+        </span>
+        {description && (
+          <span className="text-[10px] text-muted-foreground/50 leading-snug">
+            {description}
+          </span>
         )}
-      >
-        {label}
-      </span>
+      </div>
       <button
         onClick={isDisabled ? undefined : onToggle}
         disabled={isDisabled}
