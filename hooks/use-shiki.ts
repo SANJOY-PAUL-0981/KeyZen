@@ -14,6 +14,7 @@ const LANG_MAP: Record<string, string> = {
   rust: "rust",
   cpp: "cpp",
   c: "c",
+  java: "java",
 };
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
