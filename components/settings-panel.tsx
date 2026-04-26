@@ -93,37 +93,6 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 <NextThemeSwitcher />
               </section>
 
-              {soundEnabled && !isMobile && (
-                <section>
-                  <SectionLabel>Keys</SectionLabel>
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    {SOUND_PACKS.map((s) => {
-                      const selected = soundPack === s.id
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => setSoundPack(s.id)}
-                          aria-pressed={selected}
-                          className={cn(
-                            "flex min-w-0 flex-col cursor-pointer items-center justify-between gap-2 rounded-lg border p-2 text-center transition-colors outline-none",
-                            "hover:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
-                            selected
-                              ? "border-primary bg-primary/10 text-foreground"
-                              : "border-input bg-background text-muted-foreground"
-                          )}
-                        >
-                          <SwitchIcon pack={s.id} selected={selected} />
-                          <span className="w-full text-[10px] leading-tight font-medium break-words">
-                            {s.label}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </section>
-              )}
-
               <section>
                 <SectionLabel>Accent</SectionLabel>
                 <div
@@ -158,12 +127,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               </section>
 
               <section className="flex flex-col gap-3">
-                <ToggleRow
-                  label="Show keyboard"
-                  enabled={showKeyboard}
-                  onToggle={() => setShowKeyboard(!showKeyboard)}
-                  disabledReason="keyboard not available on mobile"
-                />
+                <SectionLabel>Sound</SectionLabel>
                 <ToggleRow
                   label="Keyboard sound"
                   enabled={soundEnabled}
@@ -175,11 +139,56 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                   enabled={clickSoundEnabled}
                   onToggle={() => setClickSoundEnabled(!clickSoundEnabled)}
                 />
+              </section>
+
+              {soundEnabled && !isMobile && (
+                <section>
+                  <SectionLabel>Sound Pack</SectionLabel>
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {SOUND_PACKS.map((s) => {
+                      const selected = soundPack === s.id
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSoundPack(s.id)}
+                          aria-pressed={selected}
+                          className={cn(
+                            "flex min-w-0 flex-col cursor-pointer items-center justify-between gap-2 rounded-lg border p-2 text-center transition-colors outline-none",
+                            "hover:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                            selected
+                              ? "border-primary bg-primary/10 text-foreground"
+                              : "border-input bg-background text-muted-foreground"
+                          )}
+                        >
+                          <SwitchIcon pack={s.id} selected={selected} />
+                          <span className="w-full text-[10px] leading-tight font-medium wrap-break-word">
+                            {s.label}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </section>
+              )}
+
+              <section className="flex flex-col gap-3">
+                <SectionLabel>Interface</SectionLabel>
+                <ToggleRow
+                  label="Show keyboard"
+                  enabled={showKeyboard}
+                  onToggle={() => setShowKeyboard(!showKeyboard)}
+                  disabledReason="keyboard not available on mobile"
+                />
                 <ToggleRow
                   label="Realtime stats"
                   enabled={realtimeWpm}
                   onToggle={() => setRealtimeWpm(!realtimeWpm)}
                 />
+              </section>
+
+              <section className="flex flex-col gap-3">
+                <SectionLabel>Code</SectionLabel>
                 <ToggleRow
                   label="Syntax highlighting"
                   enabled={syntaxHighlighting}
