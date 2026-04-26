@@ -307,7 +307,7 @@ export function TypingTest(props: TypingTestProps) {
           ref={wordsContainerRef}
           className={cn(
             "relative w-full leading-relaxed",
-            isCodeRendering ? "overflow-x-auto overflow-y-hidden" : "overflow-hidden",
+            isCodeRendering ? "overflow-x-auto overflow-y-hidden no-scrollbar" : "overflow-hidden",
             "h-[7.8rem]",
             isActivelyTyping && "is-typing"
           )}
