@@ -110,7 +110,7 @@ Audio uses the **Web Audio API**. Many browsers only unlock audio after a **user
 
 ## Contributing
 
-Issues and pull requests are welcome on [GitHub](https://github.com/shivabhattacharjee/KeyZen).
+Issues and pull requests are welcome on [GitHub](https://github.com/shivabhattacharjee/KeyZen). Before contributing, please read the [Contributing guide](CONTRIBUTING.md) for the project rules and workflow.
 
 ## Contributors
 
