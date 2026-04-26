@@ -14,7 +14,7 @@ export default function Page() {
   const [typingFocused, setTypingFocused] = useState(true)
   const [restartKey, setRestartKey] = useState(0)
   const [mode, setMode] = useState<string>("time")
-  const { showKeyboard, soundEnabled, soundPack, language } = useSettings()
+  const { showKeyboard, soundEnabled, soundPack, language, setSoundPackLoading } = useSettings()
   const soundPackOption = SOUND_PACKS.find((s) => s.id === soundPack)
   const soundUrl = soundPackOption?.url ?? "/sounds/sound.ogg"
   const soundConfigUrl = soundPackOption?.configUrl
@@ -82,6 +82,7 @@ export default function Page() {
               forceActive={soundEnabled && !showKeyboard}
               physicalKeysEnabled={typingFocused}
               language={language}
+              onAudioLoadingChange={setSoundPackLoading}
             />
           </div>
         </footer>

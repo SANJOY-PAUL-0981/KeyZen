@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { IconX } from "@tabler/icons-react"
+import { IconX, IconLoader2 } from "@tabler/icons-react"
 import type { SoundPack } from "@/components/settings-context"
 import { CaretDownIcon } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "motion/react"
@@ -22,7 +22,7 @@ interface SettingsPanelProps {
 
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const {
-    accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, soundEnabled, setSoundEnabled, clickSoundEnabled, setClickSoundEnabled, realtimeWpm, setRealtimeWpm, faahMode, setFaahMode, ghostMode, setGhostMode, shakeMode, setShakeMode, soundPack, setSoundPack, language, setLanguage, showDiacritics, setShowDiacritics, fontSize, setFontSize, syntaxHighlighting, setSyntaxHighlighting, autoPair, setAutoPair, showLineNumbers, setShowLineNumbers,
+    accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, soundEnabled, setSoundEnabled, clickSoundEnabled, setClickSoundEnabled, realtimeWpm, setRealtimeWpm, faahMode, setFaahMode, ghostMode, setGhostMode, shakeMode, setShakeMode, soundPack, setSoundPack, language, setLanguage, showDiacritics, setShowDiacritics, fontSize, setFontSize, syntaxHighlighting, setSyntaxHighlighting, autoPair, setAutoPair, showLineNumbers, setShowLineNumbers, soundPackLoading,
   } = useSettings()
   const isRTL = isRTLLanguage(language)
   const [isMobile, setIsMobile] = useState(false)
@@ -161,7 +161,14 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                               : "border-input bg-background text-muted-foreground"
                           )}
                         >
-                          <SwitchIcon pack={s.id} selected={selected} />
+                          <div className="relative flex items-center justify-center">
+                            <SwitchIcon pack={s.id} selected={selected} />
+                            {selected && soundPackLoading && (
+                              <div className="absolute inset-0 flex items-center justify-center rounded bg-background/50 backdrop-blur-[1px]">
+                                <IconLoader2 className="animate-spin text-primary" size={18} />
+                              </div>
+                            )}
+                          </div>
                           <span className="w-full text-[10px] leading-tight font-medium wrap-break-word">
                             {s.label}
                           </span>
@@ -235,33 +242,33 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               <section>
                 <SectionLabel>Font</SectionLabel>
                 {/* Inline accordion — avoids Popover portal which vaul intercepts on mobile */}
-                <button
-                  type="button"
-                  onClick={() => { setFontPickerOpen((v) => !v); setFontSearch("") }}
-                  className={cn(
-                    "mt-3 flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs transition-colors outline-none",
-                    "hover:bg-muted/50"
-                  )}
-                >
-                  <span className="min-w-0 truncate" style={{ fontFamily: selectedFont?.cssFamily }}>
-                    {selectedFont?.label ?? font}
-                  </span>
-                  <CaretDownIcon
-                    className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-200", fontPickerOpen && "rotate-180")}
-                    weight="bold"
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {fontPickerOpen && (
-                    <motion.div
-                      key="font-list"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="mt-1 rounded-lg border border-border bg-background">
+                <div className="relative mt-3">
+                  <button
+                    type="button"
+                    onClick={() => { setFontPickerOpen((v) => !v); setFontSearch("") }}
+                    className={cn(
+                      "flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs transition-colors outline-none",
+                      "hover:bg-muted/50"
+                    )}
+                  >
+                    <span className="min-w-0 truncate" style={{ fontFamily: selectedFont?.cssFamily }}>
+                      {selectedFont?.label ?? font}
+                    </span>
+                    <CaretDownIcon
+                      className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-200", fontPickerOpen && "rotate-180")}
+                      weight="bold"
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {fontPickerOpen && (
+                      <motion.div
+                        key="font-list"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="absolute top-[calc(100%+4px)] left-0 w-full z-50 overflow-hidden shadow-xl rounded-lg border border-border bg-background"
+                      >
                         <div className="border-b border-border px-2 py-1.5">
                           <input
                             type="text"
@@ -272,7 +279,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             autoFocus={false}
                           />
                         </div>
-                        <div className="flex flex-col p-1">
+                        <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
                           {(() => {
                             const q = fontSearch.trim().toLowerCase()
                             const filtered = q
@@ -321,10 +328,10 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             )
                           })()}
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </section>
 
               <section>
@@ -353,31 +360,31 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               <section>
                 <SectionLabel>Language</SectionLabel>
                 {/* Inline accordion — avoids Popover portal which vaul intercepts on mobile */}
-                <button
-                  type="button"
-                  onClick={() => { setLangPickerOpen((v) => !v); setLangSearch("") }}
-                  className={cn(
-                    "mt-3 flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs transition-colors outline-none",
-                    "hover:bg-muted/50"
-                  )}
-                >
-                  <span className="min-w-0 truncate">{selectedLang?.name ?? language}</span>
-                  <CaretDownIcon
-                    className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-200", langPickerOpen && "rotate-180")}
-                    weight="bold"
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {langPickerOpen && (
-                    <motion.div
-                      key="lang-list"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="mt-1 rounded-lg border border-border bg-background">
+                <div className="relative mt-3">
+                  <button
+                    type="button"
+                    onClick={() => { setLangPickerOpen((v) => !v); setLangSearch("") }}
+                    className={cn(
+                      "flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs transition-colors outline-none",
+                      "hover:bg-muted/50"
+                    )}
+                  >
+                    <span className="min-w-0 truncate">{selectedLang?.name ?? language}</span>
+                    <CaretDownIcon
+                      className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-200", langPickerOpen && "rotate-180")}
+                      weight="bold"
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {langPickerOpen && (
+                      <motion.div
+                        key="lang-list"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="absolute top-[calc(100%+4px)] left-0 w-full z-50 overflow-hidden shadow-xl rounded-lg border border-border bg-background"
+                      >
                         <div className="border-b border-border px-2 py-1.5">
                           <input
                             type="text"
@@ -388,7 +395,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             autoFocus={false}
                           />
                         </div>
-                        <div className="flex flex-col p-1">
+                        <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
                           {(() => {
                             const q = langSearch.trim().toLowerCase()
                             const filtered = q
@@ -415,10 +422,10 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             )
                           })()}
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </section>
 
               <section>

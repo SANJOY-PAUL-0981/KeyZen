@@ -61,6 +61,8 @@ interface SettingsContextType {
   setAutoPair: (v: boolean) => void;
   showLineNumbers: boolean;
   setShowLineNumbers: (v: boolean) => void;
+  soundPackLoading: boolean;
+  setSoundPackLoading: (v: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
@@ -104,6 +106,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [syntaxHighlighting, setSyntaxHighlightingState] = useState(true);
   const [autoPair, setAutoPairState] = useState(true);
   const [showLineNumbers, setShowLineNumbersState] = useState(true);
+  const [soundPackLoading, setSoundPackLoading] = useState(false);
 
   useMountEffect(() => {
     const savedAccent = localStorage.getItem("tc-accent") as AccentColor | null;
@@ -248,6 +251,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         syntaxHighlighting, setSyntaxHighlighting,
         autoPair, setAutoPair,
         showLineNumbers, setShowLineNumbers,
+        soundPackLoading, setSoundPackLoading,
       }}
     >
       {children}

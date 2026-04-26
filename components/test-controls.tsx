@@ -83,7 +83,7 @@ export function TestControls({
   );
 
   const drawerBtnClass = (active: boolean) => cn(
-    "flex flex-col items-center justify-center gap-1.5 rounded-xl p-3 text-xs font-medium transition-colors border cursor-pointer",
+    "flex flex-col items-center justify-center gap-1 rounded-lg p-2 text-xs font-medium transition-colors border cursor-pointer",
     active
       ? "border-primary/40 bg-primary/10 text-primary"
       : "border-border bg-zinc-100 dark:bg-zinc-800 text-muted-foreground hover:text-foreground hover:border-border/80",
@@ -180,71 +180,8 @@ export function TestControls({
   );
 
   const settingsContent = (
-    <div className="flex flex-col gap-5 px-4 pb-8 pt-2">
-      {/* Toggles + Difficulty — always visible, disabled in quote / code / custom mode */}
-      {(() => {
-        const disabled = mode === "quote" || mode === "code" || mode === "custom";
-        const tip = mode === "quote" ? "Not available in quote mode" : mode === "code" ? "Not available in code mode" : "Not available in custom mode";
-        return (
-          <TooltipProvider delayDuration={200}>
-            <>
-              <div className="flex flex-col gap-2">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Toggles</span>
-                <div className="grid grid-cols-2 gap-2">
-                  {([
-                    { key: "punctuation", icon: IconAt,     label: "punctuation", active: punctuation,  onClick: onPunctuationToggle },
-                    { key: "numbers",     icon: IconNumber,  label: "numbers",     active: numbers,      onClick: onNumbersToggle },
-                  ] as const).map(({ key, icon: Icon, label, active, onClick }) => (
-                    <Tooltip key={key}>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          disabled={disabled}
-                          onClick={disabled ? undefined : onClick}
-                          className={cn(drawerBtnClass(active), disabled && "opacity-35 cursor-not-allowed")}
-                        >
-                          <Icon size={18} />
-                          <span>{label}</span>
-                        </button>
-                      </TooltipTrigger>
-                      {disabled && <TooltipContent side="bottom">{tip}</TooltipContent>}
-                    </Tooltip>
-                  ))}
-                </div>
-              </div>
+    <div className="flex flex-col gap-4 px-4 pb-6 pt-2">
 
-              <div className="h-px w-full bg-border" />
-
-              <div className="flex flex-col gap-2">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Difficulty</span>
-                <div className="grid grid-cols-2 gap-2">
-                  {([
-                    { key: "easy", icon: IconFeather, label: "easy", active: difficulty === "easy", d: "easy" as const },
-                    { key: "hard", icon: IconFlame,   label: "hard", active: difficulty === "hard", d: "hard" as const },
-                  ] as const).map(({ key, icon: Icon, label, active, d }) => (
-                    <Tooltip key={key}>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          disabled={disabled}
-                          onClick={disabled ? undefined : () => onDifficultyToggle(d)}
-                          className={cn(drawerBtnClass(active), disabled && "opacity-35 cursor-not-allowed")}
-                        >
-                          <Icon size={18} />
-                          <span>{label}</span>
-                        </button>
-                      </TooltipTrigger>
-                      {disabled && <TooltipContent side="bottom">{tip}</TooltipContent>}
-                    </Tooltip>
-                  ))}
-                </div>
-              </div>
-
-              <div className="h-px w-full bg-border" />
-            </>
-          </TooltipProvider>
-        );
-      })()}
 
       {/* Mode group */}
       <div className="flex flex-col gap-2">
@@ -314,7 +251,7 @@ export function TestControls({
                 trigger={
                   <button
                     type="button"
-                    className="flex items-center justify-center gap-2 rounded-xl border border-border bg-zinc-100 px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground dark:bg-zinc-800 cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-border bg-zinc-100 px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground dark:bg-zinc-800 cursor-pointer"
                   >
                     <IconPencil size={15} />
                     change text
@@ -322,111 +259,113 @@ export function TestControls({
                 }
               />
             ) : mode === "code" ? (
-              <div className="flex flex-col gap-2">
-                {/* Language picker — inline accordion (Popover portals are intercepted by vaul on mobile) */}
-                <button
-                  type="button"
-                  onClick={() => { setLangPickerOpen((v) => !v); setLangSearch(""); }}
-                  className="flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-zinc-100 dark:bg-zinc-800 px-3 py-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:text-foreground cursor-pointer"
-                >
-                  <span className="truncate">
-                    {codeLanguage && codeManifest[codeLanguage] ? codeManifest[codeLanguage].name : "Select language"}
-                  </span>
-                  <CaretDownIcon
-                    className={cn("size-4 shrink-0 transition-transform duration-200", langPickerOpen && "rotate-180")}
-                    weight="bold"
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {langPickerOpen && (
-                    <motion.div
-                      key="lang-accordion"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="rounded-xl border border-border bg-zinc-100 dark:bg-zinc-800">
-                        <div className="px-2 py-1.5 border-b border-border">
-                          <input
-                            type="text"
-                            placeholder="Search language..."
-                            value={langSearch}
-                            onChange={(e) => setLangSearch(e.target.value)}
-                            className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground/70"
-                            autoFocus={false}
-                          />
-                        </div>
-                        <div className="flex flex-col gap-0.5 p-1.5">
-                          {(() => {
-                            const filtered = Object.values(codeManifest).filter(lang =>
-                              !langSearch ||
-                              lang.name.toLowerCase().includes(langSearch.toLowerCase()) ||
-                              lang.ext.toLowerCase().includes(langSearch.toLowerCase()) ||
-                              lang.code.toLowerCase().includes(langSearch.toLowerCase())
-                            )
-                            return filtered.length > 0 ? (
-                              filtered.map((lang) => (
-                                <button
-                                  type="button"
-                                  key={lang.code}
-                                  onClick={() => { onCodeLanguageChange(lang.code); setLangPickerOpen(false); setLangSearch(""); }}
-                                  className={renderDropdownOptionClass(codeLanguage === lang.code)}
-                                >
-                                  {lang.name}
-                                </button>
-                              ))
-                            ) : (
-                              <p className="py-3 text-center text-xs text-muted-foreground">No results</p>
-                            )
-                          })()}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+              <div className="grid grid-cols-2 gap-2 items-start">
+                <div className="flex flex-col gap-2 w-full relative">
+                  {/* Language picker — inline accordion (Popover portals are intercepted by vaul on mobile) */}
+                  <button
+                    type="button"
+                    onClick={() => { setLangPickerOpen((v) => !v); setLangSearch(""); }}
+                    className="flex w-full items-center justify-between gap-2 rounded-lg border border-border bg-zinc-100 dark:bg-zinc-800 px-3 py-2 text-sm font-medium text-muted-foreground outline-none transition-colors hover:text-foreground cursor-pointer"
+                  >
+                    <span className="truncate">
+                      {codeLanguage && codeManifest[codeLanguage] ? codeManifest[codeLanguage].name : "Select language"}
+                    </span>
+                    <CaretDownIcon
+                      className={cn("size-4 shrink-0 transition-transform duration-200", langPickerOpen && "rotate-180")}
+                      weight="bold"
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {langPickerOpen && (
+                      <motion.div
+                        key="lang-accordion"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="absolute top-[calc(100%+4px)] left-0 w-full z-50 overflow-hidden shadow-xl rounded-lg border border-border bg-zinc-100 dark:bg-zinc-800 flex flex-col max-h-40 md:max-h-56"
+                      >
+                        <div className="px-2 py-1.5 border-b border-border shrink-0">
+                            <input
+                              type="text"
+                              placeholder="Search language..."
+                              value={langSearch}
+                              onChange={(e) => setLangSearch(e.target.value)}
+                              className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground/70"
+                              autoFocus={false}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-0.5 p-1.5 overflow-y-auto custom-scrollbar flex-1">
+                            {(() => {
+                              const filtered = Object.values(codeManifest).filter(lang =>
+                                !langSearch ||
+                                lang.name.toLowerCase().includes(langSearch.toLowerCase()) ||
+                                lang.ext.toLowerCase().includes(langSearch.toLowerCase()) ||
+                                lang.code.toLowerCase().includes(langSearch.toLowerCase())
+                              )
+                              return filtered.length > 0 ? (
+                                filtered.map((lang) => (
+                                  <button
+                                    type="button"
+                                    key={lang.code}
+                                    onClick={() => { onCodeLanguageChange(lang.code); setLangPickerOpen(false); setLangSearch(""); }}
+                                    className={renderDropdownOptionClass(codeLanguage === lang.code)}
+                                  >
+                                    {lang.name}
+                                  </button>
+                                ))
+                              ) : (
+                                <p className="py-3 text-center text-xs text-muted-foreground">No results</p>
+                              )
+                            })()}
+                          </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
-                {/* Chapter picker — inline accordion */}
-                <button
-                  type="button"
-                  disabled={!codeLanguage || !codeManifest[codeLanguage]}
-                  onClick={() => setChapterPickerOpen((v) => !v)}
-                  className="flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-zinc-100 dark:bg-zinc-800 px-3 py-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:text-foreground cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="truncate">
-                    {codeChapter ? codeChapter.replace(/_/g, " ") : "Select chapter"}
-                  </span>
-                  <CaretDownIcon
-                    className={cn("size-4 shrink-0 transition-transform duration-200", chapterPickerOpen && "rotate-180")}
-                    weight="bold"
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {chapterPickerOpen && codeLanguage && codeManifest[codeLanguage] && (
-                    <motion.div
-                      key="chapter-accordion"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="flex flex-col gap-0.5 rounded-xl border border-border bg-zinc-100 dark:bg-zinc-800 p-1.5">
-                        {codeManifest[codeLanguage].chapters.map((chap) => (
-                          <button
-                            type="button"
-                            key={chap}
-                            onClick={() => { onCodeChapterChange(chap); setChapterPickerOpen(false); }}
-                            className={renderDropdownOptionClass(codeChapter === chap)}
-                          >
-                            {chap.replace(/_/g, " ")}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div className="flex flex-col gap-2 w-full relative">
+                  {/* Chapter picker — inline accordion */}
+                  <button
+                    type="button"
+                    disabled={!codeLanguage || !codeManifest[codeLanguage]}
+                    onClick={() => setChapterPickerOpen((v) => !v)}
+                    className="flex w-full items-center justify-between gap-2 rounded-lg border border-border bg-zinc-100 dark:bg-zinc-800 px-3 py-2 text-sm font-medium text-muted-foreground outline-none transition-colors hover:text-foreground cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="truncate">
+                      {codeChapter ? codeChapter.replace(/_/g, " ") : "Select chapter"}
+                    </span>
+                    <CaretDownIcon
+                      className={cn("size-4 shrink-0 transition-transform duration-200", chapterPickerOpen && "rotate-180")}
+                      weight="bold"
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {chapterPickerOpen && codeLanguage && codeManifest[codeLanguage] && (
+                      <motion.div
+                        key="chapter-accordion"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="absolute top-[calc(100%+4px)] left-0 w-full z-50 overflow-hidden shadow-xl rounded-lg border border-border bg-zinc-100 dark:bg-zinc-800 flex flex-col max-h-40 md:max-h-56"
+                      >
+                        <div className="flex flex-col gap-0.5 p-1.5 overflow-y-auto custom-scrollbar flex-1">
+                          {codeManifest[codeLanguage].chapters.map((chap) => (
+                            <button
+                              type="button"
+                              key={chap}
+                              onClick={() => { onCodeChapterChange(chap); setChapterPickerOpen(false); }}
+                              className={renderDropdownOptionClass(codeChapter === chap)}
+                            >
+                              {chap.replace(/_/g, " ")}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-2">
@@ -445,6 +384,71 @@ export function TestControls({
           </div>
         </>
       )}
+
+      <div className="h-px w-full bg-border" />
+
+      {/* Toggles + Difficulty — always visible, disabled in quote / code / custom mode */}
+      {(() => {
+        const disabled = mode === "quote" || mode === "code" || mode === "custom";
+        const tip = mode === "quote" ? "Not available in quote mode" : mode === "code" ? "Not available in code mode" : "Not available in custom mode";
+        return (
+          <TooltipProvider delayDuration={200}>
+            <>
+              <div className="flex flex-col gap-2">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Difficulty</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {([
+                    { key: "easy", icon: IconFeather, label: "easy", active: difficulty === "easy", d: "easy" as const },
+                    { key: "hard", icon: IconFlame,   label: "hard", active: difficulty === "hard", d: "hard" as const },
+                  ] as const).map(({ key, icon: Icon, label, active, d }) => (
+                    <Tooltip key={key}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          disabled={disabled}
+                          onClick={disabled ? undefined : () => onDifficultyToggle(d)}
+                          className={cn(drawerBtnClass(active), disabled && "opacity-35 cursor-not-allowed")}
+                        >
+                          <Icon size={18} />
+                          <span>{label}</span>
+                        </button>
+                      </TooltipTrigger>
+                      {disabled && <TooltipContent side="bottom">{tip}</TooltipContent>}
+                    </Tooltip>
+                  ))}
+                </div>
+              </div>
+
+              <div className="h-px w-full bg-border" />
+
+              <div className="flex flex-col gap-2">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Toggles</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {([
+                    { key: "punctuation", icon: IconAt,     label: "punctuation", active: punctuation,  onClick: onPunctuationToggle },
+                    { key: "numbers",     icon: IconNumber,  label: "numbers",     active: numbers,      onClick: onNumbersToggle },
+                  ] as const).map(({ key, icon: Icon, label, active, onClick }) => (
+                    <Tooltip key={key}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          disabled={disabled}
+                          onClick={disabled ? undefined : onClick}
+                          className={cn(drawerBtnClass(active), disabled && "opacity-35 cursor-not-allowed")}
+                        >
+                          <Icon size={18} />
+                          <span>{label}</span>
+                        </button>
+                      </TooltipTrigger>
+                      {disabled && <TooltipContent side="bottom">{tip}</TooltipContent>}
+                    </Tooltip>
+                  ))}
+                </div>
+              </div>
+            </>
+          </TooltipProvider>
+        );
+      })()}
     </div>
   );
 

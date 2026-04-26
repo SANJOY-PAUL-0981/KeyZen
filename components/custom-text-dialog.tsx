@@ -274,7 +274,7 @@ export function CustomTextDialog({
 
             {isCodeMode && selectedLang ? (
               /* Monaco editor — explicit height on mobile, flex-1 on desktop */
-              <div className="h-[280px] md:h-auto md:flex-1 md:min-h-0 overflow-hidden rounded-md border border-border">
+              <div className="h-[220px] md:h-auto md:flex-1 md:min-h-0 overflow-hidden rounded-md border border-border">
                 <MonacoEditor
                   height="100%"
                   language={monacoLang}
@@ -303,7 +303,7 @@ export function CustomTextDialog({
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
-                className="relative h-[260px] md:h-auto md:flex-1 md:min-h-0"
+                className="relative h-[200px] md:h-auto md:flex-1 md:min-h-0"
               >
                 <textarea
                   value={draft}
@@ -511,24 +511,24 @@ export function CustomTextDialog({
               </p>
             </section>
 
-            <div className="mt-auto flex flex-col gap-2 pt-2">
-              <CornerBrackets className="inline-flex">
+            <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
+              <CornerBrackets className="w-full">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="flex w-full items-center justify-center gap-2 px-4 py-2 text-sm border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
+                >
+                  Cancel
+                </button>
+              </CornerBrackets>
+              <CornerBrackets className="w-full">
                 <button
                   type="button"
                   onClick={handleSave}
                   disabled={overLimit || draft.trim().length === 0 || (isCodeMode && !selectedLang)}
                   className="flex w-full items-center justify-center gap-2 px-4 py-2 text-sm bg-primary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Save and Start
-                </button>
-              </CornerBrackets>
-              <CornerBrackets className="w-full flex justify-center items-center">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-1 text-center text-xs text-muted-foreground/70 transition-colors hover:text-foreground"
-                >
-                  Cancel
+                  Save & Start
                 </button>
               </CornerBrackets>
             </div>
