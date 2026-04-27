@@ -10,7 +10,9 @@ export type SoundPack =
   | "cherrymx-red-pbt"
   | "mx-speed-silver"
   | "eg-oreo"
-  | "topre-purple";
+  | "topre-purple"
+  | "creams"
+  | "banana-split-lubed";
 
 export interface SoundPackOption {
   id: SoundPack;
@@ -28,6 +30,8 @@ export const SOUND_PACKS: SoundPackOption[] = [
   { id: "mx-speed-silver",    label: "MX Speed Silver",  url: "/sounds/mx-speed-silver/mx-speed-silver-1.wav", configUrl: "/sounds/mx-speed-silver/config.json" },
   { id: "eg-oreo",            label: "EG Oreo",          url: "/sounds/eg-oreo/oreo.ogg",                      configUrl: "/sounds/eg-oreo/config.json" },
   { id: "topre-purple",       label: "Topre Purple",     url: "/sounds/topre-purple-hybrid-pbt/sound.ogg",     configUrl: "/sounds/topre-purple-hybrid-pbt/config.json" },
+  { id: "creams",             label: "Creams",           url: "/sounds/Creams/Creams.ogg",                    configUrl: "/sounds/Creams/config.json" },
+  { id: "banana-split-lubed", label: "Banana Split Lubed", url: "/sounds/banana split lubed/banana-l-1.wav",     configUrl: "/sounds/banana split lubed/config.json" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

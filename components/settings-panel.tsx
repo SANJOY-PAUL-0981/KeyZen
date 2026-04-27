@@ -711,6 +711,8 @@ const SWITCH_STEM_COLORS: Record<SoundPack, string> = {
   "mx-speed-silver": "#c4ccd4",
   "eg-oreo": "#1a1a2e",
   "topre-purple": "#8b5cf6",
+  "creams": "#f0d9c6",
+  "banana-split-lubed": "#ffe135",
 }
 
 function SwitchIcon({ pack, selected }: { pack: SoundPack; selected: boolean }) {
