@@ -128,7 +128,7 @@ export default function Page() {
                                 : "invisible h-0 overflow-hidden border-0",
                         )}
                     >
-                        <div className="scale-[0.85]">
+                        <div className="[zoom:0.85]">
                             {keyboardStyle === "magic" ? (
                                 <MagicKeyboard
                                     enableHaptics
