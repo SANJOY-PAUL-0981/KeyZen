@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { useMountEffect } from "@/hooks/use-mount-effect"
 import { cn } from "@/lib/utils"
@@ -42,8 +42,12 @@ export default function Page() {
         [setTypingActive],
     )
 
-    // Guard callbacks so they only trigger Page re-renders when values actually change
     const finishedRef = useRef(isFinished)
+ 
+    useEffect(() => {
+        finishedRef.current = isFinished
+    }, [isFinished])
+
     const handleFinished = useCallback((finished: boolean) => {
         if (finishedRef.current === finished) return
         finishedRef.current = finished
