@@ -122,29 +122,24 @@ Thanks to everyone who has contributed to KeyZen!
       <a href="https://github.com/ShivaBhattacharjee">
         <img src="https://avatars.githubusercontent.com/u/95211406?v=4" width="80" height="80" style="border-radius:50%" alt="ShivaBhattacharjee" /><br />
         <sub><b>ShivaBhattacharjee</b></sub>
-      </a><br />
-      <sub>115 commits</sub>
+      </a>
     </td>
     <td align="center">
       <a href="https://github.com/priyanshuwq">
         <img src="https://avatars.githubusercontent.com/u/105375708?v=4" width="80" height="80" style="border-radius:50%" alt="priyanshuwq" /><br />
         <sub><b>priyanshuwq</b></sub>
-      </a><br />
-      <sub>4 commits</sub>
+      </a>
     </td>
     <td align="center">
       <a href="https://github.com/RusilKoirala">
         <img src="https://avatars.githubusercontent.com/u/209594643?v=4" width="80" height="80" style="border-radius:50%" alt="RusilKoirala" /><br />
         <sub><b>RusilKoirala</b></sub>
-      </a><br />
-      <sub>1 commit</sub>
+      </a>
     </td>
     <td align="center">
       <a href="https://github.com/saaahilhussain">
         <img src="https://avatars.githubusercontent.com/u/140058338?v=4" width="80" height="80" style="border-radius:50%" alt="saaahilhussain" /><br />
         <sub><b>saaahilhussain</b></sub>
-      </a><br />
-      <sub>1 commit</sub>
     </td>
   </tr>
 </table>
