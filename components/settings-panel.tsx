@@ -149,7 +149,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             placeholder="Search themes..."
                             value={themeSearch}
                             onChange={(e) => setThemeSearch(e.target.value)}
-                            className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                            className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
                             autoFocus={false}
                           />
                         </div>
@@ -404,7 +404,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             placeholder="Search fonts..."
                             value={fontSearch}
                             onChange={(e) => setFontSearch(e.target.value)}
-                            className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                            className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
                             autoFocus={false}
                           />
                         </div>
@@ -520,7 +520,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                             placeholder="Search languages..."
                             value={langSearch}
                             onChange={(e) => setLangSearch(e.target.value)}
-                            className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                            className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
                             autoFocus={false}
                           />
                         </div>
