@@ -6,6 +6,7 @@ import { useMountEffect } from "@/hooks/use-mount-effect"
 import { cn } from "@/lib/utils"
 import { useAppChrome } from "@/components/app-chrome"
 import { Keyboard } from "@/components/ui/keyboard"
+import { Keyboard as MagicKeyboard } from "@/components/ui/magic-keyboard"
 import { TypingTest } from "@/components/typing-test"
 import { useSettings, SOUND_PACKS } from "@/components/settings-context"
 import { Loading } from "@/components/ui/loader"
@@ -16,7 +17,7 @@ export default function Page() {
     const [typingFocused, setTypingFocused] = useState(true)
     const [restartKey, setRestartKey] = useState(0)
     const [mode, setMode] = useState<string>("time")
-    const { showKeyboard, soundEnabled, soundPack, language, setSoundPackLoading, settingsLoaded } = useSettings()
+    const { showKeyboard, keyboardStyle, soundEnabled, soundPack, language, setSoundPackLoading, settingsLoaded } = useSettings()
     const soundPackOption = SOUND_PACKS.find((s) => s.id === soundPack)
     const soundUrl = soundPackOption?.url ?? "/sounds/sound.ogg"
     const soundConfigUrl = soundPackOption?.configUrl
@@ -124,17 +125,30 @@ export default function Page() {
                         )}
                     >
                         <div className="scale-[0.85]">
-                            <Keyboard
-                                theme="classic"
-                                enableHaptics
-                                enableSound={soundEnabled}
-                                soundUrl={soundUrl}
-                                soundConfigUrl={soundConfigUrl}
-                                forceActive={soundEnabled && !showKeyboard}
-                                physicalKeysEnabled={typingFocused}
-                                language={language}
-                                onAudioLoadingChange={setSoundPackLoading}
-                            />
+                            {keyboardStyle === "magic" ? (
+                                <MagicKeyboard
+                                    enableHaptics
+                                    enableSound={soundEnabled}
+                                    soundUrl={soundUrl}
+                                    soundConfigUrl={soundConfigUrl}
+                                    forceActive={soundEnabled && !showKeyboard}
+                                    physicalKeysEnabled={typingFocused}
+                                    language={language}
+                                    onAudioLoadingChange={setSoundPackLoading}
+                                />
+                            ) : (
+                                <Keyboard
+                                    theme="classic"
+                                    enableHaptics
+                                    enableSound={soundEnabled}
+                                    soundUrl={soundUrl}
+                                    soundConfigUrl={soundConfigUrl}
+                                    forceActive={soundEnabled && !showKeyboard}
+                                    physicalKeysEnabled={typingFocused}
+                                    language={language}
+                                    onAudioLoadingChange={setSoundPackLoading}
+                                />
+                            )}
                         </div>
                     </footer>
                 )}

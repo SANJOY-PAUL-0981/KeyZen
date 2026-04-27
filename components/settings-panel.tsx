@@ -23,7 +23,7 @@ interface SettingsPanelProps {
 
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const {
-    accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, soundEnabled, setSoundEnabled, clickSoundEnabled, setClickSoundEnabled, realtimeWpm, setRealtimeWpm, faahMode, setFaahMode, ghostMode, setGhostMode, shakeMode, setShakeMode, soundPack, setSoundPack, language, setLanguage, showDiacritics, setShowDiacritics, fontSize, setFontSize, syntaxHighlighting, setSyntaxHighlighting, autoPair, setAutoPair, showLineNumbers, setShowLineNumbers, soundPackLoading, colorTheme, setColorTheme,
+    accent, setAccent, font, setFont, showKeyboard, setShowKeyboard, keyboardStyle, setKeyboardStyle, soundEnabled, setSoundEnabled, clickSoundEnabled, setClickSoundEnabled, realtimeWpm, setRealtimeWpm, faahMode, setFaahMode, ghostMode, setGhostMode, shakeMode, setShakeMode, soundPack, setSoundPack, language, setLanguage, showDiacritics, setShowDiacritics, fontSize, setFontSize, syntaxHighlighting, setSyntaxHighlighting, autoPair, setAutoPair, showLineNumbers, setShowLineNumbers, soundPackLoading, colorTheme, setColorTheme,
   } = useSettings()
   const isRTL = isRTLLanguage(language)
   const [isMobile, setIsMobile] = useState(false)
@@ -269,6 +269,46 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         />
       </section>
 
+      {showKeyboard && !isMobile && (
+        <section>
+          <SectionHeader
+            title="Keyboard Style"
+            description="Choose between mechanical or flat Apple style"
+          />
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            {(["normal", "magic"] as const).map((style) => {
+              const selected = keyboardStyle === style
+              return (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => setKeyboardStyle(style)}
+                  aria-pressed={selected}
+                  className={cn(
+                    "flex min-w-0 flex-col cursor-pointer items-center justify-between gap-2 rounded-lg border p-2 text-center transition-colors outline-none",
+                    "hover:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                    selected
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-input bg-background text-muted-foreground"
+                  )}
+                >
+                  <div className="relative flex items-center justify-center h-8">
+                    {style === "normal" ? (
+                      <KeyboardStyleNormalIcon selected={selected} />
+                    ) : (
+                      <KeyboardStyleMagicIcon selected={selected} />
+                    )}
+                  </div>
+                  <span className="w-full text-[10px] leading-tight font-medium wrap-break-word">
+                    {style === "normal" ? "Mechanical" : "Magic"}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       {soundEnabled && !isMobile && (
         <section>
           <SectionHeader
@@ -507,6 +547,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
           onToggle={() => setShowKeyboard(!showKeyboard)}
           disabledReason="keyboard not available on mobile"
         />
+
         <ToggleRow
           label="Realtime stats"
           description="Show WPM and accuracy while typing"
@@ -829,5 +870,23 @@ function ToggleRow({
         />
       </button>
     </div>
+  )
+}
+
+function KeyboardStyleNormalIcon({ selected }: { selected: boolean }) {
+  return (
+    <svg viewBox="0 0 48 48" width={32} height={32} className={cn("shrink-0 transition-opacity", !selected && "opacity-80")}>
+      <rect x="6" y="6" width="36" height="36" rx="4" className="fill-muted-foreground/30" />
+      <rect x="10" y="8" width="28" height="24" rx="3" className="fill-muted-foreground/50" />
+    </svg>
+  )
+}
+
+function KeyboardStyleMagicIcon({ selected }: { selected: boolean }) {
+  return (
+    <svg viewBox="0 0 48 48" width={32} height={32} className={cn("shrink-0 transition-opacity", !selected && "opacity-80")}>
+      <rect x="4" y="16" width="40" height="16" rx="2" className="fill-muted-foreground/20 stroke-muted-foreground/40" strokeWidth="1" />
+      <rect x="6" y="18" width="36" height="12" rx="1" className="fill-muted-foreground/40" />
+    </svg>
   )
 }

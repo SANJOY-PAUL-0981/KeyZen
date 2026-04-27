@@ -27,6 +27,8 @@ export {
   SOUND_PACKS,
 } from "@/lib/settings-data";
 
+export type KeyboardStyle = "normal" | "magic";
+
 interface SettingsContextType {
   accent: AccentColor;
   setAccent: (c: AccentColor) => void;
@@ -40,6 +42,8 @@ interface SettingsContextType {
   setColorTheme: (t: string, url: string | null, fontSans?: string | null, fontMono?: string | null) => void;
   showKeyboard: boolean;
   setShowKeyboard: (v: boolean) => void;
+  keyboardStyle: KeyboardStyle;
+  setKeyboardStyle: (s: KeyboardStyle) => void;
   soundEnabled: boolean;
   setSoundEnabled: (v: boolean) => void;
   clickSoundEnabled: boolean;
@@ -189,6 +193,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [colorTheme, setColorThemeState] = useState<string>("default");
   const [themeLoading, setThemeLoading] = useState(false);
   const [showKeyboard, setShowKeyboardState] = useState(true);
+  const [keyboardStyle, setKeyboardStyleState] = useState<KeyboardStyle>("normal");
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [clickSoundEnabled, setClickSoundEnabledState] = useState(true);
   const [realtimeWpm, setRealtimeWpmState] = useState(false);
@@ -211,6 +216,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const savedColorTheme = localStorage.getItem("tc-color-theme");
     const savedColorThemeUrl = localStorage.getItem("tc-color-theme-url");
     const savedShowKeyboard = localStorage.getItem("tc-show-keyboard");
+    const savedKeyboardStyle = localStorage.getItem("tc-keyboard-style") as KeyboardStyle | null;
     const savedSoundEnabled = localStorage.getItem("tc-sound-enabled");
     const savedClickSoundEnabled = localStorage.getItem("tc-click-sound-enabled");
     const savedRealtimeWpm = localStorage.getItem("tc-realtime-wpm");
@@ -239,6 +245,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       applyThemeFontsToDom(savedFontSans, savedFontMono);
     }
     if (savedShowKeyboard !== null) setShowKeyboardState(savedShowKeyboard !== "false");
+    if (savedKeyboardStyle) setKeyboardStyleState(savedKeyboardStyle);
     if (savedSoundEnabled !== null) setSoundEnabledState(savedSoundEnabled !== "false");
     if (savedClickSoundEnabled !== null) setClickSoundEnabledState(savedClickSoundEnabled !== "false");
     if (savedRealtimeWpm !== null) setRealtimeWpmState(savedRealtimeWpm === "true");
@@ -313,6 +320,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setShowKeyboard = (v: boolean) => {
     setShowKeyboardState(v);
     localStorage.setItem("tc-show-keyboard", String(v));
+  };
+
+  const setKeyboardStyle = (s: KeyboardStyle) => {
+    setKeyboardStyleState(s);
+    localStorage.setItem("tc-keyboard-style", s);
   };
 
   const setSoundEnabled = (v: boolean) => {
@@ -391,6 +403,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         fontSize, setFontSize,
         colorTheme, setColorTheme, themeLoading,
         showKeyboard, setShowKeyboard,
+        keyboardStyle, setKeyboardStyle,
         soundEnabled, setSoundEnabled,
         clickSoundEnabled, setClickSoundEnabled,
         realtimeWpm, setRealtimeWpm,
