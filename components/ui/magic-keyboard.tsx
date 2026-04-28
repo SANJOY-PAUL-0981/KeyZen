@@ -735,7 +735,7 @@ export const Keyboard = ({
             <div
                 ref={containerRef}
                 className={cn(
-                    "mx-auto w-fit [zoom:0.75] sm:[zoom:1] md:[zoom:1.2] lg:[zoom:1.4] xl:[zoom:1.8]",
+                    "mx-auto w-fit [zoom:0.75] sm:[zoom:1] md:[zoom:1.2] lg:[zoom:1.4] xl:[zoom:1.8] magic-keyboard-root",
                     className,
                 )}
             >
@@ -748,13 +748,13 @@ export const Keyboard = ({
 
 export const Keypad = () => {
     return (
-        <div className="h-full w-fit rounded-xl bg-neutral-200 p-1 shadow-sm ring-1 shadow-black/5 ring-black/5 dark:bg-neutral-800 dark:ring-white/10">
+        <div className="h-full w-fit rounded-[10px] bg-neutral-200 p-1 shadow-sm ring-1 shadow-black/5 ring-black/5 dark:bg-neutral-800 dark:ring-white/10">
             {/* Function Row */}
             <Row>
                 <Key
                     keyCode="Escape"
-                    containerClassName="rounded-tl-xl"
-                    className="w-10 rounded-tl-lg"
+                    containerClassName="rounded-tl-[10px]"
+                    className="w-10 rounded-tl-[8px]"
                     childrenClassName="items-start justify-end pb-[2px] pl-[4px]"
                 >
                     <span>esc</span>
@@ -807,7 +807,7 @@ export const Keypad = () => {
                     <IconVolume className="h-[6px] w-[6px]" />
                     <span className="mt-1">F12</span>
                 </Key>
-                <Key keyCode="F13" containerClassName="rounded-tr-xl" className="rounded-tr-lg">
+                <Key keyCode="F13" containerClassName="rounded-tr-[10px]" className="rounded-tr-[8px]">
                     <div className="h-4 w-4 rounded-full bg-gradient-to-b from-neutral-300 via-neutral-200 to-neutral-300 p-px dark:from-neutral-600 dark:via-neutral-700 dark:to-neutral-600">
                         <div className="h-full w-full rounded-full bg-neutral-100 dark:bg-neutral-800" />
                     </div>
@@ -906,8 +906,8 @@ export const Keypad = () => {
             <Row>
                 <ModifierKey
                     keyCode="Fn"
-                    containerClassName="rounded-bl-xl"
-                    className="rounded-bl-lg"
+                    containerClassName="rounded-bl-[10px]"
+                    className="rounded-bl-[8px]"
                 >
                     <span>fn</span>
                     <IconWorld className="h-[6px] w-[6px]" />
@@ -948,8 +948,8 @@ export const Keypad = () => {
                     </div>
                     <Key
                         keyCode="ArrowRight"
-                        containerClassName="rounded-br-xl"
-                        className="h-6 w-6 rounded-br-lg"
+                        containerClassName="rounded-br-[10px]"
+                        className="h-6 w-6 rounded-br-[8px]"
                     >
                         <IconCaretRightFilled className="h-[6px] w-[6px]" />
                     </Key>

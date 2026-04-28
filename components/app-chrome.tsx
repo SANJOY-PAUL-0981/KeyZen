@@ -44,6 +44,8 @@ export function useAppChrome() {
 }
 
 export function AppChrome({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+  const isLanding = pathname === "/landing"
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [testSettingsOpen, setTestSettingsOpen] = useState(false)
   const [typingActive, setTypingActive] = useState(false)
@@ -108,7 +110,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
         className="flex w-full flex-col bg-background"
         style={{ minHeight: keyboardOpen ? 0 : "100dvh" }}
       >
-        <SiteHeader />
+        {!isLanding && <SiteHeader />}
         {children}
       </motion.div>
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />

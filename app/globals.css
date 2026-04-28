@@ -651,3 +651,21 @@ body::-webkit-scrollbar,
 *::-webkit-scrollbar {
   display: none;
 }
+
+/* ── Magic Keyboard: isolate from theme CSS variables ─────────────────────── */
+/* Forces magic keyboard to always use root :root values, ignoring data-accent theme overrides */
+.magic-keyboard-root,
+.magic-keyboard-root * {
+  --radius: 0.45rem !important;
+  --radius-sm: 0.27rem !important;
+  --radius-md: 0.36rem !important;
+  --radius-lg: 0.45rem !important;
+  --radius-xl: 0.63rem !important;
+  --spacing: 0.25rem !important;
+  --shadow-x: 0 !important;
+  --shadow-y: 1px !important;
+  --shadow-blur: 3px !important;
+  --shadow-spread: 0px !important;
+  --shadow-opacity: 0.1 !important;
+  --shadow-color: oklch(0 0 0) !important;
+}
