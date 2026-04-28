@@ -3,19 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { HighlighterCore } from "shiki";
 
-const LANG_MAP: Record<string, string> = {
-  javascript: "javascript",
-  go: "go",
-  dart: "dart",
-  lua: "lua",
+// Only list languages whose shiki name differs from the internal code name.
+const SHIKI_NAME_OVERRIDES: Record<string, string> = {
   shell: "shellscript",
-  python: "python",
-  typescript: "typescript",
-  rust: "rust",
-  cpp: "cpp",
-  c: "c",
-  java: "java",
 };
+
+function toShikiLang(lang: string): string {
+  return SHIKI_NAME_OVERRIDES[lang] ?? lang;
+}
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
 const loadedLangs = new Set<string>();
@@ -30,8 +25,8 @@ async function getHighlighter() {
 }
 
 async function ensureLang(lang: string) {
-  const shikiLang = LANG_MAP[lang];
-  if (!shikiLang || loadedLangs.has(shikiLang)) return;
+  const shikiLang = toShikiLang(lang);
+  if (loadedLangs.has(shikiLang)) return;
   const h = await getHighlighter();
   await h.loadLanguage(shikiLang as Parameters<typeof h.loadLanguage>[0]);
   loadedLangs.add(shikiLang);
@@ -62,7 +57,7 @@ export function useHighlightedHtml(
     (async () => {
       await ensureLang(lang);
       const h = await getHighlighter();
-      const shikiLang = LANG_MAP[lang] ?? "text";
+      const shikiLang = toShikiLang(lang);
       const shikiTheme = theme === "dark" ? "vitesse-dark" : "vitesse-light";
       const result = h.codeToHtml(code, { lang: shikiLang, theme: shikiTheme });
       if (!cancelled) setHtml(result);
@@ -105,7 +100,7 @@ export function useShikiTokens(
     (async () => {
       await ensureLang(lang);
       const h = await getHighlighter();
-      const shikiLang = LANG_MAP[lang] ?? "text";
+      const shikiLang = toShikiLang(lang);
       const shikiTheme = theme === "dark" ? "vitesse-dark" : "vitesse-light";
 
       const { tokens } = h.codeToTokens(codeToHighlight, { lang: shikiLang, theme: shikiTheme });

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { AnimatePresence, motion } from "motion/react";
 import {
   IconUpload,
   IconRotate,
@@ -20,17 +21,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { CornerBrackets } from "@/components/corner-brackets";
 import { DEFAULT_CUSTOM_TEXT } from "@/lib/test-storage";
 import type { CodeManifest } from "@/lib/code";
@@ -518,18 +508,12 @@ const VESPER_THEME = {
   ],
 };
 
-const MONACO_LANG_MAP: Record<string, string> = {
-  javascript: "javascript",
-  typescript: "typescript",
-  python: "python",
-  go: "go",
-  rust: "rust",
-  cpp: "cpp",
-  c: "c",
-  lua: "lua",
-  shell: "shell",
-  dart: "dart",
-};
+// Only list languages whose Monaco language ID differs from the internal code name.
+const MONACO_NAME_OVERRIDES: Record<string, string> = {};
+
+function toMonacoLang(lang: string): string {
+  return MONACO_NAME_OVERRIDES[lang] ?? lang;
+}
 
 // Map file extensions → our language codes
 const EXT_TO_LANG: Record<string, string> = {
@@ -547,6 +531,9 @@ const EXT_TO_LANG: Record<string, string> = {
   bash: "shell",
   zsh: "shell",
   dart: "dart",
+  php: "php",
+  sql: "sql",
+  rb: "ruby",
 };
 
 const MAX_CHARS = 20000;
@@ -571,6 +558,7 @@ export function CustomTextDialog({
   const [isCodeMode, setIsCodeMode] = useState(false);
   const [selectedLang, setSelectedLang] = useState("");
   const [langPickerOpen, setLangPickerOpen] = useState(false);
+  const [langSearch, setLangSearch] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { resolvedTheme } = useTheme();
 
@@ -699,7 +687,7 @@ export function CustomTextDialog({
 
   const dirty = draft !== value;
   const selectedLangEntry = selectedLang ? codeManifest[selectedLang] : undefined;
-  const monacoLang = MONACO_LANG_MAP[selectedLang] ?? "plaintext";
+  const monacoLang = selectedLang ? toMonacoLang(selectedLang) : "plaintext";
   const monacoTheme = resolvedTheme === "light" ? "light" : "vs-dark";
 
   return (
@@ -753,7 +741,7 @@ export function CustomTextDialog({
                   {isCodeMode ? "Upload code file" : "Upload .txt"}
                 </span>
                 <span className="text-[10px] text-muted-foreground/60">
-                  {isCodeMode ? ".js .ts .py .go .rs .c .lua .sh .dart" : "or drop one onto the editor"}
+                  {isCodeMode ? Object.keys(EXT_TO_LANG).map(e => `.${e}`).join(" ") : "or drop one onto the editor"}
                 </span>
               </span>
             </button>
@@ -857,7 +845,7 @@ export function CustomTextDialog({
                   </span>
                   <span className="text-[10px] text-muted-foreground/60">
                     {isCodeMode
-                      ? ".js .ts .py .go .rs .c .lua .sh .dart"
+                      ? Object.keys(EXT_TO_LANG).map(e => `.${e}`).join(" ")
                       : "or drop one onto the editor"}
                   </span>
                 </span>
@@ -910,58 +898,79 @@ export function CustomTextDialog({
                 </button>
               </div>
 
-              <Popover open={isCodeMode && langPickerOpen} onOpenChange={(v) => isCodeMode && setLangPickerOpen(v)}>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    disabled={!isCodeMode}
-                    aria-expanded={langPickerOpen}
-                    className={cn(
-                      "flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs transition-colors outline-none",
-                      isCodeMode
-                        ? "hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 cursor-pointer"
-                        : "opacity-40 cursor-not-allowed"
-                    )}
-                  >
-                    <span className="min-w-0 truncate text-muted-foreground">
-                      {selectedLangEntry ? selectedLangEntry.name : "Select language…"}
-                    </span>
-                    <CaretDownIcon
-                      className="size-4 shrink-0 text-muted-foreground"
-                      weight="bold"
-                    />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="gap-0 p-0"
-                  align="end"
-                  side="bottom"
-                  sideOffset={8}
-                  style={{ width: "var(--radix-popover-trigger-width)" }}
+              <div className="relative">
+                <button
+                  type="button"
+                  disabled={!isCodeMode}
+                  onClick={() => { if (isCodeMode) { setLangPickerOpen((v) => !v); setLangSearch(""); } }}
+                  className={cn(
+                    "flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-xs transition-colors outline-none",
+                    isCodeMode
+                      ? "hover:bg-muted/50 cursor-pointer"
+                      : "opacity-40 cursor-not-allowed"
+                  )}
                 >
-                  <Command>
-                    <CommandList>
-                      <CommandGroup>
-                        {Object.values(codeManifest).map((lang) => (
-                          <CommandItem
-                            key={lang.code}
-                            value={lang.code}
-                            keywords={[lang.name]}
-                            data-checked={selectedLang === lang.code ? true : undefined}
-                            onSelect={() => {
-                              setSelectedLang(lang.code);
-                              localStorage.setItem(DIALOG_CODE_LANG_KEY, lang.code);
-                              setLangPickerOpen(false);
-                            }}
-                          >
-                            {lang.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+                  <span className="min-w-0 truncate text-muted-foreground">
+                    {selectedLangEntry ? selectedLangEntry.name : "Select language…"}
+                  </span>
+                  <CaretDownIcon
+                    className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-200", langPickerOpen && "rotate-180")}
+                    weight="bold"
+                  />
+                </button>
+                <AnimatePresence initial={false}>
+                  {isCodeMode && langPickerOpen && (
+                    <motion.div
+                      key="lang-list"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="absolute top-[calc(100%+4px)] left-0 w-full z-50 overflow-hidden shadow-xl rounded-lg border border-border bg-background"
+                    >
+                      <div className="border-b border-border px-2 py-1.5">
+                        <input
+                          type="text"
+                          placeholder="Search language..."
+                          value={langSearch}
+                          onChange={(e) => setLangSearch(e.target.value)}
+                          className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
+                        />
+                      </div>
+                      <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
+                        {(() => {
+                          const q = langSearch.trim().toLowerCase();
+                          const filtered = q
+                            ? Object.values(codeManifest).filter((l) => l.name.toLowerCase().includes(q) || l.code.toLowerCase().includes(q))
+                            : Object.values(codeManifest);
+                          return filtered.length > 0 ? filtered.map((lang) => (
+                            <button
+                              type="button"
+                              key={lang.code}
+                              onClick={() => {
+                                setSelectedLang(lang.code);
+                                localStorage.setItem(DIALOG_CODE_LANG_KEY, lang.code);
+                                setLangPickerOpen(false);
+                                setLangSearch("");
+                              }}
+                              className={cn(
+                                "flex w-full items-center rounded-md px-2 py-1.5 text-xs text-left transition-colors",
+                                selectedLang === lang.code
+                                  ? "bg-primary/10 text-primary"
+                                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              )}
+                            >
+                              {lang.name}
+                            </button>
+                          )) : (
+                            <p className="py-4 text-center text-xs text-muted-foreground">No languages found</p>
+                          );
+                        })()}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </section>
 
             <div className="h-px bg-border" />
