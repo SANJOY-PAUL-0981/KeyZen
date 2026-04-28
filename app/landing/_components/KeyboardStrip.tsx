@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { Keyboard as KeychronKeyboard } from "@/components/ui/keyboard";
 import { Keyboard as MagicKeyboard } from "@/components/ui/magic-keyboard";
 import { SOUND_PACKS } from "@/lib/settings-data";
@@ -23,6 +24,33 @@ const SWITCH_STEM_COLORS: Record<string, string> = {
   "topre-purple": "#8b5cf6",
   "creams": "#f0d9c6",
   "banana-split-lubed": "#ffe135",
+};
+
+type LandingPopoverStyle = CSSProperties & Record<`--${string}`, string>;
+
+const popoverThemeStyle: LandingPopoverStyle = {
+  "--background": "#0a0c10",
+  "--foreground": CREAM,
+  "--popover": "#0d1016",
+  "--popover-foreground": CREAM,
+  "--muted": "#151a23",
+  "--muted-foreground": `${CREAM}99`,
+  "--primary": CYAN,
+  "--primary-foreground": CREAM,
+  "--border": `${CREAM}24`,
+  "--ring": CYAN,
+  "--color-background": "#0a0c10",
+  "--color-foreground": CREAM,
+  "--color-popover": "#0d1016",
+  "--color-popover-foreground": CREAM,
+  "--color-muted": "#151a23",
+  "--color-muted-foreground": `${CREAM}99`,
+  "--color-primary": CYAN,
+  "--color-primary-foreground": CREAM,
+  "--color-border": `${CREAM}24`,
+  "--color-ring": CYAN,
+  "--font-sans": '"Space Grotesk", ui-sans-serif, system-ui, sans-serif',
+  "--font-mono": '"Geist Mono", ui-monospace, SFMono-Regular, monospace',
 };
 
 export function KeyboardStrip() {
@@ -155,7 +183,11 @@ function KeyboardShowcase({
                 </svg>
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 p-0" align="end">
+            <PopoverContent
+              className="w-64 bg-[#0d1016] p-0 text-white ring-white/10"
+              align="end"
+              style={popoverThemeStyle}
+            >
               <div className="max-h-64 overflow-y-auto custom-scrollbar">
                 {SOUND_PACKS.map((pack) => (
                   <button

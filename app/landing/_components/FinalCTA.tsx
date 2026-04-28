@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { GithubLogo } from "@phosphor-icons/react";
-import { CORAL, CREAM, CYAN, INK } from "../lib/colors";
+import { CORAL, CREAM, CYAN } from "../lib/colors";
 import Link from "next/link";
 
 function CornerCross({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
@@ -138,14 +138,14 @@ export function FinalCTA() {
             <Link
               href="/"
               className="group inline-flex items-center gap-3 px-8 py-4 font-mono text-[12px] uppercase tracking-[0.24em]"
-              style={{ background: CYAN, color: INK }}
+              style={{ background: CYAN, color: CREAM }}
             >
               launch keyzen
               <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
                 <path
                   d="M2 7 H12 M8 3 L12 7 L8 11"
                   fill="none"
-                  stroke={INK}
+                  stroke={CREAM}
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import type { CSSProperties } from "react"
 import { motion, useScroll, useMotionValueEvent } from "motion/react"
 import Link from "next/link"
 import { ArrowUpRight } from "@phosphor-icons/react"
@@ -18,11 +19,54 @@ import { SoundWave } from "./_components/SoundWave"
 import { FinalCTA } from "./_components/FinalCTA"
 import { Footer } from "./_components/Footer"
 
+type LandingStyle = CSSProperties & Record<`--${string}`, string>
+
+const landingStyle: LandingStyle = {
+  background: INK,
+  color: CREAM,
+  "--background": INK,
+  "--foreground": CREAM,
+  "--card": "#0d1016",
+  "--card-foreground": CREAM,
+  "--popover": "#0d1016",
+  "--popover-foreground": CREAM,
+  "--primary": CYAN,
+  "--primary-foreground": CREAM,
+  "--secondary": "#121720",
+  "--secondary-foreground": CREAM,
+  "--muted": "#151a23",
+  "--muted-foreground": `${CREAM}99`,
+  "--accent": `${CYAN}24`,
+  "--accent-foreground": CREAM,
+  "--border": `${CREAM}24`,
+  "--input": `${CREAM}24`,
+  "--ring": CYAN,
+  "--color-background": INK,
+  "--color-foreground": CREAM,
+  "--color-card": "#0d1016",
+  "--color-card-foreground": CREAM,
+  "--color-popover": "#0d1016",
+  "--color-popover-foreground": CREAM,
+  "--color-primary": CYAN,
+  "--color-primary-foreground": CREAM,
+  "--color-secondary": "#121720",
+  "--color-secondary-foreground": CREAM,
+  "--color-muted": "#151a23",
+  "--color-muted-foreground": `${CREAM}99`,
+  "--color-accent": `${CYAN}24`,
+  "--color-accent-foreground": CREAM,
+  "--color-border": `${CREAM}24`,
+  "--color-input": `${CREAM}24`,
+  "--color-ring": CYAN,
+  "--font-sans": '"Space Grotesk", ui-sans-serif, system-ui, sans-serif',
+  "--font-mono": '"Geist Mono", ui-monospace, SFMono-Regular, monospace',
+}
+
 export default function LandingPage() {
   return (
     <div
       className="relative min-h-screen overflow-x-hidden font-sans"
-      style={{ background: INK, color: CREAM }}
+      style={landingStyle}
     >
       <BackgroundGrid />
       <NoiseOverlay />
