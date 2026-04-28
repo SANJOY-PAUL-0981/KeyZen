@@ -192,7 +192,10 @@ export function TypingTest(props: TypingTestProps) {
 
   return (
     <div
-      className="flex w-full max-w-5xl flex-col items-center gap-3 transition-all duration-150 ease-out"
+      className={cn(
+        "flex w-full max-w-5xl flex-col items-center gap-3 transition-all duration-150 ease-out",
+        !showKeyboard && "flex-1"
+      )}
       style={{
         opacity: screenFade,
         filter: screenFade < 1 ? "blur(4px)" : "none",
@@ -226,6 +229,12 @@ export function TypingTest(props: TypingTestProps) {
         onCodeChapterChange={onCodeChapterChange}
         onRestart={onRestart}
       />
+
+      {/* Text area + controls — fills remaining height and centers when keyboard is hidden */}
+      <div className={cn(
+        "flex w-full flex-col items-center gap-3",
+        !showKeyboard && "flex-1 justify-center pb-20"
+      )}>
 
       {/* Words display */}
       <div className="relative w-full">
@@ -516,6 +525,8 @@ export function TypingTest(props: TypingTestProps) {
           </span>
         )}
       </motion.div>
+
+      </div>{/* end centered content wrapper */}
     </div>
   )
 }

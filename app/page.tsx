@@ -106,7 +106,7 @@ export default function Page() {
                             ? "flex-1 justify-center px-10 py-2"
                             : showFooter
                                 ? "flex-1 items-center justify-center lg:justify-end lg:pb-8"
-                                : "flex-1 items-center justify-center",
+                                : "flex-1 items-center",
                     )}
                 >
                     <TypingTest
