@@ -1,0 +1,191 @@
+"use client";
+
+import { useState } from "react";
+import { Keyboard as KeychronKeyboard } from "@/components/ui/keyboard";
+import { Keyboard as MagicKeyboard } from "@/components/ui/magic-keyboard";
+import { SOUND_PACKS } from "@/lib/settings-data";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CREAM, CYAN } from "../lib/colors";
+import { SectionHeader } from "./Modes";
+
+const SWITCH_STEM_COLORS: Record<string, string> = {
+  "default": "var(--color-primary)",
+  "cherrymx-black-pbt": "#2b2b2b",
+  "cherrymx-blue-pbt": "#2f6fe0",
+  "cherrymx-brown-pbt": "#8a5a2b",
+  "cherrymx-red-pbt": "#d7373f",
+  "mx-speed-silver": "#c4ccd4",
+  "eg-oreo": "#1a1a2e",
+  "topre-purple": "#8b5cf6",
+  "creams": "#f0d9c6",
+  "banana-split-lubed": "#ffe135",
+};
+
+export function KeyboardStrip() {
+  const [activeKeyboard, setActiveKeyboard] = useState<"magic" | "keychron">("magic");
+  const [soundPack, setSoundPack] = useState("default");
+
+  return (
+    <section className="relative z-10 mx-auto max-w-5xl px-6 py-20">
+      <SectionHeader
+        kicker="§01 · the surface"
+        title="Match your keyboard."
+        sub="Switch layouts, type normally, and watch the board respond live."
+      />
+
+      <div className="mb-12 flex flex-col items-center gap-4 sm:mb-12">
+        <div className="flex gap-2 rounded-full border border-white/10 bg-[#0d1016] p-1">
+          <button
+            onClick={() => setActiveKeyboard("magic")}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors sm:px-6 ${
+              activeKeyboard === "magic"
+                ? "bg-white/10 text-white"
+                : "text-white/50 hover:text-white/80"
+            }`}
+          >
+            <svg viewBox="0 0 48 48" width={20} height={20} className="shrink-0" aria-hidden>
+              <rect x="4" y="16" width="40" height="16" rx="2" className="fill-white/20 stroke-white/40" strokeWidth="1" />
+              <rect x="6" y="18" width="36" height="12" rx="1" className="fill-white/40" />
+            </svg>
+            <span className="hidden sm:inline">Apple Magic</span>
+            <span className="sm:hidden">Magic</span>
+          </button>
+          <button
+            onClick={() => setActiveKeyboard("keychron")}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors sm:px-6 ${
+              activeKeyboard === "keychron"
+                ? "bg-white/10 text-white"
+                : "text-white/50 hover:text-white/80"
+            }`}
+          >
+            <svg viewBox="0 0 48 48" width={20} height={20} className="shrink-0" aria-hidden>
+              <rect x="6" y="6" width="36" height="36" rx="4" className="fill-white/30" />
+              <rect x="10" y="8" width="28" height="24" rx="3" className="fill-white/50" />
+            </svg>
+            <span className="hidden sm:inline">Keychron K2</span>
+            <span className="sm:hidden">Keychron</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-10">
+        {activeKeyboard === "magic" ? (
+          <KeyboardShowcase soundPack={soundPack} onSoundPackChange={setSoundPack}>
+            <MagicKeyboard
+              enableSound={true}
+              enableHaptics={false}
+              physicalKeysEnabled
+              soundUrl={SOUND_PACKS.find(s => s.id === soundPack)?.url ?? "/sounds/sound.ogg"}
+              soundConfigUrl={SOUND_PACKS.find(s => s.id === soundPack)?.configUrl}
+              className="[zoom:0.55] sm:[zoom:0.85] md:[zoom:1.05] lg:[zoom:1.25] xl:[zoom:1.4]"
+            />
+          </KeyboardShowcase>
+        ) : (
+          <KeyboardShowcase soundPack={soundPack} onSoundPackChange={setSoundPack}>
+            <KeychronKeyboard
+              theme="classic"
+              enableSound={true}
+              soundUrl={SOUND_PACKS.find(s => s.id === soundPack)?.url ?? "/sounds/sound.ogg"}
+              soundConfigUrl={SOUND_PACKS.find(s => s.id === soundPack)?.configUrl}
+              enableHaptics={false}
+              physicalKeysEnabled
+              className="[zoom:0.38] sm:[zoom:0.55] md:[zoom:0.7] lg:[zoom:0.82] xl:[zoom:0.95]"
+            />
+          </KeyboardShowcase>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function KeyboardShowcase({
+  children,
+  soundPack,
+  onSoundPackChange,
+}: {
+  children: React.ReactNode;
+  soundPack: string;
+  onSoundPackChange: (pack: string) => void;
+}) {
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const selectedPack = SOUND_PACKS.find(s => s.id === soundPack);
+
+  return (
+    <div
+      className="overflow-hidden border"
+      style={{
+        background: "#0d1016",
+        borderColor: `${CREAM}14`,
+      }}
+    >
+      <div
+        className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-6"
+        style={{ borderColor: `${CREAM}10` }}
+      >
+        <div>
+          <div
+            className="font-mono text-[10px] uppercase tracking-[0.28em]"
+            style={{ color: CYAN }}
+          >
+            ▮ try it · live
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>
+              <button
+                className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60 transition-colors hover:border-white/20 hover:text-white/80"
+              >
+                <svg viewBox="0 0 48 48" width={16} height={16} aria-hidden>
+                  <rect x="4" y="10" width="40" height="34" rx="4" className="fill-white/20" />
+                  <rect x="6" y="7" width="36" height="33" rx="3.5" className="fill-white/10 stroke-white/30" strokeWidth="0.75" />
+                  <rect x="11" y="11" width="26" height="25" rx="2" className="fill-white/5" />
+                  <g transform="translate(24 23)">
+                    <rect x="-10" y="-3.25" width="20" height="6.5" rx="1.25" className="fill-white/60" />
+                    <rect x="-3.25" y="-10" width="6.5" height="20" rx="1.25" className="fill-white/60" />
+                  </g>
+                </svg>
+                <span>{selectedPack?.label ?? "Classic"}</span>
+                <svg viewBox="0 0 24 24" width={12} height={12} className="text-white/40" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-0" align="end">
+              <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                {SOUND_PACKS.map((pack) => (
+                  <button
+                    key={pack.id}
+                    onClick={() => { onSoundPackChange(pack.id); setPopoverOpen(false); }}
+                    className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-white/5"
+                  >
+                    <svg viewBox="0 0 48 48" width={24} height={24} aria-hidden>
+                      <rect x="4" y="10" width="40" height="34" rx="4" className="fill-muted-foreground/20" />
+                      <rect x="6" y="7" width="36" height="33" rx="3.5" className="fill-muted-foreground/10 stroke-muted-foreground/20" strokeWidth="0.75" />
+                      <rect x="11" y="11" width="26" height="25" rx="2" className="fill-background/70" />
+                      <g transform="translate(24 23)">
+                        <rect x="-10" y="-3.25" width="20" height="6.5" rx="1.25" fill={SWITCH_STEM_COLORS[pack.id] || "currentColor"} />
+                        <rect x="-3.25" y="-10" width="6.5" height="20" rx="1.25" fill={SWITCH_STEM_COLORS[pack.id] || "currentColor"} />
+                      </g>
+                    </svg>
+                    <span className={soundPack === pack.id ? "text-white" : "text-white/60"}>
+                      {pack.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+
+      <div className="flex w-full justify-center overflow-x-auto px-3 py-8 sm:px-6 sm:py-10">
+        {children}
+      </div>
+    </div>
+  );
+}

@@ -1,8 +1,13 @@
 {
-  "name": "keyboard-typing-test",
-  "version": "0.0.1",
+  "name": "keyzen",
+  "version": "1.0.0",
   "type": "module",
-  "private": true,
+  "author": {
+    "name": "Shiva Bhattacharjee",
+    "email": "hello@theshiva.xyz"
+  },
+  "license": "Apache-2.0",
+  "private": false,
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
