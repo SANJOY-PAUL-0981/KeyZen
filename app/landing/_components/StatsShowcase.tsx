@@ -139,7 +139,7 @@ function AccuracyDonut() {
       >
         97%
       </text>
-      <style>{`@keyframes kz-acc { to { stroke-dashoffset: ${c * 0.03}; } }`}</style>
+      <style>{`@keyframes kz-acc { to { stroke-dashoffset: ${c * 0.03 + 12}; } }`}</style>
     </svg>
   );
 }
