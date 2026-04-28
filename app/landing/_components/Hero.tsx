@@ -487,10 +487,38 @@ function BrowserFrame() {
 export function Hero() {
   return (
     <section className="relative z-10 mx-auto max-w-5xl px-6 pt-20 pb-16 text-center lg:pt-28">
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.0 }}
+        className="mb-8 flex justify-center"
+      >
+        <div
+          className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium tracking-widest uppercase"
+          style={{
+            borderColor: `${CYAN}40`,
+            backgroundColor: `${CYAN}0d`,
+            color: `${CREAM}cc`,
+          }}
+        >
+          <span className="relative flex h-1.5 w-1.5">
+            <span
+              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+              style={{ backgroundColor: CYAN }}
+            />
+            <span
+              className="relative inline-flex h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: CYAN }}
+            />
+          </span>
+          Trusted by 500+ active users
+        </div>
+      </motion.div>
+
       <motion.h1
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.05 }}
+        transition={{ duration: 0.8, delay: 0.15 }}
         className="mx-auto max-w-[12ch] text-[clamp(42px,9vw,88px)] leading-[0.96] font-bold"
         style={{ color: CREAM }}
       >
