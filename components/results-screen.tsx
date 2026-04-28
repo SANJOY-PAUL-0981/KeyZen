@@ -150,7 +150,7 @@ function WpmChart({
 
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
-      <LineChart data={data} margin={{ top: 8, right: 16, left: -16, bottom: 20 }}>
+      <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 20 }}>
         <CartesianGrid
           vertical={false}
           stroke="currentColor"
@@ -172,12 +172,12 @@ function WpmChart({
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 11, fill: "currentColor", opacity: 0.35 }}
-          width={36}
+          width={48}
           label={{
             value: "WPM",
             angle: -90,
             position: "insideLeft",
-            offset: 10,
+            offset: 16,
             style: { fontSize: 10, fill: "currentColor", opacity: 0.25 },
           }}
         />

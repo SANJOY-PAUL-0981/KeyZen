@@ -13,6 +13,7 @@ import { Modes } from "./_components/Modes"
 import { StatsShowcase } from "./_components/StatsShowcase"
 import { Hero } from "./_components/Hero"
 import { KeyboardStrip } from "./_components/KeyboardStrip"
+import { MobileSurface } from "./_components/MobileSurface"
 import { LanguageSupport } from "./_components/LanguageSupport"
 import { Process } from "./_components/Process"
 import { SoundWave } from "./_components/SoundWave"
@@ -73,6 +74,7 @@ export default function LandingPage() {
       <TopBar />
       <Hero />
       <KeyboardStrip />
+      <MobileSurface />
       <Modes />
       <LanguageSupport />
       <StatsShowcase />
