@@ -40,6 +40,9 @@ import { flushSync } from "react-dom";
 import { useWebHaptics } from "web-haptics/react";
 import { toast } from "sonner";
 
+const KEYCAP_FONT_FAMILY =
+  '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
+
 // -----------------------------------------------------------------------------
 // Public API
 // -----------------------------------------------------------------------------
@@ -103,7 +106,13 @@ export function Keyboard({
       layout={layout}
       onAudioLoadingChange={onAudioLoadingChange}
     >
-      <div ref={containerRef} className={cn("inline-block [zoom:0.55] sm:[zoom:0.7] md:[zoom:0.65] lg:[zoom:0.85] xl:[zoom:1.15]", className)}>
+      <div
+        ref={containerRef}
+        className={cn(
+          "inline-block [-webkit-text-size-adjust:100%] [text-size-adjust:100%] [zoom:0.55] sm:[zoom:0.7] md:[zoom:0.65] lg:[zoom:0.85] xl:[zoom:1.15]",
+          className,
+        )}
+      >
         <KeyboardKeys />
       </div>
     </KeyboardProvider>
@@ -835,13 +844,16 @@ function Key({
         <div
           className={cn(
             "relative z-10 h-[37px] rounded-[6px] border border-t-0 border-black/40 transition-all duration-100",
-            "text-[9px] font-medium flex flex-col items-center justify-between p-1 gap-0.5 select-none",
+            "flex flex-col items-center justify-between gap-0.5 p-1 text-[4.5px] leading-none font-medium whitespace-nowrap select-none sm:text-[9px]",
             className,
           )}
           style={{
             width: `${width - 13}px`,
             backgroundColor: keyVariant.bg,
             color: keyVariant.text,
+            fontFamily: KEYCAP_FONT_FAMILY,
+            WebkitTextSizeAdjust: "100%",
+            textSizeAdjust: "100%",
           }}
         >
           {children}

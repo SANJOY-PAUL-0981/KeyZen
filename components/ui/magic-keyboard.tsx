@@ -37,6 +37,9 @@ import { toast } from "sonner";
 import { flushSync } from "react-dom";
 import { useWebHaptics } from "web-haptics/react";
 
+const KEYCAP_FONT_FAMILY =
+    '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
+
 // -----------------------------------------------------------------------------
 // Types & Defaults
 // -----------------------------------------------------------------------------
@@ -735,7 +738,7 @@ export const Keyboard = ({
             <div
                 ref={containerRef}
                 className={cn(
-                    "mx-auto w-fit [zoom:0.75] sm:[zoom:1] md:[zoom:1.2] lg:[zoom:1.4] xl:[zoom:1.8] magic-keyboard-root",
+                    "mx-auto w-fit [-webkit-text-size-adjust:100%] [text-size-adjust:100%] [zoom:0.75] sm:[zoom:1] md:[zoom:1.2] lg:[zoom:1.4] xl:[zoom:1.8] magic-keyboard-root",
                     className,
                 )}
             >
@@ -1028,10 +1031,11 @@ const Key = ({
             >
                 <div
                     className={cn(
-                        "flex h-full w-full flex-col items-center justify-center text-[5px] text-neutral-700 transition-colors dark:text-neutral-300",
+                        "flex h-full w-full flex-col items-center justify-center text-[3px] leading-none text-neutral-700 transition-colors [-webkit-text-size-adjust:none] [text-size-adjust:none] sm:text-[5px] dark:text-neutral-300",
                         isPressed && "font-bold",
                         childrenClassName,
                     )}
+                    style={{ fontFamily: KEYCAP_FONT_FAMILY }}
                 >
                     {children}
                 </div>
@@ -1087,9 +1091,11 @@ const ModifierKey = ({
                 )}
             >
                 <div className={cn(
-                    "flex h-full w-full flex-col items-start justify-between p-1 text-[5px] text-neutral-700 transition-colors dark:text-neutral-300",
+                    "flex h-full w-full flex-col items-start justify-between p-1 text-[2px] leading-none text-neutral-700 transition-colors [-webkit-text-size-adjust:none] [text-size-adjust:none] sm:text-[5px] dark:text-neutral-300",
                     isPressed && "font-bold",
-                )}>
+                )}
+                    style={{ fontFamily: KEYCAP_FONT_FAMILY }}
+                >
                     {children}
                 </div>
             </button>
