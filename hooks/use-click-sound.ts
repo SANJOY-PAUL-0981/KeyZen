@@ -1,13 +1,16 @@
 "use client"
 
 import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { useSettings } from "@/components/settings-context"
 
 export function useClickSound() {
   const { clickSoundEnabled } = useSettings()
+  const pathname = usePathname()
 
   useEffect(() => {
     if (!clickSoundEnabled) return
+    if (pathname?.startsWith("/landing")) return
 
     function handleClick(e: MouseEvent) {
       const target = e.target as Element | null
@@ -22,5 +25,5 @@ export function useClickSound() {
 
     document.addEventListener("click", handleClick)
     return () => document.removeEventListener("click", handleClick)
-  }, [clickSoundEnabled])
+  }, [clickSoundEnabled, pathname])
 }
