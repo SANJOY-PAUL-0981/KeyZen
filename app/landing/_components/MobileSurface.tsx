@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SOUND_PACKS } from "@/lib/settings-data";
+import { SOUND_DEFINES_DOWN } from "@/components/ui/keyboard";
 import { CREAM, CYAN, CORAL } from "../lib/colors";
 import { SectionHeader } from "./Modes";
 
@@ -18,18 +19,61 @@ const SWITCH_META: Record<string, { stem: string; feel: string }> = {
   "banana-split-lubed":  { stem: "#ffe135",  feel: "tactile · thocky" },
 };
 
-type Sprite = { sound: string; defines: Record<string, [number, number] | null> };
+type RawConfig = {
+  key_define_type?: "single" | "multi";
+  defines: Record<string, [number, number] | string | null>;
+};
+
+// Module-level caches — same pattern as keyboard.tsx
+const rawBufferCache = new Map<string, ArrayBuffer>();
+const decodedBufferCache = new Map<string, AudioBuffer>();
+const configCache = new Map<string, RawConfig>();
+
+async function fetchDecoded(ctx: AudioContext, url: string): Promise<AudioBuffer> {
+  if (decodedBufferCache.has(url)) return decodedBufferCache.get(url)!;
+  let ab = rawBufferCache.get(url);
+  if (!ab) {
+    const r = await fetch(url);
+    ab = await r.arrayBuffer();
+    rawBufferCache.set(url, ab);
+  }
+  const decoded = await ctx.decodeAudioData(ab.slice(0));
+  decodedBufferCache.set(url, decoded);
+  return decoded;
+}
+
+function playBuffer(ctx: AudioContext, buffer: AudioBuffer, startMs: number, durMs: number): AudioBufferSourceNode {
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(ctx.destination);
+  if (startMs === 0 && durMs === 0) {
+    source.start(0);
+  } else {
+    source.start(0, startMs / 1000, durMs / 1000);
+  }
+  return source;
+}
+
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Scancode to use when demoing a specific pack (overrides random pick)
+const PACK_SHOWCASE_SCANCODE: Record<string, string> = {
+  "creams": "57", // Space
+};
 
 export function MobileSurface() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [pressedId, setPressedId] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const stopTimer = useRef<number | null>(null);
-  const spriteCache = useRef<Map<string, Sprite>>(new Map());
 
   useEffect(() => () => {
     if (stopTimer.current) window.clearTimeout(stopTimer.current);
-    audioRef.current?.pause();
+    try { currentSourceRef.current?.stop(); } catch { /* already stopped */ }
+    audioCtxRef.current?.close();
   }, []);
 
   async function play(packId: string) {
@@ -40,40 +84,59 @@ export function MobileSurface() {
     setActiveId(packId);
     window.setTimeout(() => setPressedId(null), 140);
 
-    if (audioRef.current) audioRef.current.pause();
     if (stopTimer.current) window.clearTimeout(stopTimer.current);
+    try { currentSourceRef.current?.stop(); } catch { /* already stopped */ }
+    currentSourceRef.current = null;
 
-    let startMs = 0;
-    let durMs = 220;
+    if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
+    const ctx = audioCtxRef.current;
+    if (ctx.state === "suspended") await ctx.resume();
 
-    if (pack.configUrl) {
-      try {
-        let sprite = spriteCache.current.get(pack.configUrl);
-        if (!sprite) {
-          const res = await fetch(pack.configUrl);
-          sprite = (await res.json()) as Sprite;
-          spriteCache.current.set(pack.configUrl, sprite);
+    try {
+      let source: AudioBufferSourceNode;
+      let durMs: number;
+
+      if (!pack.configUrl) {
+        // Classic: built-in sprite with SOUND_DEFINES_DOWN offsets
+        const buffer = await fetchDecoded(ctx, pack.url);
+        const defs = Object.values(SOUND_DEFINES_DOWN);
+        const [startMs, dur] = pickRandom(defs);
+        durMs = dur;
+        source = playBuffer(ctx, buffer, startMs, durMs);
+      } else {
+        let config = configCache.get(pack.configUrl);
+        if (!config) {
+          config = await fetch(pack.configUrl).then(r => r.json()) as RawConfig;
+          configCache.set(pack.configUrl, config);
         }
-        const entries = Object.values(sprite.defines).filter(Boolean) as [number, number][];
-        if (entries.length) {
-          const pick = entries[Math.floor(Math.random() * entries.length)];
-          startMs = pick[0];
-          durMs = pick[1];
+
+        if (config.key_define_type === "multi") {
+          // Individual WAV files per key — pick one randomly and play the whole file
+          const baseUrl = pack.configUrl.slice(0, pack.configUrl.lastIndexOf("/") + 1);
+          const filenames = Object.values(config.defines).filter((v): v is string => typeof v === "string");
+          const filename = pickRandom(filenames);
+          const buffer = await fetchDecoded(ctx, baseUrl + filename);
+          durMs = Math.round(buffer.duration * 1000);
+          source = playBuffer(ctx, buffer, 0, 0);
+        } else {
+          // Sprite pack — use showcase scancode if defined, otherwise pick randomly
+          const buffer = await fetchDecoded(ctx, pack.url);
+          const showcaseScancode = PACK_SHOWCASE_SCANCODE[packId];
+          const showcaseEntry = showcaseScancode ? config.defines[showcaseScancode] : undefined;
+          const slices = Object.values(config.defines).filter((v): v is [number, number] => Array.isArray(v));
+          const [startMs, dur] = (Array.isArray(showcaseEntry) ? showcaseEntry : null) ?? pickRandom(slices);
+          durMs = dur;
+          source = playBuffer(ctx, buffer, startMs, durMs);
         }
-      } catch {
-        // fall through to defaults
       }
-    }
 
-    const audio = new Audio(pack.url);
-    audio.preload = "auto";
-    audioRef.current = audio;
-    audio.currentTime = startMs / 1000;
-    audio.play().catch(() => {});
-    stopTimer.current = window.setTimeout(() => {
-      audio.pause();
-      setActiveId((cur) => (cur === packId ? null : cur));
-    }, durMs + 60);
+      currentSourceRef.current = source;
+      stopTimer.current = window.setTimeout(() => {
+        setActiveId(cur => (cur === packId ? null : cur));
+      }, durMs + 60);
+    } catch {
+      setActiveId(null);
+    }
   }
 
   return (
