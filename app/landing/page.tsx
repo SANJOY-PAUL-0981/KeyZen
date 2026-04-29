@@ -105,7 +105,7 @@ export default function LandingPage() {
 
   return (
     <div
-      className="relative min-h-screen overflow-x-hidden font-sans"
+      className="landing-theme relative min-h-screen overflow-x-hidden font-sans"
       style={landingStyle}
     >
       <BackgroundGrid />

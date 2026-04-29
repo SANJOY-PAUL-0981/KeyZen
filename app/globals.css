@@ -130,6 +130,16 @@
   }
 }
 
+::selection {
+  background: color-mix(in oklch, var(--primary) 42%, var(--background) 58%);
+  color: var(--foreground);
+}
+
+::-moz-selection {
+  background: color-mix(in oklch, var(--primary) 42%, var(--background) 58%);
+  color: var(--foreground);
+}
+
 /* ── Accent colour themes ─────────────────────────────────────── */
 /* teal (default — matches :root values, listed for explicitness) */
 :root[data-accent="teal"] {
