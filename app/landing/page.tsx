@@ -67,6 +67,21 @@ export default function LandingPage() {
   const router = useRouter()
 
   useEffect(() => {
+    const root = document.documentElement
+    const previousAccent = root.getAttribute("data-accent")
+
+    root.setAttribute("data-accent", "teal")
+
+    return () => {
+      if (previousAccent) {
+        root.setAttribute("data-accent", previousAccent)
+      } else {
+        root.removeAttribute("data-accent")
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (!event.metaKey || event.key.toLowerCase() !== "k") return
 
