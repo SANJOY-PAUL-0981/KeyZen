@@ -14,7 +14,7 @@ import { useMountEffect } from "@/hooks/use-mount-effect"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "motion/react"
-import { IconInfoCircle, IconNotes, IconSettings } from "@tabler/icons-react"
+import { IconCompass, IconInfoCircle, IconNotes, IconSettings } from "@tabler/icons-react"
 import { GithubLogo } from "@phosphor-icons/react"
 
 import { CornerBrackets } from "@/components/corner-brackets"
@@ -217,6 +217,18 @@ function SiteHeader() {
           >
             <IconSettings size={16} />
           </button>
+          <Link
+            href="/landing"
+            prefetch
+            className={cn(
+              iconButtonClass,
+              pathname === "/landing" && "text-foreground",
+            )}
+            aria-current={pathname === "/landing" ? "page" : undefined}
+            aria-label="Landing page"
+          >
+            <IconCompass size={16} stroke={1.5} aria-hidden />
+          </Link>
         </div>
       </div>
       <CornerBrackets>
