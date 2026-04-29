@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { GithubLogo } from "@phosphor-icons/react";
 import { CORAL, CREAM, CYAN } from "../lib/colors";
 import Link from "next/link";
@@ -22,140 +19,150 @@ function CornerCross({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
   );
 }
 
-function PixelHeart() {
-  const pixels = [
-    [0, 1, 1, 0, 1, 1, 0],
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
-    [0, 1, 1, 1, 1, 1, 0],
-    [0, 0, 1, 1, 1, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0],
+function LaunchSignal() {
+  const rows = [
+    "keyzen.start()",
+    "mode: time",
+    "duration: 30s",
+    "result: cleaner",
   ];
+
   return (
-    <svg viewBox="0 0 70 60" width="160" height="140" aria-hidden>
-      {pixels.map((row, y) =>
-        row.map((on, x) =>
-          on ? (
-            <rect
-              key={`${x}-${y}`}
-              x={x * 10}
-              y={y * 10}
-              width="9"
-              height="9"
-              fill={CYAN}
+    <div
+      className="relative min-h-[240px] overflow-hidden border-t px-5 py-5 sm:px-8 lg:border-l lg:border-t-0"
+      style={{ borderColor: `${CREAM}12` }}
+    >
+      <div
+        className="absolute inset-0 opacity-[0.16]"
+        style={{
+          backgroundImage: `linear-gradient(${CREAM}14 1px, transparent 1px), linear-gradient(90deg, ${CREAM}14 1px, transparent 1px)`,
+          backgroundSize: "28px 28px",
+        }}
+      />
+      <div className="relative flex h-full flex-col justify-center gap-8">
+        <div
+          className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.24em] sm:text-[10px]"
+          style={{ color: `${CREAM}70` }}
+        >
+          <span>ready</span>
+          <span style={{ color: CYAN }}>30s run</span>
+        </div>
+        <div
+          className="space-y-3 font-mono text-[12px] sm:text-[13px]"
+          style={{ color: `${CREAM}a8` }}
+        >
+          {rows.map((row, index) => (
+            <div key={row} className="flex items-center gap-3">
+              <span style={{ color: index === 0 ? CYAN : `${CREAM}40` }}>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span>{row}</span>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-12 gap-1" aria-hidden>
+          {Array.from({ length: 36 }).map((_, i) => (
+            <span
+              key={i}
+              className="h-3"
               style={{
-                opacity: 0,
-                animation: `kz-heart 0.25s ease ${(x + y) * 0.06}s forwards`,
+                background: i % 9 === 0 ? CORAL : CYAN,
+                opacity: [0, 11, 23, 35].includes(i)
+                  ? 1
+                  : 0.18 + (i % 5) * 0.12,
+                animation: `kz-signal ${0.8 + (i % 4) * 0.12}s ease-in-out ${i * 0.025}s infinite alternate`,
               }}
             />
-          ) : null
-        )
-      )}
-      <style>{`@keyframes kz-heart { to { opacity: 1; } }`}</style>
-    </svg>
+          ))}
+        </div>
+      </div>
+      <style>{`@keyframes kz-signal { to { opacity: 0.95; transform: translateY(-1px); } }`}</style>
+    </div>
   );
 }
 
-function GitHubStarButton() {
-  const [stars, setStars] = useState<number | null>(null);
-
-  useEffect(() => {
-    fetch("https://api.github.com/repos/shivabhattacharjee/KeyZen")
-      .then((res) => res.json())
-      .then((data) => setStars(data.stargazers_count))
-      .catch(() => setStars(null));
-  }, []);
-
+function SourceButton() {
   return (
     <a
       href="https://github.com/shivabhattacharjee/KeyZen"
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors hover:bg-white/5"
+      className="inline-flex h-11 min-w-0 items-center justify-center gap-2 border px-3 font-mono text-[9px] uppercase tracking-[0.12em] transition-colors hover:bg-white/5 sm:h-12 sm:px-4 sm:text-[10px] sm:tracking-[0.16em]"
       style={{ borderColor: `${CYAN}55`, color: CREAM }}
     >
       <GithubLogo size={14} weight="fill" />
-      <span className="font-(family-name:--font-doto)">star on github</span>
-      <span
-        className="px-1.5 py-0.5"
-        style={{
-          background: `${CYAN}20`,
-          color: CYAN,
-          fontFamily: "var(--font-mono)",
-        }}
-      >
-        {stars !== null ? `★ ${stars.toLocaleString()}` : "★ —"}
-      </span>
+      <span className="truncate font-(family-name:--font-doto)">Star On Github</span>
     </a>
   );
 }
 
 export function FinalCTA() {
   return (
-    <section id="open" className="relative z-10 mx-auto max-w-5xl px-6 py-28">
-      <div
-        className="relative overflow-hidden border p-10 text-center sm:p-16"
-        style={{ borderColor: `${CREAM}1a`, background: "#0d1016" }}
-      >
-        <CornerCross pos="tl" />
-        <CornerCross pos="tr" />
-        <CornerCross pos="bl" />
-        <CornerCross pos="br" />
-
+    <section id="open" className="relative z-10 mx-auto max-w-5xl px-6 py-16 sm:py-20">
+      <div className="relative pb-4 pr-4">
+        {/* Back shadow — same size as main card, offset 16px */}
         <div
-          className="absolute inset-0 -z-0 opacity-30"
-          style={{
-            background:
-              `radial-gradient(circle at 80% 20%, ${CYAN}40 0%, transparent 50%), radial-gradient(circle at 10% 90%, ${CORAL}30 0%, transparent 55%)`,
-          }}
+          className="pointer-events-none absolute border"
+          style={{ borderColor: `${CREAM}10`, background: "#090b0f", top: 16, left: 16, right: 0, bottom: 0 }}
         />
+        {/* Middle shadow — same size as main card, offset 8px */}
+        <div
+          className="pointer-events-none absolute border"
+          style={{ borderColor: `${CYAN}22`, background: "#0b1015", top: 8, left: 8, right: 8, bottom: 8 }}
+        />
+        <div
+          className="relative overflow-hidden border"
+          style={{ borderColor: `${CREAM}1a`, background: "#0d1016" }}
+        >
+          <CornerCross pos="tl" />
+          <CornerCross pos="tr" />
+          <CornerCross pos="bl" />
+          <CornerCross pos="br" />
 
-        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center">
-          <div
-            className="font-mono text-[10px] uppercase tracking-[0.28em]"
-            style={{ color: CYAN }}
-          >
-            §end · begin
-          </div>
-          <h2
-            className="mt-4 text-[clamp(36px,6vw,72px)] font-bold leading-[1.02] tracking-[-0.02em]"
-            style={{ color: CREAM }}
-          >
-            Put your fingers
-            <br />
-            <span style={{ color: CYAN }}>where your eyes are.</span>
-          </h2>
-          <p
-            className="mt-5 max-w-xl text-[15px] leading-[1.7]"
-            style={{ color: `${CREAM}b0` }}
-          >
-            No login, no card. Open the test, take a breath, and start typing.
-            The first run takes 30 seconds. The thousandth one earns you a
-            quietly faster brain.
-          </p>
+          <div className="relative z-10 grid min-h-[520px] min-w-0 items-stretch lg:min-h-[360px] lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="flex min-w-0 flex-col justify-center px-5 py-8 text-left sm:px-10 lg:py-10">
+              <div
+                className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                style={{ color: CYAN }}
+              >
+                §end · begin
+              </div>
+              <h2
+                className="mt-4 max-w-full text-[30px] font-bold leading-[1.04] tracking-[-0.015em] text-balance sm:text-[44px] lg:text-[50px]"
+                style={{ color: CREAM }}
+              >
+                Start the next run while the thought is warm.
+              </h2>
+              <p
+                className="mt-4 max-w-full text-[14px] leading-[1.7] sm:max-w-xl sm:text-[15px]"
+                style={{ color: `${CREAM}b0` }}
+              >
+                No login, no card. Open KeyZen, take a breath, and let the first
+                30 seconds tell you what to practice next.
+              </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/"
-              className="group inline-flex items-center gap-3 px-8 py-4 font-mono text-[12px] uppercase tracking-[0.24em]"
-              style={{ background: CYAN, color: CREAM }}
-            >
-              launch keyzen
-              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
-                <path
-                  d="M2 7 H12 M8 3 L12 7 L8 11"
-                  fill="none"
-                  stroke={CREAM}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-          </div>
-
-          <div className="mt-12">
-            <PixelHeart />
+              <div className="mt-7 grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+                <Link
+                  href="/"
+                  className="group inline-flex h-11 min-w-0 items-center justify-center gap-2 px-3 font-mono text-[9px] uppercase tracking-[0.14em] transition-transform hover:-translate-y-0.5 sm:h-12 sm:gap-3 sm:px-6 sm:text-[11px] sm:tracking-[0.22em]"
+                  style={{ background: CYAN, color: CREAM }}
+                >
+                  Start Typing
+                  <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
+                    <path
+                      d="M2 7 H12 M8 3 L12 7 L8 11"
+                      fill="none"
+                      stroke={CREAM}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </Link>
+                <SourceButton />
+              </div>
+            </div>
+            <LaunchSignal />
           </div>
         </div>
       </div>

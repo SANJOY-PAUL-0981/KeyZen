@@ -675,9 +675,16 @@ export const TestControls = memo(function TestControls({
         </div>
 
         {/* Mobile / tablet button */}
-        <div className="flex absolute bottom-132 left-0 right-0 lg:hidden items-center justify-center mb-5">
+        <div className="relative z-40 flex w-full items-center justify-center pt-4 pb-8 lg:hidden">
           <button
             type="button"
+            onPointerDown={(e) => {
+              if (e.pointerType === "mouse") return;
+              e.preventDefault();
+              e.stopPropagation();
+              (document.activeElement as HTMLElement | null)?.blur();
+              setDrawerOpen(true);
+            }}
             onClick={(e) => {
               e.stopPropagation();
               (document.activeElement as HTMLElement | null)?.blur();

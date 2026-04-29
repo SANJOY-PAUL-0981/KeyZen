@@ -79,7 +79,7 @@ export function Footer() {
 
         <div className="md:col-span-3">
           <FooterTitle>navigate</FooterTitle>
-          <FooterList items={["Modes", "Stats", "Process", "Launch"]} />
+          <FooterList items={["Modes", "Stats", "Process", "Try Now"]} />
         </div>
 
         <div className="md:col-span-4">

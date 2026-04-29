@@ -18,6 +18,7 @@ import { LanguageSupport } from "./_components/LanguageSupport"
 import { Process } from "./_components/Process"
 import { SoundWave } from "./_components/SoundWave"
 import { FinalCTA } from "./_components/FinalCTA"
+import { FAQ } from "./_components/FAQ"
 import { Footer } from "./_components/Footer"
 
 type LandingStyle = CSSProperties & Record<`--${string}`, string>
@@ -80,6 +81,7 @@ export default function LandingPage() {
       <StatsShowcase />
       <Process />
       <SoundWave />
+      <FAQ />
       <FinalCTA />
       <Footer />
     </div>
@@ -200,7 +202,7 @@ function TopBar() {
             <Button variant="noborderradius" asChild>
               <Link href="/" className="flex items-center gap-2">
                 <ArrowUpRight weight="bold" />
-                <span>Launch</span>
+                <span>Start Typing</span>
               </Link>
             </Button>
           </CornerBrackets>

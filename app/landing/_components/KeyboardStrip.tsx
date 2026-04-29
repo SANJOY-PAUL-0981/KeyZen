@@ -58,22 +58,26 @@ export function KeyboardStrip() {
   const [soundPack, setSoundPack] = useState("default");
 
   return (
-    <section className="relative z-10 mx-auto hidden max-w-5xl px-6 py-20 md:block">
+    <section id="surface" className="relative z-10 mx-auto hidden max-w-5xl px-6 py-20 md:block">
       <SectionHeader
         kicker="§01 · the surface"
         title="Match your keyboard."
         sub="Switch layouts, type normally, and watch the board respond live."
       />
 
-      <div className="mb-12 flex flex-col items-center gap-4 sm:mb-12">
-        <div className="flex gap-2 rounded-full border border-white/10 bg-[#0d1016] p-1">
+      <div className="mb-10 flex flex-col items-center gap-4 sm:mb-12">
+        <div
+          className="grid w-full max-w-xl grid-cols-2 gap-px border p-1"
+          style={{ background: `${CREAM}10`, borderColor: `${CREAM}18` }}
+        >
           <button
             onClick={() => setActiveKeyboard("magic")}
-            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors sm:px-6 ${
+            className={`relative flex h-12 items-center justify-center gap-2 px-3 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors sm:px-6 ${
               activeKeyboard === "magic"
-                ? "bg-white/10 text-white"
-                : "text-white/50 hover:text-white/80"
+                ? "text-white"
+                : "text-white/45 hover:text-white/80"
             }`}
+            style={{ background: activeKeyboard === "magic" ? `${CREAM}10` : "#0d1016" }}
           >
             <svg viewBox="0 0 48 48" width={20} height={20} className="shrink-0" aria-hidden>
               <rect x="4" y="16" width="40" height="16" rx="2" className="fill-white/20 stroke-white/40" strokeWidth="1" />
@@ -81,14 +85,18 @@ export function KeyboardStrip() {
             </svg>
             <span className="hidden sm:inline">Apple Magic</span>
             <span className="sm:hidden">Magic</span>
+            {activeKeyboard === "magic" && (
+              <span className="absolute inset-x-3 bottom-1 h-px" style={{ background: CYAN }} />
+            )}
           </button>
           <button
             onClick={() => setActiveKeyboard("keychron")}
-            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors sm:px-6 ${
+            className={`relative flex h-12 items-center justify-center gap-2 px-3 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors sm:px-6 ${
               activeKeyboard === "keychron"
-                ? "bg-white/10 text-white"
-                : "text-white/50 hover:text-white/80"
+                ? "text-white"
+                : "text-white/45 hover:text-white/80"
             }`}
+            style={{ background: activeKeyboard === "keychron" ? `${CREAM}10` : "#0d1016" }}
           >
             <svg viewBox="0 0 48 48" width={20} height={20} className="shrink-0" aria-hidden>
               <rect x="6" y="6" width="36" height="36" rx="4" className="fill-white/30" />
@@ -96,6 +104,9 @@ export function KeyboardStrip() {
             </svg>
             <span className="hidden sm:inline">Keychron K2</span>
             <span className="sm:hidden">Keychron</span>
+            {activeKeyboard === "keychron" && (
+              <span className="absolute inset-x-3 bottom-1 h-px" style={{ background: CYAN }} />
+            )}
           </button>
         </div>
       </div>
@@ -109,7 +120,7 @@ export function KeyboardStrip() {
               physicalKeysEnabled
               soundUrl={SOUND_PACKS.find(s => s.id === soundPack)?.url ?? "/sounds/sound.ogg"}
               soundConfigUrl={SOUND_PACKS.find(s => s.id === soundPack)?.configUrl}
-              className="[zoom:0.55] sm:[zoom:0.85] md:[zoom:1.05] lg:[zoom:1.25] xl:[zoom:1.4]"
+              className="[zoom:0.68] sm:[zoom:0.98] md:[zoom:1.2] lg:[zoom:1.5] xl:[zoom:1.72]"
             />
           </KeyboardShowcase>
         ) : (
@@ -166,7 +177,7 @@ function KeyboardShowcase({
           <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
             <PopoverTrigger asChild>
               <button
-                className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60 transition-colors hover:border-white/20 hover:text-white/80"
+                className="flex h-10 items-center gap-2 border border-white/10 bg-white/5 px-3 font-mono text-[10px] uppercase tracking-widest text-white/60 transition-colors hover:border-white/20 hover:text-white/80"
               >
                 <svg viewBox="0 0 48 48" width={16} height={16} aria-hidden>
                   <rect x="4" y="10" width="40" height="34" rx="4" className="fill-white/20" />
@@ -215,7 +226,7 @@ function KeyboardShowcase({
         </div>
       </div>
 
-      <div className="flex w-full justify-center overflow-x-auto px-3 py-8 sm:px-6 sm:py-10">
+      <div className="flex min-h-[320px] w-full items-center justify-center overflow-x-auto px-3 py-8 sm:min-h-[130px] sm:px-6 lg:min-h-[110px]">
         {children}
       </div>
     </div>

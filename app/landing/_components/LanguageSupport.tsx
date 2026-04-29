@@ -216,33 +216,9 @@ function KeyboardLayoutGrid() {
 
 function LanguageDeck() {
   return (
-    <div className="relative isolate mt-7">
+    <div className="relative h-full min-h-0">
       <div
-        aria-hidden
-        className="absolute inset-x-5 top-[-28px] -z-30 h-full rounded-[8px] border opacity-35 blur-[1px]"
-        style={{
-          background: "rgba(13, 16, 22, 0.72)",
-          borderColor: `${CREAM}12`,
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-x-3 top-[-16px] -z-20 h-full rounded-[8px] border opacity-55 blur-[0.5px]"
-        style={{
-          background: "rgba(13, 16, 22, 0.82)",
-          borderColor: `${CYAN}18`,
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-x-1 top-[-7px] -z-10 h-full rounded-[8px] border opacity-80"
-        style={{
-          background: "rgba(13, 16, 22, 0.9)",
-          borderColor: `${CREAM}14`,
-        }}
-      />
-      <div
-        className="relative grid grid-cols-2 gap-px overflow-hidden rounded-[8px] border shadow-[0_28px_80px_rgba(0,0,0,0.34)] lg:grid-cols-3"
+        className="relative grid h-full grid-cols-2 gap-px overflow-hidden border shadow-[0_28px_80px_rgba(0,0,0,0.34)] lg:grid-cols-3"
         style={{
           background: `${CREAM}10`,
           borderColor: `${CREAM}14`,
@@ -295,18 +271,30 @@ export function LanguageSupport() {
         </p>
       </div>
 
-      <div
-        className="grid grid-cols-1 gap-px border md:grid-cols-[0.95fr_1.05fr]"
-        style={{ background: `${CREAM}10`, borderColor: `${CREAM}10` }}
-      >
-        <div className="grid gap-px" style={{ background: `${CREAM}10` }}>
-          <div className="p-3 sm:p-8" style={{ background: INK }}>
-            <LanguageGlobe />
+      <div className="relative pb-4 pr-4">
+        {/* Back shadow */}
+        <div
+          className="pointer-events-none absolute border"
+          style={{ borderColor: `${CREAM}10`, background: "#090b0f", top: 16, left: 16, right: 0, bottom: 0 }}
+        />
+        {/* Middle shadow */}
+        <div
+          className="pointer-events-none absolute border"
+          style={{ borderColor: `${CYAN}22`, background: "#0b1015", top: 8, left: 8, right: 8, bottom: 8 }}
+        />
+        <div
+          className="relative grid grid-cols-1 items-stretch gap-px border md:grid-cols-[0.95fr_1.05fr]"
+          style={{ background: `${CREAM}10`, borderColor: `${CREAM}10` }}
+        >
+          <div className="grid gap-px" style={{ background: `${CREAM}10` }}>
+            <div className="p-3 sm:p-8" style={{ background: INK }}>
+              <LanguageGlobe />
+            </div>
+            <KeyboardLayoutGrid />
           </div>
-          <KeyboardLayoutGrid />
-        </div>
 
-        <LanguageDeck />
+          <LanguageDeck />
+        </div>
       </div>
     </section>
   )
