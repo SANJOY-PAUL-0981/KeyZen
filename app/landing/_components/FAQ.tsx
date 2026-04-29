@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "motion/react";
 import { CREAM, CYAN, INK } from "../lib/colors";
 import { SectionHeader } from "./Modes";
 
@@ -34,8 +37,12 @@ export function FAQ() {
         style={{ background: `${CREAM}10`, borderColor: `${CREAM}10` }}
       >
         {FAQS.map((item, index) => (
-          <details
+          <motion.details
             key={item.q}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
             className="group border-b last:border-b-0"
             style={{ background: index % 2 === 0 ? INK : "#0d1016", borderColor: `${CREAM}10` }}
             open={index === 0}
@@ -68,7 +75,7 @@ export function FAQ() {
                 {item.a}
               </p>
             </div>
-          </details>
+          </motion.details>
         ))}
       </div>
     </section>

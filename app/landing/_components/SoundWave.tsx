@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "motion/react";
 import { CORAL, CREAM, CYAN } from "../lib/colors";
 
 function Waveform() {
@@ -78,8 +81,12 @@ function Marquee() {
 export function SoundWave() {
   return (
     <section className="relative z-10 mx-auto max-w-5xl px-6 py-12">
-      <div
-        className="flex items-center gap-6 overflow-hidden border-y py-6"
+      <motion.div
+        initial={{ opacity: 0, scaleX: 0.94 }}
+        whileInView={{ opacity: 1, scaleX: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="flex origin-center items-center gap-6 overflow-hidden border-y py-6"
         style={{ borderColor: `${CREAM}1a` }}
       >
         <div
@@ -90,7 +97,7 @@ export function SoundWave() {
         </div>
         <Waveform />
         <Marquee />
-      </div>
+      </motion.div>
     </section>
   );
 }

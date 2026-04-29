@@ -5,6 +5,7 @@ import { SOUND_PACKS } from "@/lib/settings-data";
 import { SOUND_DEFINES_DOWN } from "@/components/ui/keyboard";
 import { CREAM, CYAN, CORAL } from "../lib/colors";
 import { SectionHeader } from "./Modes";
+import { Reveal } from "./Reveal";
 
 const SWITCH_META: Record<string, { stem: string; feel: string }> = {
   "default":             { stem: CYAN,       feel: "clean · neutral" },
@@ -152,6 +153,7 @@ export function MobileSurface() {
         sub="Ten switches, ten personalities. Tap one to sample its voice."
       />
 
+      <Reveal direction="up" y={20} delay={0.1}>
       <div
         className="relative border"
         style={{ borderColor: `${CREAM}14`, background: "#0d1016" }}
@@ -226,6 +228,7 @@ export function MobileSurface() {
           tap a row · sample the stem
         </div>
       </div>
+      </Reveal>
     </section>
   );
 }

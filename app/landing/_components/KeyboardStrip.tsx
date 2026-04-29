@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { CREAM, CYAN } from "../lib/colors";
 import { SectionHeader } from "./Modes";
+import { Reveal } from "./Reveal";
 
 const SWITCH_STEM_COLORS: Record<string, string> = {
   "default": "var(--color-primary)",
@@ -65,9 +66,9 @@ export function KeyboardStrip() {
         sub="Switch layouts, type normally, and watch the board respond live."
       />
 
-      <div className="mb-10 flex flex-col items-center gap-4 sm:mb-12">
+      <Reveal direction="up" y={16} delay={0.05} className="mb-10 flex flex-col  items-start gap-4 sm:mb-12">
         <div
-          className="grid w-full max-w-xl grid-cols-2 gap-px border p-1"
+          className="flex gap-3 items-center  border p-1"
           style={{ background: `${CREAM}10`, borderColor: `${CREAM}18` }}
         >
           <button
@@ -109,9 +110,9 @@ export function KeyboardStrip() {
             )}
           </button>
         </div>
-      </div>
+      </Reveal>
 
-      <div className="space-y-10">
+      <Reveal direction="up" y={28} delay={0.1} duration={0.85} className="space-y-10">
         {activeKeyboard === "magic" ? (
           <KeyboardShowcase soundPack={soundPack} onSoundPackChange={setSoundPack}>
             <MagicKeyboard
@@ -136,7 +137,7 @@ export function KeyboardStrip() {
             />
           </KeyboardShowcase>
         )}
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -226,7 +227,7 @@ function KeyboardShowcase({
         </div>
       </div>
 
-      <div className="flex min-h-[320px] w-full items-center justify-center overflow-x-auto px-3 py-8 sm:min-h-[130px] sm:px-6 lg:min-h-[110px]">
+      <div className="flex w-full items-center justify-center overflow-x-auto px-3 py-8 sm:min-h-[200px] sm:px-6 sm:py-10 md:min-h-[260px] lg:min-h-[320px] xl:min-h-[380px]">
         {children}
       </div>
     </div>

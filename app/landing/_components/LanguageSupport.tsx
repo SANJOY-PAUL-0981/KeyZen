@@ -1,5 +1,9 @@
+"use client"
+
+import { motion } from "motion/react"
 import type { Language } from "@/lib/languages"
 import { CREAM, CYAN, INK } from "../lib/colors"
+import { Reveal } from "./Reveal"
 
 type LandingLanguage = Pick<Language, "name" | "code"> & {
   sample: string
@@ -152,7 +156,11 @@ function LanguageCard({
   index: number
 }) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
       className="border px-3 py-2.5 sm:p-4"
       style={{
         background: index % 2 === 0 ? `${INK}f2` : "#0d1016",
@@ -171,7 +179,7 @@ function LanguageCard({
       >
         {sample}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -244,34 +252,40 @@ export function LanguageSupport() {
       className="relative z-10 mx-auto max-w-5xl px-6 py-24"
     >
       <div className="mb-8 sm:mb-12">
-        <div
-          className="font-mono text-[9px] tracking-[0.28em] uppercase sm:text-[10px]"
-          style={{ color: CYAN }}
-        >
-          §03 · languages
-        </div>
-        <h2
-          className="mt-3 max-w-4xl text-[30px] leading-[1.05] font-bold sm:text-[42px] md:text-[56px]"
-          style={{
-            color: CREAM,
-            textShadow: `1px 0 ${CYAN}66, -1px 0 ${CYAN}38, 0 1px ${CYAN}38, 0 -1px ${CYAN}38, 0 0 26px ${CYAN}1f`,
-          }}
-        >
-          Practice for a global keyboard.
-        </h2>
-        <p
-          className="mt-4 max-w-2xl text-[15px] leading-[1.7]"
-          style={{
-            color: `${CREAM}b8`,
-            textShadow: `0 0 16px ${CYAN}14`,
-          }}
-        >
-          Train with accents, native scripts, mixed-language phrases, and the
-          real text your international audience actually types.
-        </p>
+        <Reveal direction="up" y={12} duration={0.55}>
+          <div
+            className="font-mono text-[9px] tracking-[0.28em] uppercase sm:text-[10px]"
+            style={{ color: CYAN }}
+          >
+            §03 · languages
+          </div>
+        </Reveal>
+        <Reveal direction="up" y={20} delay={0.08} duration={0.7}>
+          <h2
+            className="mt-3 max-w-4xl text-[30px] leading-[1.05] font-bold sm:text-[42px] md:text-[56px]"
+            style={{
+              color: CREAM,
+              textShadow: `1px 0 ${CYAN}66, -1px 0 ${CYAN}38, 0 1px ${CYAN}38, 0 -1px ${CYAN}38, 0 0 26px ${CYAN}1f`,
+            }}
+          >
+            Practice for a global keyboard.
+          </h2>
+        </Reveal>
+        <Reveal direction="up" y={16} delay={0.18} duration={0.7}>
+          <p
+            className="mt-4 max-w-2xl text-[15px] leading-[1.7]"
+            style={{
+              color: `${CREAM}b8`,
+              textShadow: `0 0 16px ${CYAN}14`,
+            }}
+          >
+            Train with accents, native scripts, mixed-language phrases, and the
+            real text your international audience actually types.
+          </p>
+        </Reveal>
       </div>
 
-      <div className="relative pb-4 pr-4">
+      <Reveal direction="up" y={28} delay={0.1} duration={0.85} className="relative pb-4 pr-4">
         {/* Back shadow */}
         <div
           className="pointer-events-none absolute border"
@@ -295,7 +309,7 @@ export function LanguageSupport() {
 
           <LanguageDeck />
         </div>
-      </div>
+      </Reveal>
     </section>
   )
 }

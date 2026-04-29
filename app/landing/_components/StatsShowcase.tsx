@@ -1,20 +1,29 @@
+"use client";
+
+import { motion } from "motion/react";
 import { CORAL, CREAM, CYAN, INK } from "../lib/colors";
 import { SectionHeader } from "./Modes";
 
 function BigStat({
   children,
   className = "",
+  index = 0,
 }: {
   children: React.ReactNode;
   className?: string;
+  index?: number;
 }) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.65, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
       className={`relative flex min-h-[220px] flex-col overflow-hidden p-5 sm:p-6 ${className}`}
       style={{ background: INK }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
 
@@ -453,20 +462,20 @@ export function StatsShowcase() {
         className="grid grid-cols-1 gap-px border sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr] lg:auto-rows-[280px]"
         style={{ background: `${CREAM}10`, borderColor: `${CREAM}10` }}
       >
-        <BigStat className="justify-center gap-5 lg:col-span-1 lg:row-span-2 lg:p-8">
+        <BigStat index={0} className="justify-center gap-5 lg:col-span-1 lg:row-span-2 lg:p-8">
           <StatLabel eyebrow="speed split" title="Raw vs net" />
           <WPMGauge />
           <SpeedSplit />
         </BigStat>
-        <BigStat className="lg:col-span-2">
+        <BigStat index={1} className="lg:col-span-2">
           <AccuracyCard />
         </BigStat>
-        <BigStat className="lg:col-span-1">
+        <BigStat index={2} className="lg:col-span-1">
           <StatLabel eyebrow="consistency" title="Less wobble" />
           <ConsistencyChart />
           <StatFooter kpi="A+" unit="" note="streak · 28 days" />
         </BigStat>
-        <BigStat className="lg:col-span-1">
+        <BigStat index={3} className="lg:col-span-1">
           <StatLabel eyebrow="errors" title="Decay" />
           <ErrorDecayChart />
           <StatFooter kpi="-41%" unit="" note="this week" />

@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "motion/react";
 import { GithubLogo } from "@phosphor-icons/react";
 import { CORAL, CREAM, CYAN } from "../lib/colors";
 import Link from "next/link";
@@ -99,7 +102,13 @@ function SourceButton() {
 export function FinalCTA() {
   return (
     <section id="open" className="relative z-10 mx-auto max-w-5xl px-6 py-16 sm:py-20">
-      <div className="relative pb-4 pr-4">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="relative pb-4 pr-4"
+      >
         {/* Back shadow — same size as main card, offset 16px */}
         <div
           className="pointer-events-none absolute border"
@@ -165,7 +174,7 @@ export function FinalCTA() {
             <LaunchSignal />
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

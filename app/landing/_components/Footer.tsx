@@ -1,133 +1,131 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { GithubLogo, XLogo } from "@phosphor-icons/react"
-import { CORAL, CREAM, CYAN } from "../lib/colors"
+import { motion } from "motion/react"
+import { CREAM, CYAN, INK } from "../lib/colors"
 
-function FooterTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h4
-      className="mb-4 font-mono text-[10px] tracking-[0.28em] uppercase"
-      style={{ color: CYAN }}
-    >
-      {children}
-    </h4>
-  )
-}
+const SERIF_STACK =
+  "'Cormorant Garamond', 'EB Garamond', 'Iowan Old Style', 'Apple Garamond', Georgia, 'Times New Roman', serif"
 
-function FooterList({ items }: { items: string[] }) {
+const EASE = [0.22, 1, 0.36, 1] as const
+
+const ASCII_TEXT_PATTERN = `url("data:image/svg+xml,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="88" viewBox="0 0 260 88">
+  <g fill="${CYAN}" fill-opacity="0.92" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="7" letter-spacing="0.55">
+    <text x="-80" y="7">KEYZEN ASCII TYPE TAB ENTER WPM FLOW CTRL SHIFT ALT ESC RETURN HOME ROW</text>
+    <text x="-112" y="15">0101 CTRL SHIFT ALT ESC RETURN HOME ROW QWERTY KEYZEN ASCII TYPE TAB</text>
+    <text x="-42" y="23">WPM ACCURACY FLOW FOCUS KEYZEN CODE SPEED ZEN RETURN TAB ESC 1010</text>
+    <text x="-96" y="31">ASCII MODE PRACTICE SPEED ENTER TAB KEYZEN HOME ROW CTRL SHIFT WPM</text>
+    <text x="-20" y="39">HOME ROW QWERTY CODE ZEN 1010 SHIFT ALT RETURN TYPE FLOW KEYZEN</text>
+    <text x="-124" y="47">KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY KEY</text>
+    <text x="-64" y="55">CTRL RETURN ACCURACY FOCUS FLOW TYPE KEYZEN ASCII WPM TAB ESC</text>
+    <text x="-104" y="63">TAB ESC ENTER SPEED CODE ASCII ZEN QWERTY HOME ROW KEYZEN 0101</text>
+    <text x="-34" y="71">0101 HOME ROW SHIFT ALT CTRL RETURN KEYZEN WPM FLOW ACCURACY TYPE</text>
+    <text x="-88" y="79">KEYZEN ASCII TYPE TAB ENTER WPM FLOW CTRL SHIFT ALT ESC RETURN HOME</text>
+    <text x="-8" y="87">WPM ACCURACY FLOW FOCUS KEYZEN CODE SPEED ZEN RETURN TAB ESC 1010</text>
+  </g>
+</svg>
+`)}")`
+
+const BACKGROUND_KEYS = [
+  { label: "esc", x: "7%", y: "18%", w: 68, r: -18, delay: 0 },
+  { label: "tab", x: "21%", y: "63%", w: 78, r: 10, delay: 0.04 },
+  { label: "Q", x: "32%", y: "22%", w: 54, r: 24, delay: 0.08 },
+  { label: "W", x: "43%", y: "72%", w: 56, r: -13, delay: 0.12 },
+  { label: "E", x: "56%", y: "19%", w: 54, r: 15, delay: 0.16 },
+  { label: "return", x: "69%", y: "58%", w: 104, r: -23, delay: 0.2 },
+  { label: "shift", x: "82%", y: "24%", w: 94, r: 20, delay: 0.24 },
+  { label: "space", x: "52%", y: "43%", w: 170, r: -7, delay: 0.28 },
+  { label: "A", x: "13%", y: "78%", w: 54, r: 27, delay: 0.32 },
+  { label: "K", x: "88%", y: "75%", w: 54, r: -17, delay: 0.36 },
+] as const
+
+function ScatteredKeys() {
   return (
-    <ul className="space-y-3 text-[14px]" style={{ color: `${CREAM}b0` }}>
-      {items.map((it) => (
-        <li key={it}>
-          <a href={`#${it}`} className="transition-colors hover:text-white">
-            ↳ {it}
-          </a>
-        </li>
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-10">
+      {BACKGROUND_KEYS.map((key) => (
+        <motion.div
+          key={`${key.label}-${key.x}-${key.y}`}
+          initial={{ opacity: 0, y: 14, rotate: key.r - 8 }}
+          whileInView={{ opacity: 1, y: 0, rotate: key.r }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease: EASE, delay: key.delay }}
+          className="absolute flex h-7 items-center justify-center border font-mono text-[7px] uppercase sm:h-12 sm:text-[10px]"
+          style={{
+            left: key.x,
+            top: key.y,
+            width: `clamp(${Math.round(key.w * 0.48)}px, ${Math.round(key.w * 0.12)}vw, ${key.w}px)`,
+            transform: `rotate(${key.r}deg)`,
+            background: `linear-gradient(180deg, ${CREAM}14, ${CREAM}05 60%, ${CYAN}12)`,
+            borderColor: `${CREAM}18`,
+            boxShadow: `inset 0 1px 0 ${CREAM}18, 0 18px 42px rgba(0,0,0,0.28)`,
+            color: `${CREAM}5f`,
+            letterSpacing: 0,
+          }}
+        >
+          <span>{key.label}</span>
+          <span
+            className="absolute inset-x-2 bottom-1 h-px opacity-70"
+            style={{ background: CYAN }}
+          />
+        </motion.div>
       ))}
-    </ul>
+    </div>
   )
 }
 
-function SocialIcon({
-  href,
-  label,
-  children,
-}: {
-  href: string
-  label: string
-  children: React.ReactNode
-}) {
+function Wordmark() {
   return (
-    <a
-      href={href}
-      aria-label={label}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex h-11 w-11 items-center justify-center border transition-colors hover:bg-white/5"
-      style={{ borderColor: `${CREAM}24`, color: CREAM }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-120px" }}
+      transition={{ duration: 1.2, ease: EASE }}
+      className="pointer-events-none absolute inset-x-[-8vw] top-1/2 z-0 -translate-y-1/2 select-none"
+      aria-hidden
     >
-      {children}
-    </a>
+      <span
+        className="block w-full text-center leading-[1.05]"
+        style={{
+          fontFamily: SERIF_STACK,
+          fontWeight: 700,
+          fontStyle: "normal",
+          fontSize: "clamp(70px, 18vw, 292px)",
+          letterSpacing: 0,
+          color: "transparent",
+          WebkitTextStroke: `1px ${CYAN}82`,
+          backgroundImage: `${ASCII_TEXT_PATTERN}, linear-gradient(${CYAN}2e, ${CYAN}2e)`,
+          backgroundSize: "260px 88px, auto",
+          backgroundPosition: "center",
+          backgroundRepeat: "repeat",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          filter: `drop-shadow(0 0 18px ${CYAN}1f)`,
+          paddingBottom: "0.24em",
+        }}
+      >
+        keyzen
+      </span>
+    </motion.div>
   )
 }
 
 export function Footer() {
   return (
     <footer
-      className="relative z-10 border-t pt-16 pb-10"
-      style={{ borderColor: `${CREAM}14`, background: "#07090d" }}
+      className="relative z-10 h-[260px] overflow-hidden border-t sm:h-[420px]"
+      style={{ borderColor: `${CREAM}10` }}
     >
-      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-12 px-6 md:grid-cols-12">
-        <div className="md:col-span-5">
-          <span
-            className="flex items-center gap-2 font-(family-name:--font-doto) text-[44px] leading-none font-bold"
-            style={{ color: CYAN }}
-          >
-            <Link href="/">KeyZen</Link>
-          </span>
-          <p
-            className="mt-4 max-w-sm text-[14px] leading-[1.7]"
-            style={{ color: `${CREAM}99` }}
-          >
-            A typing studio for people who care about how their fingers move.
-            Open source, local-first, ad-free, and quietly opinionated.
-          </p>
-          
-        </div>
-
-        <div className="md:col-span-3">
-          <FooterTitle>navigate</FooterTitle>
-          <FooterList items={["Modes", "Stats", "Process", "Try Now"]} />
-        </div>
-
-        <div className="md:col-span-4">
-          <FooterTitle>support the project</FooterTitle>
-          <p
-            className="mb-5 text-[14px] leading-[1.65]"
-            style={{ color: `${CREAM}99` }}
-          >
-            Stars genuinely help. So does opening a PR with the keyboard layout
-            you wish existed.
-          </p>
-          <GitHubStarButton />
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-function GitHubStarButton() {
-  const [stars, setStars] = useState<number | null>(null)
-
-  useEffect(() => {
-    fetch("https://api.github.com/repos/shivabhattacharjee/KeyZen")
-      .then((res) => res.json())
-      .then((data) => setStars(data.stargazers_count))
-      .catch(() => setStars(null))
-  }, [])
-
-  return (
-    <a
-      href="https://github.com/shivabhattacharjee/KeyZen"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 border px-3 py-2 font-mono text-[10px] tracking-[0.18em] uppercase transition-colors hover:bg-white/5"
-      style={{ borderColor: `${CYAN}55`, color: CREAM }}
-    >
-      <GithubLogo size={14} weight="fill" />
-      <span className="font-(family-name:--font-doto)">star on github</span>
-      <span
-        className="px-1.5 py-0.5"
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
-          background: `${CYAN}20`,
-          color: CYAN,
-          fontFamily: "var(--font-mono)",
+          backgroundImage: `linear-gradient(${CREAM} 1px, transparent 1px), linear-gradient(90deg, ${CREAM} 1px, transparent 1px)`,
+          backgroundSize: "64px 64px",
+          maskImage: `radial-gradient(ellipse at center, ${INK} 30%, transparent 80%)`,
         }}
-      >
-        {stars !== null ? `★ ${stars.toLocaleString()}` : "★ —"}
-      </span>
-    </a>
+      />
+      <Wordmark />
+      <ScatteredKeys />
+    </footer>
   )
 }

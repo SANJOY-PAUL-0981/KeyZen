@@ -1,6 +1,9 @@
+"use client";
+
 import { motion } from "motion/react";
 import {  CREAM, CYAN, INK } from "../lib/colors";
 import { ModeTime, ModeWords, ModeCode, ModeZen, ModeQuote, ModeCustom } from "./ModeIcons";
+import { Reveal } from "./Reveal";
 
 const MODES = [
   {
@@ -58,25 +61,31 @@ function SectionHeader({
     <div
       className={`mb-12 ${align === "center" ? "mx-auto max-w-2xl text-center" : ""}`}
     >
-      <div
-        className="font-mono text-[9px] uppercase tracking-[0.28em] sm:text-[10px]"
-        style={{ color: CYAN }}
-      >
-        {kicker}
-      </div>
-      <h2
-        className="mt-3 text-[28px] font-bold leading-[1.1] tracking-[-0.015em] sm:text-[36px] md:text-[48px]"
-        style={{ color: CREAM }}
-      >
-        {title}
-      </h2>
-      {sub && (
-        <p
-          className={`mt-4 text-[15px] leading-[1.7] ${align === "center" ? "" : "max-w-2xl"}`}
-          style={{ color: `${CREAM}b0` }}
+      <Reveal direction="up" y={12} duration={0.55}>
+        <div
+          className="font-mono text-[9px] uppercase tracking-[0.28em] sm:text-[10px]"
+          style={{ color: CYAN }}
         >
-          {sub}
-        </p>
+          {kicker}
+        </div>
+      </Reveal>
+      <Reveal direction="up" y={20} delay={0.08} duration={0.7}>
+        <h2
+          className="mt-3 text-[28px] font-bold leading-[1.1] tracking-[-0.015em] sm:text-[36px] md:text-[48px]"
+          style={{ color: CREAM }}
+        >
+          {title}
+        </h2>
+      </Reveal>
+      {sub && (
+        <Reveal direction="up" y={16} delay={0.18} duration={0.7}>
+          <p
+            className={`mt-4 text-[15px] leading-[1.7] ${align === "center" ? "" : "max-w-2xl"}`}
+            style={{ color: `${CREAM}b0` }}
+          >
+            {sub}
+          </p>
+        </Reveal>
       )}
     </div>
   );
