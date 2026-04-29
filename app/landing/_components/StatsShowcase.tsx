@@ -363,13 +363,8 @@ function AccuracyCard() {
           </div>
         </div>
 
-        <div className="pt-4">
-          <div
-            className="font-mono text-[10px] tracking-[0.24em] uppercase"
-            style={{ color: `${CREAM}60` }}
-          >
-            across all modes
-          </div>
+        <div className="pt-6">
+         
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
             <OdometerNumber
               value={97}
