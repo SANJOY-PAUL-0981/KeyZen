@@ -1,11 +1,40 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "motion/react"
 import Link from "next/link"
 import { GithubLogo, ArrowUpRight } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { CornerBrackets } from "@/components/corner-brackets"
 import { CREAM, CYAN } from "../lib/colors"
+
+function ActiveUsersCounter({ target = 500, duration = 1400 }) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    let animationFrame = 0
+    let startTime: number | null = null
+
+    const tick = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(target * easedProgress))
+
+      if (progress < 1) {
+        animationFrame = window.requestAnimationFrame(tick)
+      }
+    }
+
+    animationFrame = window.requestAnimationFrame(tick)
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame)
+    }
+  }, [duration, target])
+
+  return <>{value.toLocaleString()}+</>
+}
 
 function UnderlineSquiggle() {
   return (
@@ -497,8 +526,9 @@ export function Hero() {
           className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium tracking-widest uppercase"
           style={{
             borderColor: `${CYAN}40`,
-            backgroundColor: `${CYAN}0d`,
+                backgroundColor: `${CYAN}0d`,
             color: `${CREAM}cc`,
+        
           }}
         >
           <span className="relative flex h-1.5 w-1.5">
@@ -511,7 +541,11 @@ export function Hero() {
               style={{ backgroundColor: CYAN }}
             />
           </span>
-          Trusted by 500+ active users
+          <span
+            className="rounded-[4px] px-2 py-0.5 font-mono text-[0.78rem] tracking-[0.16em]"
+          >
+            <ActiveUsersCounter /> ACTIVE USERS
+          </span>
         </div>
       </motion.div>
 
