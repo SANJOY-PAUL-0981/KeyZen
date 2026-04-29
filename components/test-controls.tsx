@@ -675,7 +675,7 @@ export const TestControls = memo(function TestControls({
         </div>
 
         {/* Mobile / tablet button */}
-        <div className="flex fixed z-50 left-0 right-0 lg:hidden items-center justify-center mb-5">
+        <div className="flex absolute bottom-132 left-0 right-0 lg:hidden items-center justify-center mb-5">
           <button
             type="button"
             onClick={(e) => {
