@@ -6,20 +6,100 @@ import { SectionHeader } from "./Modes";
 
 const FAQS = [
   {
-    q: "Is KeyZen free?",
-    a: "Yes. You can open the test and start typing without an account, paywall, or trial gate.",
+    q: "Is KeyZen free and open source?",
+    a: (
+      <>
+        KeyZen is free to use with no sign-up wall, ads, or trial lock. The code is public under Apache-2.0, so
+        you can audit it, fork it, and build your own version.
+      </>
+    ),
   },
   {
-    q: "What makes the stats useful?",
-    a: "KeyZen separates raw speed from net WPM, then pairs it with accuracy, consistency, and error decay so a fast but messy run does not look better than a cleaner one.",
+    q: "What modes and stats are included?",
+    a: (
+      <>
+        You can train with timed tests, word-count tests, quotes, zen mode, code drills, or your own custom text.
+        Results include WPM, raw speed, accuracy, consistency, character breakdown, and a WPM-over-time chart.
+      </>
+    ),
   },
   {
-    q: "Can I practice code and custom text?",
-    a: "Yes. You can use built-in code drills, paste your own writing, or switch into a calmer zen mode when you want practice without a timer.",
+    q: "How does keyboard support work?",
+    a: (
+      <>
+        KeyZen mirrors real key presses and highlights keys live on desktop layouts. You can switch keyboard styles
+        (mechanical or magic) and practice with a visual board that responds in real time while you type.
+      </>
+    ),
   },
   {
-    q: "Does the keyboard view work with my real keyboard?",
-    a: "The landing preview reacts to physical key presses, and the app includes keyboard display options for matching the feel of your setup.",
+    q: "What about sound packs and typing feel?",
+    a: (
+      <>
+        Audio feedback is built in with separate toggles for keyboard sounds and click sounds. There are multiple
+        switch-inspired sound packs, plus optional haptics on supported devices. If sound feels muted at first,
+        one click or keypress usually unlocks audio in the browser.
+      </>
+    ),
+  },
+  {
+    q: "Do you support languages and code practice?",
+    a: (
+      <>
+        Yes. KeyZen ships with a broad language manifest (including RTL scripts like Arabic, Urdu, Persian, and
+        Hebrew), plus built-in code passages across popular stacks such as JavaScript, TypeScript, Python, Go,
+        Rust, SQL, and more.
+      </>
+    ),
+  },
+  {
+    q: "Where can I report bugs or contribute?",
+    a: (
+      <>
+        Everything runs through GitHub: open issues for bugs/features and submit pull requests for fixes.
+        Contributors are also surfaced on the About page from the public GitHub contributor feed.
+        {" "}
+        <a
+          href="https://github.com/shivabhattacharjee/KeyZen"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-4 hover:text-white"
+          style={{ color: CYAN }}
+        >
+          View repository
+        </a>
+        {" · "}
+        <a
+          href="https://github.com/shivabhattacharjee/KeyZen/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-4 hover:text-white"
+          style={{ color: CYAN }}
+        >
+          Open an issue
+        </a>
+      </>
+    ),
+  },
+  {
+    q: "How is my data stored and used?",
+    a: (
+      <>
+        KeyZen stores your local preferences in your browser (for example theme, keyboard/sound toggles, and related
+        settings) so your setup persists between sessions. It also uses Google Analytics for anonymous usage signals
+        like speed, accuracy, and feature usage to improve product decisions and fix issues faster, without collecting
+        personal identity data.
+      </>
+    ),
+  },
+  {
+    q: "Is KeyZen affiliated with Monkeytype?",
+    a: (
+      <>
+        No. KeyZen is an independent hobby project inspired by Monkeytype&apos;s clean UX pattern, with its own
+        implementation, features, and open-source roadmap.
+      </>
+    ),
   },
 ] as const;
 
