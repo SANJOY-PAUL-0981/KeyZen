@@ -153,6 +153,8 @@ function KeyboardShowcase({
 }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const selectedPack = SOUND_PACKS.find(s => s.id === soundPack);
+  const selectedStemColor = SWITCH_STEM_COLORS[selectedPack?.id ?? "default"] ?? "currentColor";
+  const selectedIsDarkStem = (selectedPack?.id ?? "default") === "cherrymx-black-pbt" || (selectedPack?.id ?? "default") === "eg-oreo";
 
   return (
     <div
@@ -185,8 +187,26 @@ function KeyboardShowcase({
                   <rect x="6" y="7" width="36" height="33" rx="3.5" className="fill-white/10 stroke-white/30" strokeWidth="0.75" />
                   <rect x="11" y="11" width="26" height="25" rx="2" className="fill-white/5" />
                   <g transform="translate(24 23)">
-                    <rect x="-10" y="-3.25" width="20" height="6.5" rx="1.25" className="fill-white/60" />
-                    <rect x="-3.25" y="-10" width="6.5" height="20" rx="1.25" className="fill-white/60" />
+                    <rect
+                      x="-10"
+                      y="-3.25"
+                      width="20"
+                      height="6.5"
+                      rx="1.25"
+                      fill={selectedStemColor}
+                      stroke={selectedIsDarkStem ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
+                      strokeWidth="0.5"
+                    />
+                    <rect
+                      x="-3.25"
+                      y="-10"
+                      width="6.5"
+                      height="20"
+                      rx="1.25"
+                      fill={selectedStemColor}
+                      stroke={selectedIsDarkStem ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
+                      strokeWidth="0.5"
+                    />
                   </g>
                 </svg>
                 <span>{selectedPack?.label ?? "Classic"}</span>
