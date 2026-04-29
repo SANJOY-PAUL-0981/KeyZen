@@ -997,7 +997,8 @@ const Key = ({
     const { pressedKeys, pressKey, releaseKey, triggerPointerHaptic } = useKeyboard();
     const isPressed = keyCode ? pressedKeys.has(keyCode) : false;
 
-    const handleMouseDown = () => {
+    const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         if (keyCode) {
             triggerPointerHaptic();
             pressKey(keyCode, "pointer");
@@ -1058,7 +1059,8 @@ const ModifierKey = ({
     const { pressedKeys, pressKey, releaseKey, triggerPointerHaptic } = useKeyboard();
     const isPressed = keyCode ? pressedKeys.has(keyCode) : false;
 
-    const handleMouseDown = () => {
+    const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         if (keyCode) {
             triggerPointerHaptic();
             pressKey(keyCode, "pointer");
