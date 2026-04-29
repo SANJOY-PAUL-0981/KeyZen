@@ -38,6 +38,20 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const [cacheInfo, setCacheInfo] = useState<string | null>(null)
   const [showAllAccents, setShowAllAccents] = useState(false)
 
+  const focusTypingInput = () => {
+    const typingInput = document.querySelector<HTMLInputElement>(
+      'input[autocapitalize="none"][spellcheck="false"].absolute'
+    )
+    typingInput?.focus()
+  }
+
+  const closeAndRefocusTypingInput = () => {
+    onClose()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(focusTypingInput)
+    })
+  }
+
   const clearSWCache = async () => {
     if (!("caches" in window)) {
       setCacheInfo("Cache API not available")
@@ -642,7 +656,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={(v) => { if (!v) onClose() }}>
+      <Drawer open={open} onOpenChange={(v) => { if (!v) closeAndRefocusTypingInput() }}>
         <DrawerContent className="max-h-[90dvh]">
           <DrawerTitle className="sr-only">Settings</DrawerTitle>
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
@@ -650,7 +664,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               Settings
             </span>
             <button
-              onClick={onClose}
+              onClick={closeAndRefocusTypingInput}
               className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
             >
               <IconX size={14} />
@@ -673,7 +687,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
-            onClick={onClose}
+            onClick={closeAndRefocusTypingInput}
           />
           <motion.aside
             key="panel"
@@ -688,7 +702,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 Settings
               </span>
               <button
-                onClick={onClose}
+                onClick={closeAndRefocusTypingInput}
                 className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <IconX size={14} />

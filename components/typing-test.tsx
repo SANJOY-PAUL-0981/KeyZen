@@ -482,7 +482,7 @@ export function TypingTest(props: TypingTestProps) {
               >
                 <span className="flex items-center gap-2 text-sm font-medium text-primary">
                   <IconPointer size={16} />
-                  Click here or press any key to focus
+                  Click here or press Enter to focus
                 </span>
               </motion.div>
             )}

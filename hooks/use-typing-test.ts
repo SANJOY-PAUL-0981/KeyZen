@@ -718,6 +718,29 @@ export function useTypingTest({
     onFocusChange?.(true);
   }, [onFocusChange]);
 
+  useEffect(() => {
+    if (isFocused) return;
+
+    const handleEnterToFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Enter" || pauseRefocusRef.current) return;
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target?.closest(
+          'input, textarea, select, button, [contenteditable="true"], [role="dialog"], [data-radix-dialog-content]'
+        )
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      inputRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", handleEnterToFocus);
+    return () => window.removeEventListener("keydown", handleEnterToFocus);
+  }, [isFocused]);
+
   const handleCompositionStart = useCallback(() => {
     isComposingRef.current = true;
   }, []);
