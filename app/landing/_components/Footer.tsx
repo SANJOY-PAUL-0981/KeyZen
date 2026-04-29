@@ -27,16 +27,21 @@ const ASCII_TEXT_PATTERN = `url("data:image/svg+xml,${encodeURIComponent(`
 `)}")`
 
 const BACKGROUND_KEYS = [
-  { label: "esc", x: "7%", y: "18%", w: 68, r: -18, delay: 0 },
-  { label: "tab", x: "21%", y: "63%", w: 78, r: 10, delay: 0.04 },
-  { label: "Q", x: "32%", y: "22%", w: 54, r: 24, delay: 0.08 },
-  { label: "W", x: "43%", y: "72%", w: 56, r: -13, delay: 0.12 },
-  { label: "E", x: "56%", y: "19%", w: 54, r: 15, delay: 0.16 },
-  { label: "return", x: "69%", y: "58%", w: 104, r: -23, delay: 0.2 },
-  { label: "shift", x: "82%", y: "24%", w: 94, r: 20, delay: 0.24 },
-  { label: "space", x: "52%", y: "43%", w: 170, r: -7, delay: 0.28 },
-  { label: "A", x: "13%", y: "78%", w: 54, r: 27, delay: 0.32 },
-  { label: "K", x: "88%", y: "75%", w: 54, r: -17, delay: 0.36 },
+  { label: "esc", x: "-2%", y: "14%", w: 68, r: -18, delay: 0 },
+  { label: "1", x: "12%", y: "8%", w: 48, r: 18, delay: 0.02 },
+  { label: "Q", x: "24%", y: "21%", w: 54, r: 24, delay: 0.04 },
+  { label: "E", x: "44%", y: "12%", w: 54, r: 15, delay: 0.06 },
+  { label: "shift", x: "76%", y: "18%", w: 94, r: 20, delay: 0.08 },
+  { label: "tab", x: "9%", y: "62%", w: 78, r: 10, delay: 0.1 },
+  { label: "A", x: "-3%", y: "74%", w: 54, r: 27, delay: 0.12 },
+  { label: "S", x: "29%", y: "70%", w: 50, r: -13, delay: 0.14 },
+  { label: "W", x: "44%", y: "76%", w: 56, r: -13, delay: 0.16 },
+  { label: "space", x: "53%", y: "43%", w: 170, r: -7, delay: 0.18 },
+  { label: "return", x: "68%", y: "60%", w: 104, r: -23, delay: 0.2 },
+  { label: "K", x: "87%", y: "72%", w: 54, r: -17, delay: 0.22 },
+  { label: "cmd", x: "3%", y: "39%", w: 68, r: -7, delay: 0.24 },
+  { label: "Z", x: "89%", y: "42%", w: 50, r: 13, delay: 0.26 },
+  { label: "/", x: "58%", y: "79%", w: 48, r: 22, delay: 0.28 },
 ] as const
 
 function ScatteredKeys() {
@@ -49,11 +54,11 @@ function ScatteredKeys() {
           whileInView={{ opacity: 1, y: 0, rotate: key.r }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.9, ease: EASE, delay: key.delay }}
-          className="absolute flex h-7 items-center justify-center border font-mono text-[7px] uppercase sm:h-12 sm:text-[10px]"
+          className="absolute flex h-9 items-center justify-center border font-mono text-[8px] uppercase sm:h-12 sm:text-[10px]"
           style={{
             left: key.x,
             top: key.y,
-            width: `clamp(${Math.round(key.w * 0.48)}px, ${Math.round(key.w * 0.12)}vw, ${key.w}px)`,
+            width: `clamp(${Math.round(key.w * 0.72)}px, ${Math.round(key.w * 0.24)}vw, ${key.w}px)`,
             transform: `rotate(${key.r}deg)`,
             background: `linear-gradient(180deg, ${CREAM}14, ${CREAM}05 60%, ${CYAN}12)`,
             borderColor: `${CREAM}18`,
@@ -89,7 +94,7 @@ function Wordmark() {
           fontFamily: SERIF_STACK,
           fontWeight: 700,
           fontStyle: "normal",
-          fontSize: "clamp(70px, 18vw, 292px)",
+          fontSize: "clamp(96px, 26vw, 292px)",
           letterSpacing: 0,
           color: "transparent",
           WebkitTextStroke: `1px ${CYAN}82`,
@@ -112,7 +117,7 @@ function Wordmark() {
 export function Footer() {
   return (
     <footer
-      className="relative z-10 h-[260px] overflow-hidden border-t sm:h-[420px]"
+      className="relative z-10 h-[300px] overflow-hidden border-t sm:h-[420px]"
       style={{ borderColor: `${CREAM}10` }}
     >
       <div
