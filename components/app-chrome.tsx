@@ -50,38 +50,62 @@ export function AppChrome({ children }: { children: ReactNode }) {
   const [testSettingsOpen, setTestSettingsOpen] = useState(false)
   const [typingActive, setTypingActive] = useState(false)
   const [keyboardInset, setKeyboardInset] = useState(0)
+  const [isMobile, setIsMobile] = useState(true)
   const homeLogoHandlerRef = useRef<(() => void) | null>(null)
   useClickSound()
 
   useEffect(() => {
     if (typeof window === "undefined") return
-    const vv = window.visualViewport
-    if (!vv) return
-    let baseHeight = vv.height
-    let lastScale = vv.scale
-    const onResize = () => {
-      // Browser zoom changed (Cmd+Plus/Minus) — ignore, just update baseline
-      if (vv.scale !== lastScale) {
-        lastScale = vv.scale
-        baseHeight = vv.height
-        setKeyboardInset(0)
-        return
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    // Modern VirtualKeyboard API (Chrome/Edge/Android)
+    // @ts-ignore
+    if ("virtualKeyboard" in navigator) {
+      // @ts-ignore
+      navigator.virtualKeyboard.overlaysContent = true
+      const onGeometryChange = (e: any) => {
+        const { height } = e.target.boundingRect
+        setKeyboardInset(height)
       }
-      const delta = baseHeight - vv.height
+      // @ts-ignore
+      navigator.virtualKeyboard.addEventListener("geometrychange", onGeometryChange)
+
+      return () => {
+        window.removeEventListener("resize", checkMobile)
+        // @ts-ignore
+        navigator.virtualKeyboard.removeEventListener("geometrychange", onGeometryChange)
+      }
+    }
+
+    // Fallback for iOS Safari (which doesn't support virtualKeyboard API yet)
+    const vv = window.visualViewport
+    if (!vv) {
+      return () => window.removeEventListener("resize", checkMobile)
+    }
+
+    const onResize = () => {
+      // On iOS, when keyboard opens, visualViewport.height shrinks.
+      const delta = window.innerHeight - vv.height
       if (delta > 100) {
         setKeyboardInset(delta)
       } else {
-        baseHeight = Math.max(baseHeight, vv.height)
         setKeyboardInset(0)
       }
     }
+
     vv.addEventListener("resize", onResize)
-    return () => vv.removeEventListener("resize", onResize)
+    return () => {
+      vv.removeEventListener("resize", onResize)
+      window.removeEventListener("resize", checkMobile)
+    }
   }, [])
 
   useMountEffect(() => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {})
+      navigator.serviceWorker.register("/sw.js").catch(() => { })
     }
   })
 
@@ -106,7 +130,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
       <motion.div
         initial={false}
         animate={{
-          height: keyboardOpen ? `calc(100dvh - ${keyboardInset}px)` : "100dvh",
+          height: (isMobile && keyboardOpen) ? `calc(100dvh - ${keyboardInset}px)` : "100dvh",
           opacity: keyboardOpen ? [0.9, 1] : 1,
           y: keyboardOpen ? [14, 0] : 0,
         }}
@@ -116,7 +140,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
           y: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
         }}
         className="flex w-full flex-col bg-background"
-        style={{ minHeight: "100dvh" }}
+        style={{ minHeight: (isMobile && keyboardOpen) ? 0 : "100dvh" }}
       >
         {!isLanding && <SiteHeader />}
         {children}
@@ -135,7 +159,7 @@ function SiteHeader() {
   const isHome = pathname === "/"
   const dimHeader = isHome && typingActive
 
-  
+
   const [mouseHeaderVisible, setMouseHeaderVisible] = useState(false)
   const headerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -175,71 +199,71 @@ function SiteHeader() {
       className="flex shrink-0 justify-center border-b border-border px-6 py-3"
     >
       <div className="flex w-full max-w-5xl items-center justify-between">
-      <div className="flex items-center gap-3">
-        {isHome ? (
-          <button
-            type="button"
-            onClick={handleLogoClick}
-            className="cursor-pointer font-(family-name:--font-doto) text-4xl font-bold text-primary"
-          >
-            KeyZen
-          </button>
-        ) : (
-          <Link
-            href="/"
-            className="font-(family-name:--font-doto) text-4xl font-bold text-primary"
-          >
-            KeyZen
-          </Link>
-        )}
-        <div className="flex items-center gap-0.5">
-          <Link
-            href="/about"
-            prefetch
-            className={cn(
-              iconButtonClass,
-              pathname === "/about" && "text-foreground",
-            )}
-            aria-current={pathname === "/about" ? "page" : undefined}
-            aria-label="About KeyZen"
-          >
-            <IconInfoCircle size={16} stroke={1.5} aria-hidden />
-          </Link>
-          <Link
-            href="/changelog"
-            prefetch
-            className={cn(
-              iconButtonClass,
-              pathname === "/changelog" && "text-foreground",
-            )}
-            aria-current={pathname === "/changelog" ? "page" : undefined}
-            aria-label="Changelog"
-          >
-            <IconNotes size={16} stroke={1.5} aria-hidden />
-          </Link>
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className={cn(iconButtonClass, "cursor-pointer")}
-            aria-label="Settings"
-          >
-            <IconSettings size={16} />
-          </button>
+        <div className="flex items-center gap-3">
+          {isHome ? (
+            <button
+              type="button"
+              onClick={handleLogoClick}
+              className="cursor-pointer font-(family-name:--font-doto) text-4xl font-bold text-primary"
+            >
+              KeyZen
+            </button>
+          ) : (
+            <Link
+              href="/"
+              className="font-(family-name:--font-doto) text-4xl font-bold text-primary"
+            >
+              KeyZen
+            </Link>
+          )}
+          <div className="flex items-center gap-0.5">
+            <Link
+              href="/about"
+              prefetch
+              className={cn(
+                iconButtonClass,
+                pathname === "/about" && "text-foreground",
+              )}
+              aria-current={pathname === "/about" ? "page" : undefined}
+              aria-label="About KeyZen"
+            >
+              <IconInfoCircle size={16} stroke={1.5} aria-hidden />
+            </Link>
+            <Link
+              href="/changelog"
+              prefetch
+              className={cn(
+                iconButtonClass,
+                pathname === "/changelog" && "text-foreground",
+              )}
+              aria-current={pathname === "/changelog" ? "page" : undefined}
+              aria-label="Changelog"
+            >
+              <IconNotes size={16} stroke={1.5} aria-hidden />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              className={cn(iconButtonClass, "cursor-pointer")}
+              aria-label="Settings"
+            >
+              <IconSettings size={16} />
+            </button>
+          </div>
         </div>
-      </div>
-      <CornerBrackets>
-        <Button variant="noborderradius" asChild>
-          <a
-            href="https://github.com/shivabhattacharjee/KeyZen"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <GithubLogo />
-            <span className="hidden md:block">Open Source</span>
-          </a>
-        </Button>
-      </CornerBrackets>
+        <CornerBrackets>
+          <Button variant="noborderradius" asChild>
+            <a
+              href="https://github.com/shivabhattacharjee/KeyZen"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <GithubLogo />
+              <span className="hidden md:block">Open Source</span>
+            </a>
+          </Button>
+        </CornerBrackets>
       </div>
     </motion.header>
   )
