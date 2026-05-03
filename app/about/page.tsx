@@ -98,6 +98,27 @@ export default async function AboutPage() {
         </p>
 
         <h2 className="font-(family-name:--font-doto) text-xl font-semibold text-foreground">
+          Keyboard Shortcuts
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">Typing Test</h3>
+            <ul className="list-inside list-disc space-y-1 text-sm">
+              <li><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">tab</kbd> + <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd> - Restart test</li>
+              <li><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">shift</kbd> + <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd> - End test (Zen mode)</li>
+              <li><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">ctrl</kbd> / <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">alt</kbd> + <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">backspace</kbd> - Delete current word</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">Results Screen</h3>
+            <ul className="list-inside list-disc space-y-1 text-sm">
+              <li><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd> - Next test</li>
+              <li><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">ctrl</kbd> / <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">cmd</kbd> + <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">enter</kbd> - Restart test</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2 className="font-(family-name:--font-doto) text-xl font-semibold text-foreground">
           Privacy & Data Collection
         </h2>
         <p className="leading-relaxed">
