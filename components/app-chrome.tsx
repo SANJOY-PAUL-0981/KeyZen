@@ -14,7 +14,7 @@ import { useMountEffect } from "@/hooks/use-mount-effect"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "motion/react"
-import { IconCompass, IconInfoCircle, IconNotes, IconSettings } from "@tabler/icons-react"
+import { IconInfoCircle, IconNotes, IconSettings } from "@tabler/icons-react"
 import { GithubLogo } from "@phosphor-icons/react"
 
 import { CornerBrackets } from "@/components/corner-brackets"
@@ -121,7 +121,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
 function SiteHeader() {
   const pathname = usePathname()
   const router = useRouter()
-  const { setSettingsOpen, typingActive, setTypingActive, homeLogoHandlerRef } =
+  const { setSettingsOpen, typingActive, homeLogoHandlerRef } =
     useAppChrome()
 
   const isHome = pathname === "/"
@@ -217,18 +217,6 @@ function SiteHeader() {
           >
             <IconSettings size={16} />
           </button>
-          <Link
-            href="/landing"
-            prefetch
-            className={cn(
-              iconButtonClass,
-              pathname === "/landing" && "text-foreground",
-            )}
-            aria-current={pathname === "/landing" ? "page" : undefined}
-            aria-label="Landing page"
-          >
-            <IconCompass size={16} stroke={1.5} aria-hidden />
-          </Link>
         </div>
       </div>
       <CornerBrackets>
@@ -240,7 +228,7 @@ function SiteHeader() {
             className="flex items-center gap-2"
           >
             <GithubLogo />
-           <span className="hidden md:block">Open Source</span>
+            <span className="hidden md:block">Open Source</span>
           </a>
         </Button>
       </CornerBrackets>

@@ -1,7 +1,8 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-import { IconX, IconLoader2, IconChevronDown } from "@tabler/icons-react"
+import { IconX, IconLoader2, IconChevronDown, IconExternalLink } from "@tabler/icons-react"
 import type { SoundPack } from "@/components/settings-context"
 import { CaretDownIcon } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "motion/react"
@@ -649,6 +650,25 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               </motion.p>
             )}
           </AnimatePresence>
+        </div>
+      </section>
+
+      <section>
+        <SectionLabel>Project</SectionLabel>
+        <div className="mt-3 rounded-lg border border-border bg-muted/20">
+          <Link
+            href="/landing"
+            onClick={closeAndRefocusTypingInput}
+            className="flex items-center justify-between gap-3 px-3 py-2.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <span className="min-w-0">
+              <span className="block font-medium text-foreground">Landing page</span>
+              <span className="block truncate text-[11px]">
+                See the full project tour
+              </span>
+            </span>
+            <IconExternalLink size={14} className="shrink-0" />
+          </Link>
         </div>
       </section>
     </div>

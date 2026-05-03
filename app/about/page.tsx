@@ -75,6 +75,16 @@ export default async function AboutPage() {
           stack and features.
         </p>
         <p className="leading-relaxed">
+          Want the full tour? Visit the{" "}
+          <Link
+            href="/landing"
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            landing page
+          </Link>
+          .
+        </p>
+        <p className="leading-relaxed">
           If you spot a bug or want to improve something,{" "}
           <a
             href={`https://github.com/${REPO_OWNER}/${REPO_NAME}/issues`}
