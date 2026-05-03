@@ -142,7 +142,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                     value={themeSearch}
                     onChange={(e) => setThemeSearch(e.target.value)}
                     className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
-                    autoFocus={false}
+                    autoFocus
                   />
                 </div>
                 <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
@@ -400,7 +400,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                     value={langSearch}
                     onChange={(e) => setLangSearch(e.target.value)}
                     className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
-                    autoFocus={false}
+                    autoFocus
                   />
                 </div>
                 <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
@@ -475,7 +475,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                         value={fontSearch}
                         onChange={(e) => setFontSearch(e.target.value)}
                         className="w-full bg-transparent text-[16px] md:text-xs outline-none placeholder:text-muted-foreground"
-                        autoFocus={false}
+                        autoFocus
                       />
                     </div>
                     <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
