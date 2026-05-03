@@ -509,7 +509,7 @@ export const TestControls = memo(function TestControls({
         )}
       >
         {/* Desktop / large screen controls */}
-        <div className="hidden lg:flex items-center justify-center gap-2 mt-6 whitespace-nowrap scale-95 origin-top">
+        <div className="hidden lg:flex items-center justify-center gap-2 mt-6 whitespace-nowrap scale-94 origin-top">
           {/* Toggles: punctuation / numbers / difficulty — disabled in quote / code / custom mode */}
           {(() => {
             const disabled = mode === "quote" || mode === "code" || mode === "custom";
