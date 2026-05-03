@@ -58,7 +58,15 @@ export function AppChrome({ children }: { children: ReactNode }) {
     const vv = window.visualViewport
     if (!vv) return
     let baseHeight = vv.height
+    let lastScale = vv.scale
     const onResize = () => {
+      // Browser zoom changed (Cmd+Plus/Minus) — ignore, just update baseline
+      if (vv.scale !== lastScale) {
+        lastScale = vv.scale
+        baseHeight = vv.height
+        setKeyboardInset(0)
+        return
+      }
       const delta = baseHeight - vv.height
       if (delta > 100) {
         setKeyboardInset(delta)
@@ -108,7 +116,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
           y: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
         }}
         className="flex w-full flex-col bg-background"
-        style={{ minHeight: keyboardOpen ? 0 : "100dvh" }}
+        style={{ minHeight: "100dvh" }}
       >
         {!isLanding && <SiteHeader />}
         {children}
