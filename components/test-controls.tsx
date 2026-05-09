@@ -81,8 +81,8 @@ export const TestControls = memo(function TestControls({
   }, []);
 
   const btnClass = (active: boolean) => cn(
-    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer",
-    active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+    "flex items-center justify-center gap-1.5 rounded-md px-3 h-full text-xs font-medium transition-colors cursor-pointer",
+    active ? "text-foreground bg-background dark:bg-input/30 shadow-sm" : "text-muted-foreground hover:text-foreground",
   );
 
   const drawerBtnClass = (active: boolean) => cn(
@@ -517,7 +517,7 @@ export const TestControls = memo(function TestControls({
             return (
               <>
                 <TooltipProvider delayDuration={200}>
-                  <div className="flex flex-row items-center justify-center gap-1 rounded-lg p-1 bg-zinc-100 dark:bg-zinc-800">
+                  <div className="bg-muted inline-flex h-9 items-center justify-center gap-1 rounded-lg p-[3px]">
                     {([
                       { key: "punctuation", icon: IconAt, label: "punctuation", active: punctuation, onClick: onPunctuationToggle },
                       { key: "numbers", icon: IconNumber, label: "numbers", active: numbers, onClick: onNumbersToggle },
@@ -537,7 +537,7 @@ export const TestControls = memo(function TestControls({
                         {disabled && <TooltipContent side="bottom">{tip}</TooltipContent>}
                       </Tooltip>
                     ))}
-                    <div className="h-4 w-px shrink-0 bg-border" />
+                    <div className="h-4 w-px shrink-0 bg-border mx-1" />
                     {([
                       { key: "easy", icon: IconFeather, label: "easy", active: difficulty === "easy", d: "easy" as const },
                       { key: "hard", icon: IconFlame, label: "hard", active: difficulty === "hard", d: "hard" as const },
