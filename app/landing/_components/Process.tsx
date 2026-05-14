@@ -150,7 +150,7 @@ function StepPanel({
 
 export function Process() {
   return (
-    <section id="process" className="relative z-10 mx-auto max-w-5xl px-6 py-20">
+    <section id="process" className="relative z-10 mx-auto max-w-site px-6 py-20">
       <SectionHeader
         kicker="§05 · the loop"
         title="A four-step ritual."

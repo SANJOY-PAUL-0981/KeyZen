@@ -59,7 +59,7 @@ export function KeyboardStrip() {
   const [soundPack, setSoundPack] = useState("default");
 
   return (
-    <section id="surface" className="relative z-10 mx-auto hidden max-w-5xl px-6 py-20 md:block">
+    <section id="surface" className="relative z-10 mx-auto hidden max-w-site px-6 py-20 md:block">
       <SectionHeader
         kicker="§01 · the surface"
         title="Match your keyboard."

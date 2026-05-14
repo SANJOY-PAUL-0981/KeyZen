@@ -515,7 +515,7 @@ function BrowserFrame() {
 
 export function Hero() {
   return (
-    <section className="relative z-10 mx-auto max-w-5xl px-6 pt-20 pb-16 text-center lg:pt-28">
+    <section className="relative z-10 mx-auto max-w-site px-6 pt-20 pb-16 text-center lg:pt-28">
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}

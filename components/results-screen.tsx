@@ -284,7 +284,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="flex w-full flex-col gap-8 md:max-w-5xl md:mx-auto"
+        className="flex w-full flex-col gap-8 md:max-w-site md:mx-auto"
       >
         <div className="flex flex-col items-center gap-3 px-2 text-center">
           <p className="font-(family-name:--font-doto) text-3xl font-bold text-muted-foreground md:text-4xl">
@@ -323,7 +323,7 @@ export function ResultsScreen({ stats, onRestart, onNext }: ResultsScreenProps) 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="flex w-full flex-col gap-6 md:max-w-5xl md:mx-auto mt-12 md:mt-0"
+      className="flex w-full flex-col gap-6 md:max-w-site md:mx-auto mt-12 md:mt-0"
     >
       {pb?.isNewPb && (
         <Confetti

@@ -101,7 +101,7 @@ function SourceButton() {
 
 export function FinalCTA() {
   return (
-    <section id="open" className="relative z-10 mx-auto max-w-5xl px-6 py-16 sm:py-20">
+    <section id="open" className="relative z-10 mx-auto max-w-site px-6 py-16 sm:py-20">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}

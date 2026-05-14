@@ -105,7 +105,7 @@ const FAQS = [
 
 export function FAQ() {
   return (
-    <section className="relative z-10 mx-auto max-w-5xl px-6 py-16">
+    <section className="relative z-10 mx-auto max-w-site px-6 py-16">
       <SectionHeader
         kicker="§07 · faq"
         title="Small answers before you start."

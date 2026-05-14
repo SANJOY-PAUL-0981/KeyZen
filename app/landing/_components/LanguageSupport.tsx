@@ -249,7 +249,7 @@ export function LanguageSupport() {
   return (
     <section
       id="languages"
-      className="relative z-10 mx-auto max-w-5xl px-6 py-24"
+      className="relative z-10 mx-auto max-w-site px-6 py-24"
     >
       <div className="mb-8 sm:mb-12">
         <Reveal direction="up" y={12} duration={0.55}>

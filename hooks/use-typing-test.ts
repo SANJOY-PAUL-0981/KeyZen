@@ -11,6 +11,8 @@ import type { ResultStats, WpmSnapshot } from "@/components/results-screen";
 import { CODE_MANIFEST, getCodeContent } from "@/lib/code";
 import { type TestMode, type TimeOption, type WordOption, TEST_MODE_STORAGE_KEY, TIME_OPTION_STORAGE_KEY, WORD_OPTION_STORAGE_KEY, QUOTE_LENGTH_STORAGE_KEY, PUNCTUATION_STORAGE_KEY, NUMBERS_STORAGE_KEY, DIFFICULTY_STORAGE_KEY, CUSTOM_TEXT_STORAGE_KEY, DEFAULT_CUSTOM_TEXT, CODE_LANGUAGE_STORAGE_KEY, CODE_CHAPTER_STORAGE_KEY, CUSTOM_CODE_LANGUAGE_STORAGE_KEY, readStoredTestMode, readStoredTimeOption, readStoredWordOption, readStoredQuoteLength, readStoredBool, readStoredDifficulty, readStoredCustomText, readStoredCodeLanguage, readStoredCodeChapter, readStoredCustomCodeLanguage, } from "@/lib/test-storage";
 
+import { BRAINROT_WORDS } from "@/lib/brainrot";
+
 function customTextToWords(text: string): string[] {
   return text.replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
 }
@@ -193,7 +195,7 @@ export function useTypingTest({
     const ccl = "customCodeLanguage" in overrides ? (overrides.customCodeLanguage ?? "") : customCodeLanguage;
     const cl = overrides.codeLanguage ?? codeLanguage;
     const cc = overrides.codeChapter ?? codeChapter;
-    const wc = m === "time" ? 200 : m === "words" ? wo : 100;
+    const wc = m === "time" ? 200 : (m === "words" || m === "brainrot") ? wo : 100;
 
     setQuoteAuthor(null);
     if (m === "quote") {
@@ -214,6 +216,11 @@ export function useTypingTest({
         setCodeLines([]);
         setCodeIndents([]);
       }
+    } else if (m === "brainrot") {
+      const newWords = generateWordsFromPool(BRAINROT_WORDS, wc, { punctuation: false, numbers: false });
+      setWords(newWords);
+      setCodeLines([]);
+      setCodeIndents([]);
     } else if (m === "code") {
       const c = getCommentPrefix(cl);
       if (cl && cc) {
@@ -317,7 +324,7 @@ export function useTypingTest({
 
     const ct = storedCustomText ?? customText;
     const activeCCL = storedCustomCodeLang ?? customCodeLanguage;
-    const wc = m === "time" ? 200 : m === "words" ? wo : 100;
+    const wc = m === "time" ? 200 : (m === "words" || m === "brainrot") ? wo : 100;
     if (m === "quote") {
       const { words: initWords, author } = getQuote(ql);
       setWords(initWords);
@@ -332,6 +339,9 @@ export function useTypingTest({
         const customWords = customTextToWords(ct);
         setWords(customWords.length > 0 ? customWords : customTextToWords(DEFAULT_CUSTOM_TEXT));
       }
+    } else if (m === "brainrot") {
+      const newWords = generateWordsFromPool(BRAINROT_WORDS, wc, { punctuation: false, numbers: false });
+      setWords(newWords);
     } else if (m === "code") {
       const c = getCommentPrefix(activeCodeLang);
       if (activeCodeLang && activeCodeChap) {

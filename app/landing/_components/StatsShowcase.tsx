@@ -588,7 +588,7 @@ export function StatsShowcase() {
   return (
     <section
       id="stats"
-      className="relative z-10 mx-auto max-w-5xl px-6 py-16 sm:py-20"
+      className="relative z-10 mx-auto max-w-site px-6 py-16 sm:py-20"
     >
       <SectionHeader
         kicker="§04 · honest numbers"

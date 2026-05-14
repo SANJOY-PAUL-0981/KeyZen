@@ -193,7 +193,7 @@ export function TypingTest(props: TypingTestProps) {
   return (
     <div
       className={cn(
-        "flex w-full max-w-5xl flex-col items-center gap-3 transition-all duration-150 ease-out",
+        "flex w-full max-w-site flex-col items-center gap-3 transition-all duration-150 ease-out",
         !showKeyboard && "flex-1"
       )}
       style={{

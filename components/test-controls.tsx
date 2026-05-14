@@ -3,7 +3,7 @@
 import { memo, useEffect, useState } from "react";
 import { useAppChrome } from "@/components/app-chrome";
 import { motion, AnimatePresence } from "motion/react";
-import { IconAt, IconClock, IconLetterA, IconQuote, IconMountain, IconNumber, IconFeather, IconFlame, IconTool, IconPencil, IconAdjustments, IconX, IconCode, } from "@tabler/icons-react";
+import { IconAt, IconClock, IconLetterA, IconQuote, IconMountain, IconNumber, IconFeather, IconFlame, IconTool, IconPencil, IconAdjustments, IconX, IconCode, IconBrain, } from "@tabler/icons-react";
 import { CustomTextDialog } from "@/components/custom-text-dialog";
 import { CustomTimeDialog } from "@/components/custom-time-dialog";
 import type { QuoteLength } from "@/lib/quotes";
@@ -195,6 +195,7 @@ export const TestControls = memo(function TestControls({
             { value: "words", icon: IconLetterA, label: "words" },
             { value: "quote", icon: IconQuote, label: "quote" },
             { value: "zen", icon: IconMountain, label: "zen" },
+            { value: "brainrot", icon: IconBrain, label: "brain rot" },
             { value: "code", icon: IconCode, label: "code" },
             { value: "custom", icon: IconTool, label: "custom" },
           ] as const).map(({ value, icon: Icon, label }) => (
@@ -218,9 +219,9 @@ export const TestControls = memo(function TestControls({
           {/* Options group */}
           <div className="flex flex-col gap-2">
             <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              {mode === "words" ? "Word Count" : mode === "quote" ? "Quote Length" : mode === "custom" ? "Custom Text" : mode === "code" ? "Language / Chapter" : "Time (s)"}
+              {mode === "words" || mode === "brainrot" ? "Word Count" : mode === "quote" ? "Quote Length" : mode === "custom" ? "Custom Text" : mode === "code" ? "Language / Chapter" : "Time (s)"}
             </span>
-            {mode === "words" ? (
+            {mode === "words" || mode === "brainrot" ? (
               <div className="grid grid-cols-5 gap-2">
                 {[10, 25, 50, 100].map((w) => (
                   <button
@@ -435,8 +436,8 @@ export const TestControls = memo(function TestControls({
 
       {/* Toggles + Difficulty — always visible, disabled in quote / code / custom mode */}
       {(() => {
-        const disabled = mode === "quote" || mode === "code" || mode === "custom";
-        const tip = mode === "quote" ? "Not available in quote mode" : mode === "code" ? "Not available in code mode" : "Not available in custom mode";
+        const disabled = mode === "quote" || mode === "code" || mode === "custom" || mode === "brainrot";
+        const tip = mode === "quote" ? "Not available in quote mode" : mode === "code" ? "Not available in code mode" : mode === "brainrot" ? "Not available in brain rot mode" : "Not available in custom mode";
         return (
           <TooltipProvider delayDuration={200}>
             <>
@@ -509,11 +510,11 @@ export const TestControls = memo(function TestControls({
         )}
       >
         {/* Desktop / large screen controls */}
-        <div className="hidden lg:flex items-center justify-center gap-2 mt-6 whitespace-nowrap scale-94 origin-top">
+        <div className="hidden lg:flex items-center justify-center gap-2 mt-6 whitespace-nowrap scale-88 origin-top">
           {/* Toggles: punctuation / numbers / difficulty — disabled in quote / code / custom mode */}
           {(() => {
-            const disabled = mode === "quote" || mode === "code" || mode === "custom";
-            const tip = mode === "quote" ? "Not available in quote mode" : mode === "code" ? "Not available in code mode" : mode === "custom" ? "Not available in custom mode" : "";
+            const disabled = mode === "quote" || mode === "code" || mode === "custom" || mode === "brainrot";
+            const tip = mode === "quote" ? "Not available in quote mode" : mode === "code" ? "Not available in code mode" : mode === "brainrot" ? "Not available in brain rot mode" : mode === "custom" ? "Not available in custom mode" : "";
             return (
               <>
                 <TooltipProvider delayDuration={200}>
@@ -572,8 +573,10 @@ export const TestControls = memo(function TestControls({
                 { value: "words", icon: IconLetterA, label: "words" },
                 { value: "quote", icon: IconQuote, label: "quote" },
                 { value: "zen", icon: IconMountain, label: "zen" },
+                { value: "brainrot", icon: IconBrain, label: "brain rot" },
                 { value: "code", icon: IconCode, label: "code" },
                 { value: "custom", icon: IconTool, label: "custom" },
+
               ] as const).map(({ value, icon: Icon, label }) => (
                 <TabsTrigger key={value} value={value} className="gap-1.5 px-3 text-xs cursor-pointer">
                   <Icon size={13} />
@@ -587,7 +590,7 @@ export const TestControls = memo(function TestControls({
             <>
               <div className="hidden h-4 w-px shrink-0 bg-border sm:block" />
 
-              {mode === "words" ? (
+              {mode === "words" || mode === "brainrot" ? (
                 <Tabs value={![10, 25, 50, 100].includes(wordOption) ? "custom" : String(wordOption)} onValueChange={(v) => { if (v !== "custom") onWordOptionChange(Number(v)) }} className="flex items-center">
                   <TabsList>
                     {[10, 25, 50, 100].map((w) => (

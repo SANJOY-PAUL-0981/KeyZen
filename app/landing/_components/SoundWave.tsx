@@ -80,7 +80,7 @@ function Marquee() {
 
 export function SoundWave() {
   return (
-    <section className="relative z-10 mx-auto max-w-5xl px-6 py-12">
+    <section className="relative z-10 mx-auto max-w-site px-6 py-12">
       <motion.div
         initial={{ opacity: 0, scaleX: 0.94 }}
         whileInView={{ opacity: 1, scaleX: 1 }}

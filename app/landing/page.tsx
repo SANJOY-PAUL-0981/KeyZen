@@ -170,7 +170,7 @@ function TopBar() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
-        className="mx-auto w-full max-w-5xl px-6"
+        className="mx-auto w-full max-w-site px-6"
         animate={{
           paddingTop: scrolled ? 10 : 18,
           paddingBottom: scrolled ? 6 : 0,

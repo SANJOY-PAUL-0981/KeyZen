@@ -141,7 +141,7 @@ export function MobileSurface() {
   }
 
   return (
-    <section className="relative z-10 mx-auto max-w-5xl px-6 py-16 md:hidden">
+    <section className="relative z-10 mx-auto max-w-site px-6 py-16 md:hidden">
       <SectionHeader
         kicker="§01 · the surface"
         title={

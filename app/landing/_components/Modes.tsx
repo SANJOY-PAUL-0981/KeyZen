@@ -95,7 +95,7 @@ export { SectionHeader };
 
 export function Modes() {
   return (
-    <section id="modes" className="relative z-10 mx-auto max-w-5xl px-6 py-20">
+    <section id="modes" className="relative z-10 mx-auto max-w-site px-6 py-20">
       <SectionHeader
         kicker="§02 · modes"
         title={
