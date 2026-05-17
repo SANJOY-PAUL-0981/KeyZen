@@ -128,6 +128,7 @@ export function useTypingTest({
   const screenFadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resetAnimRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finishTestRef = useRef<(() => void) | null>(null);
+  const frozenStatsRef = useRef<ResultStats | null>(null);
 
 
   const mtCounts = useMemo(
@@ -144,16 +145,59 @@ export function useTypingTest({
     : 0;
 
 
+  const buildResultStats = useCallback((
+    snapshotWordInputs: string[] = wordInputs,
+    snapshotTyped: string = typed,
+    snapshotWordIndex: number = wordIndex,
+  ): ResultStats => {
+    const elapsed = startTime ? (Date.now() - startTime) / 1000 : elapsedSecondsRef.current;
+    const elapsedMin = elapsed / 60 || 1 / 60;
+    const counts = countWpm({
+      targetWords: words,
+      wordInputs: snapshotWordInputs,
+      typed: snapshotTyped,
+      wordIndex: snapshotWordIndex,
+      mode,
+      final: true,
+    });
+    const wpmValues = wpmHistory.map((s) => s.wpm).filter((v) => v > 0);
+    let consistency = 100;
+    if (wpmValues.length > 1) {
+      const mean = wpmValues.reduce((a, b) => a + b, 0) / wpmValues.length;
+      const variance = wpmValues.reduce((a, b) => a + (b - mean) ** 2, 0) / wpmValues.length;
+      consistency = Math.max(0, Math.round(100 - (Math.sqrt(variance) / (mean || 1)) * 100));
+    }
+    const computedWpm = Math.round(wpmNumeratorFromCounts(counts) / 5 / elapsedMin);
+    const computedRaw = Math.max(Math.round(allTypedRef.current / 5 / elapsedMin), computedWpm);
 
-  const finishTest = useCallback(() => {
+    return {
+      wpm: computedWpm,
+      accuracy: accuracyFromCounts(counts),
+      raw: computedRaw,
+      correctChars: counts.correctWordChars,
+      incorrectChars: counts.incorrectChars,
+      extraChars: counts.extraChars,
+      missedChars: counts.missedChars,
+      consistency,
+      elapsedSeconds: Math.round(elapsed),
+      correctedErrors: correctedErrorsRef.current,
+      mode,
+      modeDetail: mode === "time" ? String(timeOption) : mode === "words" ? String(wordOption) : mode === "quote" ? quoteLength : mode === "custom" ? "custom" : "",
+      language,
+      wpmHistory,
+    };
+  }, [wordInputs, typed, wordIndex, startTime, words, mode, timeOption, wordOption, quoteLength, language, wpmHistory]);
+
+  const finishTest = useCallback((finalStats?: ResultStats) => {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+    frozenStatsRef.current = finalStats ?? buildResultStats();
     setFinished(true);
     setShowControls(true);
     onFinished?.(true);
     onTypingActiveChange?.(false);
     setScreenFade(0);
     requestAnimationFrame(() => setScreenFade(1));
-  }, [onFinished, onTypingActiveChange]);
+  }, [buildResultStats, onFinished, onTypingActiveChange]);
 
   finishTestRef.current = finishTest;
 
@@ -531,7 +575,7 @@ export function useTypingTest({
             const nextIndex = lineEnd + 1;
             if (nextIndex >= words.length) {
               setWordInputs(nextInputs);
-              finishTest();
+              finishTest(buildResultStats(nextInputs, "", nextIndex));
               return;
             }
             setWordInputs(nextInputs);
@@ -611,7 +655,7 @@ export function useTypingTest({
 
         if (wordIndex + 1 >= words.length) {
           setWordInputs(nextInputs);
-          finishTest();
+          finishTest(buildResultStats(nextInputs, "", nextIndex));
           return;
         }
         setWordInputs(nextInputs);
@@ -694,7 +738,7 @@ export function useTypingTest({
           const nextInputs = [...wordInputs, nextTyped];
           setWordInputs(nextInputs);
           recordWordSnapshot(nextInputs, "", wordIndex + 1);
-          finishTest();
+          finishTest(buildResultStats(nextInputs, "", wordIndex + 1));
           return;
         }
 
@@ -780,37 +824,8 @@ export function useTypingTest({
     [handleKeyDown, typed],
   );
 
-
-  const frozenStatsRef = useRef<ResultStats | null>(null);
-
   if (finished && !frozenStatsRef.current) {
-    const elapsed = startTime ? (Date.now() - startTime) / 1000 : elapsedSecondsRef.current;
-    const elapsedMin = elapsed / 60 || 1 / 60;
-    const wpmValues = wpmHistory.map((s) => s.wpm).filter((v) => v > 0);
-    let consistency = 100;
-    if (wpmValues.length > 1) {
-      const mean = wpmValues.reduce((a, b) => a + b, 0) / wpmValues.length;
-      const variance = wpmValues.reduce((a, b) => a + (b - mean) ** 2, 0) / wpmValues.length;
-      consistency = Math.max(0, Math.round(100 - (Math.sqrt(variance) / (mean || 1)) * 100));
-    }
-    const computedWpm = Math.round(wpmNumerator / 5 / elapsedMin);
-    const computedRaw = Math.max(Math.round(allTypedRef.current / 5 / elapsedMin), computedWpm);
-    frozenStatsRef.current = {
-      wpm: computedWpm,
-      accuracy,
-      raw: computedRaw,
-      correctChars: mtCounts.correctWordChars,
-      incorrectChars: mtCounts.incorrectChars,
-      extraChars: mtCounts.extraChars,
-      missedChars: mtCounts.missedChars,
-      consistency,
-      elapsedSeconds: Math.round(elapsed),
-      correctedErrors: correctedErrorsRef.current,
-      mode,
-      modeDetail: mode === "time" ? String(timeOption) : mode === "words" ? String(wordOption) : mode === "quote" ? quoteLength : mode === "custom" ? "custom" : "",
-      language,
-      wpmHistory,
-    };
+    frozenStatsRef.current = buildResultStats();
   }
   if (!finished) frozenStatsRef.current = null;
 

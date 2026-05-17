@@ -8,7 +8,7 @@ export type InvalidReason =
   | "invalid_numbers"      // NaN / Infinity in core stats
   | "invalid_accuracy"     // accuracy outside [0, 100]
   | "zero_time"            // elapsed time ≤ 0
-  | "too_short"            // test lasted < 2 s (not enough signal)
+  | "too_short"            // ultra-short test with too little input to validate
   | "impossible_wpm"       // WPM above human ceiling (~300)
   | "impossible_raw"       // raw WPM above human ceiling (~350)
   | "impossible_cps"       // chars-per-second exceeds physical limit
@@ -30,8 +30,11 @@ const MAX_RAW_WPM = 350
 // 300 WPM ≈ 25 chars/sec; 350 raw ≈ 29 chars/sec — cap at 30 for safety
 const MAX_CHARS_PER_SEC = 30
 const MAX_BURST_WPM = 600
-// Min test duration before we can draw conclusions
-const MIN_ELAPSED_SECONDS = 5
+// Below this duration, only reject when the user also typed very little.
+// That keeps tiny accidental runs invalid without punishing legitimate fast
+// completions on short custom texts.
+const MIN_ELAPSED_SECONDS = 2
+const MIN_KEYSTROKES_FOR_SHORT_TEST = 20
 // How many consecutive 0-raw seconds mid-test triggers an AFK flag
 const MAX_CONSECUTIVE_ZERO_SECONDS = 3
 // Minimum history length before statistical checks kick in (avoid false positives on short tests)
@@ -116,7 +119,10 @@ export function validateResult(stats: ResultStats): ValidationResult {
   if (elapsedSeconds <= 0)
     return { valid: false, reason: "zero_time" }
 
-  if (elapsedSeconds < MIN_ELAPSED_SECONDS)
+  if (
+    elapsedSeconds < MIN_ELAPSED_SECONDS &&
+    keystrokes < MIN_KEYSTROKES_FOR_SHORT_TEST
+  )
     return { valid: false, reason: "too_short" }
 
   // 5. Impossible speed — human ceiling

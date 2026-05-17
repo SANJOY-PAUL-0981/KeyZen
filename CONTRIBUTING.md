@@ -326,7 +326,7 @@ A result is rejected if any of the following are true:
 | `invalid_numbers` | WPM, raw, or accuracy is `NaN` or `Infinity` |
 | `invalid_accuracy` | Accuracy outside `[0, 100]` |
 | `zero_time` | Elapsed time ≤ 0 seconds |
-| `too_short` | Elapsed time < 5 seconds |
+| `too_short` | Elapsed time < 2 seconds and fewer than 20 keystrokes |
 | `impossible_wpm` | WPM > 300 |
 | `impossible_raw` | Raw WPM > 350 |
 | `impossible_cps` | Characters per second > 30 |
